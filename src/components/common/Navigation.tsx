@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
-
+import { useState } from "react";
 
 function Navigation() {
     const userName = "전재형";
-    
+    const [open, setOpen] = useState<"noti" | "profile" | null>(null);
 
     return (
     <nav className="navigation">
@@ -53,9 +53,50 @@ function Navigation() {
             </NavLink>
         </div>
         <div className="navigation__actions">
-            <button type="button" className="navigation__notification">🔔</button>
-            <span className="navigation__avatar">{userName.charAt(0)}</span>
-            <span className="navigation__user">{userName}</span>
+            <div className="navigation__dropdown-wrap">
+                {/* 알림버튼 드롭다운 */}
+                <button 
+                    type="button" 
+                    className="navigation__notification"
+                    onClick={() => setOpen(open === "noti" ? null : "noti")}
+                >🔔
+                </button>
+                {open === "noti" && (
+                    <div className="navigation__dropdown notification-dropdown">
+                        <div className="navigation__dropdown-header">
+                            <strong>알림</strong>
+                        </div>
+
+                        <button type="button" className="notification-dropdown__item">
+                            새로운 인수인계가 등록되었습니다.
+                        </button>
+
+                        <button type="button" className="notification-dropdown__item">
+                            긴급 인수인계를 확인해주세요.
+                        </button>
+                    </div>
+                )}
+            </div>
+            {/* 프로필 */}
+            <div className="navigation__dropdown-wrap">
+                <button 
+                    type="button"
+                    className="navigation__profile"
+                    onClick={() => setOpen(open === "profile" ? null : "profile")}
+                >
+                    <span className="navigation__avatar">{userName.charAt(0)}</span>
+                    <span className="navigation__user">{userName}</span>
+                </button> 
+                {open === "profile" && (
+                    <div className="navigation__dropdown profile-dropdown">
+                        <button type="button" className="profile-dropdown__item">내 정보</button>
+                        <div className="profile-dropdown__divider"></div>
+                        <button type="button" className="profile-dropdown__item profile-dropdown__logout">
+                            로그아웃
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     </nav>
     );
