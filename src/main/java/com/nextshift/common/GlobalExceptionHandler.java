@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/** 예외를 {status, code, message} JSON으로 맞춘다. 검증 실패는 필드별 메시지도 붙인다. */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

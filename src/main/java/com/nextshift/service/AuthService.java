@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** 가입과 로그인. 리프레시 토큰 원문은 저장하지 않고 SHA-256 해시만 남긴다. */
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -43,6 +44,7 @@ public class AuthService {
         this.properties = properties;
     }
 
+    /** 이메일을 소문자로 맞춘 뒤 계정을 만들고 토큰을 발급한다. */
     @Transactional
     public Issued signup(String email, String password, String name) {
         String normalized = normalizeEmail(email);
@@ -57,6 +59,7 @@ public class AuthService {
         return issue(user);
     }
 
+    /** 이메일과 비밀번호가 맞으면 토큰을 발급한다. 실패 이유는 구분하지 않는다. */
     @Transactional
     public Issued login(String email, String password) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(normalizeEmail(email))
@@ -67,6 +70,7 @@ public class AuthService {
         return issue(user);
     }
 
+    /** 쿠키의 리프레시 토큰을 한 번 쓰고 폐기한 뒤 새 쌍을 발급한다. */
     @Transactional
     public Issued refresh(String rawToken) {
         if (rawToken == null || rawToken.isBlank()) {
@@ -85,6 +89,7 @@ public class AuthService {
         return issue(user);
     }
 
+    /** 쿠키로 온 리프레시 토큰을 폐기한다. 이미 폐기됐으면 그대로 둔다. */
     @Transactional
     public void logout(String rawToken) {
         if (rawToken == null || rawToken.isBlank()) {
@@ -97,6 +102,7 @@ public class AuthService {
         });
     }
 
+    /** 탈퇴하지 않은 같은 이메일이 있으면 409를 던진다. */
     @Transactional(readOnly = true)
     public void checkEmail(String email) {
         if (userRepository.existsByEmailAndDeletedAtIsNull(normalizeEmail(email))) {
@@ -104,6 +110,7 @@ public class AuthService {
         }
     }
 
+    /** 액세스 JWT와 새 리프레시 토큰을 같이 만든다. 재발급 때는 이전 토큰을 먼저 폐기한다. */
     private Issued issue(User user) {
         String raw = newRefreshToken();
         RefreshToken token = new RefreshToken();
@@ -134,5 +141,6 @@ public class AuthService {
         return email.trim().toLowerCase(Locale.ROOT);
     }
 
+    /** auth는 응답 본문, refreshToken은 쿠키에 쓸 원문. */
     public record Issued(AuthView auth, String refreshToken) {}
 }

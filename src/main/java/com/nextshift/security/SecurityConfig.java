@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+/** 세션 없이 JWT로만 인증한다. 가입·로그인·재발급·로그아웃만 비로그인으로 연다. */
 @Configuration
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
@@ -28,7 +29,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable) // 쿠키는 SameSite=Lax이고, 상태는 JWT라 CSRF 토큰은 쓰지 않는다.
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler

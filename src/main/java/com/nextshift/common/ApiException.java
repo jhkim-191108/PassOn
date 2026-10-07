@@ -2,6 +2,7 @@ package com.nextshift.common;
 
 import org.springframework.http.HttpStatus;
 
+/** API가 돌려주는 업무 오류. HTTP 상태와 코드, 메시지를 같이 가진다. */
 public class ApiException extends RuntimeException {
     private final HttpStatus status;
     private final String code;
@@ -12,10 +13,12 @@ public class ApiException extends RuntimeException {
         this.code = code;
     }
 
+    /** HTTP 상태 코드를 반환한다. */
     public HttpStatus getStatus() {
         return status;
     }
 
+    /** 클라이언트가 구분할 오류 코드를 반환한다. */
     public String getCode() {
         return code;
     }

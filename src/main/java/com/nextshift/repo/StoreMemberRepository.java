@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/** 사용자-매장 소속 조회. 한 매장에 같은 사용자는 한 번만 있다. */
 public interface StoreMemberRepository extends JpaRepository<StoreMember, UUID> {
     Optional<StoreMember> findByStoreIdAndUserId(UUID storeId, UUID userId);
 

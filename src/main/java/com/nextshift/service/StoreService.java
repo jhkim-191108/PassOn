@@ -16,6 +16,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** 매장 생명주기. 만들면 요청한 사람을 OWNER로 넣고 초대 코드를 발급한다. */
 @Service
 public class StoreService {
     private final StoreRepository storeRepository;
@@ -35,6 +36,7 @@ public class StoreService {
         this.inviteCodes = inviteCodes;
     }
 
+    /** 매장과 오너 멤버를 같이 만들고 초대 코드를 발급한다. */
     @Transactional
     public StoreView create(AuthPrincipal principal, String name, StoreType type) {
         Store store = new Store();
@@ -53,6 +55,7 @@ public class StoreService {
         return toView(store, StoreRole.OWNER);
     }
 
+    /** 활동 중인 소속만 모아서 돌려준다. */
     @Transactional(readOnly = true)
     public List<StoreView> list(AuthPrincipal principal) {
         List<StoreView> views = new ArrayList<>();
@@ -62,6 +65,7 @@ public class StoreService {
         return views;
     }
 
+    /** 그 매장의 활동 멤버만 상세를 본다. */
     @Transactional(readOnly = true)
     public StoreView get(AuthPrincipal principal, UUID storeId) {
         Store store = guard.requireStore(storeId);
@@ -69,6 +73,7 @@ public class StoreService {
         return toView(store, member.getRole());
     }
 
+    /** 이름만 고친다. 업종은 바꾸지 않는다. */
     @Transactional
     public StoreView update(AuthPrincipal principal, UUID storeId, String name) {
         Store store = guard.requireStore(storeId);
@@ -78,6 +83,7 @@ public class StoreService {
         return toView(store, member.getRole());
     }
 
+    /** 오너만 매장 행을 지운다. */
     @Transactional
     public void delete(AuthPrincipal principal, UUID storeId) {
         guard.requireStore(storeId);
@@ -86,6 +92,7 @@ public class StoreService {
         storeRepository.deleteById(storeId);
     }
 
+    /** 직원에게는 초대 코드를 숨긴다. */
     static StoreView toView(Store store, StoreRole role) {
         String inviteCode = role == StoreRole.STAFF ? null : store.getInviteCode();
         return new StoreView(store.getId(), store.getName(), store.getType(), role, inviteCode, store.getCreatedAt());

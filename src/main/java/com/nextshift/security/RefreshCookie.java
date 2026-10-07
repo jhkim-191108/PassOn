@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
+/** 리프레시 토큰 쿠키. HttpOnly라 브라우저 스크립트에서는 읽지 못한다. */
 @Component
 public class RefreshCookie {
     public static final String NAME = "refresh_token";
@@ -42,7 +43,7 @@ public class RefreshCookie {
     private static ResponseCookie cookie(String token, Duration age) {
         return ResponseCookie.from(NAME, token)
                 .httpOnly(true)
-                .secure(false)
+                .secure(false) // 로컬 http 개발용. 배포 시에는 true로 바꿔야 한다.
                 .path("/api/auth")
                 .maxAge(age)
                 .sameSite("Lax")

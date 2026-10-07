@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** 초대 코드 재발급과 코드로 참여. 참여는 MANAGER 또는 STAFF만 가능하다. */
 @Service
 public class InviteService {
     private final StoreRepository storeRepository;
@@ -34,6 +35,7 @@ public class InviteService {
         this.inviteCodes = inviteCodes;
     }
 
+    /** 매장 수정 권한이 있는 사람만 초대 코드를 새로 만든다. */
     @Transactional
     public StoreView reissue(AuthPrincipal principal, UUID storeId) {
         Store store = guard.requireStore(storeId);
@@ -45,6 +47,7 @@ public class InviteService {
         return StoreService.toView(store, actor.getRole());
     }
 
+    /** 코드를 대문자로 맞춘 뒤 참여한다. 정지·퇴사 멤버는 다시 들어오지 못한다. */
     @Transactional
     public StoreView join(AuthPrincipal principal, String rawCode, StoreRole role) {
         if (role != StoreRole.MANAGER && role != StoreRole.STAFF) {
