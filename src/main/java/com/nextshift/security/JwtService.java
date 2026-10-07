@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.stereotype.Service;
 
+/** 액세스 토큰 발급과 검증. subject에는 사용자 id만 넣는다. */
 @Service
 public class JwtService {
     private final SecretKey key;
@@ -35,6 +36,7 @@ public class JwtService {
         return UUID.fromString(subject);
     }
 
+    /** 액세스 토큰 유효 시간(분)을 반환한다. */
     public int accessMinutes() {
         return accessMinutes;
     }

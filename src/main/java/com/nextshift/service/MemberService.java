@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** 매장 멤버 추가·역할·근무조·상태. 행위자와 대상의 역할을 StoreGuard로 비교한다. */
 @Service
 public class MemberService {
     private final StoreMemberRepository memberRepository;
@@ -31,6 +32,7 @@ public class MemberService {
         this.guard = guard;
     }
 
+    /** 탈퇴하지 않은 사용자를 활동 멤버로 넣는다. 이미 있으면 409다. */
     @Transactional
     public MemberView add(AuthPrincipal principal, UUID storeId, UUID userId, StoreRole role) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -50,6 +52,7 @@ public class MemberService {
         return toView(member, user);
     }
 
+    /** 활동 멤버가 그 매장 멤버 전체를 본다. */
     @Transactional(readOnly = true)
     public List<MemberView> list(AuthPrincipal principal, UUID storeId) {
         guard.requireActiveMember(storeId, principal.id());
@@ -58,6 +61,7 @@ public class MemberService {
         return members.stream().map(member -> toView(member, users.get(member.getUserId()))).toList();
     }
 
+    /** 그 매장에 속한 멤버만 조회한다. 다른 매장 id면 404다. */
     @Transactional(readOnly = true)
     public MemberView get(AuthPrincipal principal, UUID storeId, UUID memberId) {
         guard.requireActiveMember(storeId, principal.id());
@@ -65,6 +69,7 @@ public class MemberService {
         return toView(member, userRepository.findById(member.getUserId()).orElse(null));
     }
 
+    /** 대상 멤버를 고칠 수 있고, 그 역할을 줄 수 있을 때만 바꾼다. */
     @Transactional
     public MemberView changeRole(AuthPrincipal principal, UUID storeId, UUID memberId, StoreRole role) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -75,6 +80,7 @@ public class MemberService {
         return toView(target, userRepository.findById(target.getUserId()).orElse(null));
     }
 
+    /** 멤버를 수정할 수 있는 사람만 근무조를 바꾼다. */
     @Transactional
     public MemberView changeTeam(AuthPrincipal principal, UUID storeId, UUID memberId, ShiftTeam team) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -84,6 +90,7 @@ public class MemberService {
         return toView(target, userRepository.findById(target.getUserId()).orElse(null));
     }
 
+    /** 멤버를 수정할 수 있는 사람만 상태를 바꾼다. */
     @Transactional
     public MemberView changeStatus(AuthPrincipal principal, UUID storeId, UUID memberId, MemberStatus status) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -93,6 +100,7 @@ public class MemberService {
         return toView(target, userRepository.findById(target.getUserId()).orElse(null));
     }
 
+    /** 멤버 행만 지운다. 사용자 계정은 그대로다. */
     @Transactional
     public void delete(AuthPrincipal principal, UUID storeId, UUID memberId) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -115,6 +123,7 @@ public class MemberService {
         return userRepository.findAllById(ids).stream().collect(Collectors.toMap(User::getId, Function.identity()));
     }
 
+    /** 탈퇴한 계정이면 이름만 "탈퇴한 사용자"로 바꾸고 이메일은 비운다. */
     private static MemberView toView(StoreMember member, User user) {
         boolean gone = user == null || user.getDeletedAt() != null;
         return new MemberView(

@@ -10,6 +10,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+/** 로그인 안 됨은 401, 권한 없음은 403. Spring 기본 HTML 대신 JSON으로 맞춘다. */
 @Component
 public class RestAuthHandlers implements AuthenticationEntryPoint, AccessDeniedHandler {
 
