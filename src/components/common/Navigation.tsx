@@ -1,10 +1,27 @@
 import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function Navigation() {
     const userName = "전재형";
     const [open, setOpen] = useState<"noti" | "profile" | null>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const closeMenu = (e: MouseEvent) => {
+            if (
+                menuRef.current && !menuRef.current.contains(e.target as Node)
+            ) {
+                setOpen(null);
+            }
+        };
+
+        document.addEventListener("mousedown", closeMenu);
+
+        return () => {
+            document.removeEventListener("mousedown", closeMenu);
+        };
+    }, []);
 
     return (
     <nav className="navigation">
@@ -52,7 +69,7 @@ function Navigation() {
                 기록 조회
             </NavLink>
         </div>
-        <div className="navigation__actions">
+        <div className="navigation__actions" ref={menuRef}>
             <div className="navigation__dropdown-wrap">
                 {/* 알림버튼 드롭다운 */}
                 <button 
@@ -71,7 +88,7 @@ function Navigation() {
                             새로운 인수인계가 등록되었습니다.
                         </button>
 
-                        <button type="button" className="notification-dropdown__item">
+                        <button type="button" className="notification-dropdown__item dropdown__danger">
                             긴급 인수인계를 확인해주세요.
                         </button>
                     </div>
@@ -91,7 +108,7 @@ function Navigation() {
                     <div className="navigation__dropdown profile-dropdown">
                         <button type="button" className="profile-dropdown__item">내 정보</button>
                         <div className="profile-dropdown__divider"></div>
-                        <button type="button" className="profile-dropdown__item profile-dropdown__logout">
+                        <button type="button" className="profile-dropdown__item dropdown__danger">
                             로그아웃
                         </button>
                     </div>
