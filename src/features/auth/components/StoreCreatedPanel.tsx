@@ -1,5 +1,5 @@
 // TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
-import { Button } from './common/Button';
+import Button from './common/Button';
 
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 import '../../../css/StoreCreatedPanel.css';

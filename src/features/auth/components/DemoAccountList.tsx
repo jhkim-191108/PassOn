@@ -1,10 +1,11 @@
 import { useId, useState } from 'react';
+import type { ComponentProps } from 'react'; 
 
 // TODO: 공통 컴포넌트 Export명 확정 후 교체
 import { Avatar } from './common/Avatar';
-import { RoleBadge } from './common/Badge';
+import Badge from './common/Badge';
 
-import type { AppUser } from '../types';
+import type { AppUser, UserRole } from '../types';
 import '../../../css/DemoAccountList.css';
 
 interface Props {
@@ -15,6 +16,12 @@ interface Props {
 
 const currentRole = (user: AppUser) =>
   user.memberships.find((m) => m.storeId === user.currentStoreId)?.role ?? 'staff';
+
+const ROLE_BADGE: Record<UserRole, { label: string; variant: ComponentProps<typeof Badge>['variant'] }> = {
+  owner: { label: 'Owner', variant: 'primary' },
+  manager: { label: 'Manager', variant: 'success' },
+  staff: { label: 'Staff', variant: 'neutral' },
+};
 
 export const DemoAccountList = ({ users, onSelect, disabled = false }: Props) => {
   const [open, setOpen] = useState(false);
@@ -67,7 +74,9 @@ export const DemoAccountList = ({ users, onSelect, disabled = false }: Props) =>
                   <span className="demo-accounts__info">
                     <span className="demo-accounts__name-row">
                       <span className="demo-accounts__name">{user.name}</span>
-                      <RoleBadge role={currentRole(user)} />
+                      <Badge variant={ROLE_BADGE[currentRole(user)].variant} size="sm">
+                        {ROLE_BADGE[currentRole(user)].label}
+                      </Badge>
                     </span>
                     <span className="demo-accounts__email">{user.email}</span>
                   </span>
