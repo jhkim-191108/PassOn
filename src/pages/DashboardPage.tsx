@@ -1,3 +1,4 @@
+import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 
 function DashboardPage() {
@@ -12,6 +13,14 @@ function DashboardPage() {
                 <Button variant="secondary">취소</Button>
                 <Button variant="danger">삭제</Button>
                 <Button disabled>비활성화</Button>
+            </div>
+
+            <div style={{ display: "flex", gap: "8px", marginTop: "24px" }}>
+                <Badge variant="neutral">일반</Badge>
+                <Badge variant="warning">중요</Badge>
+                <Badge variant="danger">긴급</Badge>
+                <Badge variant="primary">진행 중</Badge>
+                <Badge variant="success">완료</Badge>
             </div>
         </section>
     );

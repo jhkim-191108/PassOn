@@ -214,3 +214,55 @@ a {
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+/* =========================
+  Badge
+========================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  border-radius: 9999px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.badge--sm {
+  min-height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.badge--md {
+  min-height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.badge--primary {
+  color: var(--color-primary-dark);
+  background: var(--color-primary-light);
+}
+
+.badge--success {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.badge--warning {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.badge--danger {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.badge--neutral {
+  color: #52525b;
+  background: #f4f4f5;
+}
