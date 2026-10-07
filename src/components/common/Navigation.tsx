@@ -1,7 +1,11 @@
 import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
 
+
 function Navigation() {
+    const userName = "전재형";
+    
+
     return (
     <nav className="navigation">
         <NavLink to="/app/dashboard" className="navigation__logo">
@@ -47,6 +51,11 @@ function Navigation() {
             >
                 기록 조회
             </NavLink>
+        </div>
+        <div className="navigation__actions">
+            <button type="button" className="navigation__notification">🔔</button>
+            <span className="navigation__avatar">{userName.charAt(0)}</span>
+            <span className="navigation__user">{userName}</span>
         </div>
     </nav>
     );
