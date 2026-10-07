@@ -1,0 +1,103 @@
+.setup-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 카드별 색상: create = emerald, join = blue */
+.setup-choice__card--create {
+  --tone-50: #ecfdf5;
+  --tone-100: #d1fae5;
+  --tone-200: #a7f3d0;
+  --tone-400: #34d399;
+  --tone-700: #047857;
+}
+
+.setup-choice__card--join {
+  --tone-50: #eff6ff;
+  --tone-100: #dbeafe;
+  --tone-200: #bfdbfe;
+  --tone-400: #60a5fa;
+  --tone-700: #1d4ed8;
+}
+
+.setup-choice__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;   /* stone-200 */
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 150ms, background-color 150ms;
+}
+
+.setup-choice__card:hover {
+  background: var(--tone-50);
+  border-color: var(--tone-400);
+}
+
+.setup-choice__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--tone-100);
+  border-radius: 16px;
+  color: var(--tone-700);
+  transition: background-color 150ms;
+}
+
+.setup-choice__card:hover .setup-choice__icon {
+  background: var(--tone-200);
+}
+
+.setup-choice__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.setup-choice__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.setup-choice__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  color: #292524;              /* stone-800 */
+}
+
+.setup-choice__badge {
+  padding: 2px 8px;
+  background: var(--tone-100);
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--tone-700);
+}
+
+.setup-choice__desc {
+  font-size: 0.75rem;
+  line-height: 1.625;
+  color: #78716c;              /* stone-500 */
+}
+
+.setup-choice__note {
+  margin: 24px 0 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-align: center;
+  color: #a8a29e;              /* stone-400 */
+}

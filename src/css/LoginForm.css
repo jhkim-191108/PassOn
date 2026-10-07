@@ -1,0 +1,31 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.login-form__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  color: #78716c;              /* stone-500 */
+}
+
+.login-form__error {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #ef4444;              /* red-500 */
+}
+
+.login-form__submit {
+  margin-top: 4px;
+}
+
+/* 공통 Button을 전체 너비로 */
+.login-form__submit > * {
+  width: 100%;
+}

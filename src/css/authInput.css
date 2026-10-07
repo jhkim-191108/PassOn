@@ -1,0 +1,33 @@
+/* 인증 폼 공통 입력창 (LoginForm · SignupForm · PasswordInput에서 사용) */
+.auth-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;   /* stone-200 */
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #1c1917;              /* stone-900 */
+  outline: none;
+  transition: border-color 150ms;
+}
+
+.auth-input::placeholder {
+  color: #d6d3d1;              /* stone-300 */
+}
+
+.auth-input:focus {
+  border-color: #34d399;       /* emerald-400 */
+}
+
+/* 검증 실패 상태 */
+.auth-input--error {
+  border-color: #fca5a5;       /* red-300 */
+}
+
+.auth-input--error:focus {
+  border-color: #f87171;       /* red-400 */
+}
