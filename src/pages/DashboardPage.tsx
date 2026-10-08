@@ -2,6 +2,7 @@ import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import Textarea from "../components/ui/Textarea";
+import Select from "../components/ui/Select";
 
 function DashboardPage() {
     return (
@@ -40,6 +41,28 @@ function DashboardPage() {
                     hint="근무 중 있었던 일을 자연스럽게 입력해주세요."
                     rows={6}
                 />
+
+                <Button type="submit" style={{ marginTop: "16px" }}>AI로 정리하기</Button>
+            </div>
+
+            <div style={{ width: "320px", marginTop: "24px" }}>
+                <Select
+                    label="매장 종류"
+                    defaultValue=""
+                    hint="운영 중인 매장 유형을 선택해주세요!"
+                    >
+                    <option value="" disabled>매장 종류 선택</option>
+                    <option value="CAFE">카페</option>
+                    <option value="CONVENINCE">편의점</option>
+                    <option value="STUDY_CAFE">스터디 카페</option>
+                    <option value="RESTAURANT">레스토랑</option>
+                    <option value="OTHER">기타</option>
+                </Select>
+
+                <Select label="역할" defaultValue="STAFF" hint="관리자는 오너의 승인이 필요합니다!">
+                    <option value="MANAGER">매니저(승인필요)</option>
+                    <option value="STAFF">직원</option>
+                </Select>
             </div>
         </section>
     );
