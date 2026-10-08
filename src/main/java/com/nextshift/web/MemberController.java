@@ -59,7 +59,7 @@ public class MemberController {
             @PathVariable UUID memberId,
             @RequestBody TeamRequest request
     ) {
-        return memberService.changeTeam(AuthPrincipal.current(), storeId, memberId, request.team());
+        return memberService.changeTeam(AuthPrincipal.current(), storeId, memberId, request.teamId());
     }
 
     /** 정지하거나 퇴사 처리한다. */

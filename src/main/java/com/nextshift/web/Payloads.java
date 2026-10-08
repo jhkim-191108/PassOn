@@ -1,7 +1,6 @@
 package com.nextshift.web;
 
 import com.nextshift.domain.MemberStatus;
-import com.nextshift.domain.ShiftTeam;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.StoreType;
 import com.nextshift.domain.CardType;
@@ -64,8 +63,15 @@ record JoinStoreRequest(
         @NotNull(message = "역할을 지정해 주세요.") StoreRole role
 ) {}
 
-/** 멤버 근무조 변경. null이면 조 지정을 지운다. */
-record TeamRequest(ShiftTeam team) {}
+/** 멤버를 팀에 배정한다. null이면 미배정. */
+record TeamRequest(UUID teamId) {}
+
+/** 팀 이름 생성·변경. */
+record TeamNameRequest(
+        @NotBlank(message = "팀 이름을 입력해 주세요.")
+        @Size(max = 20, message = "팀 이름은 20자 이하입니다.")
+        String name
+) {}
 
 /** 이미 가입한 사용자를 매장에 직접 넣는다. */
 record AddMemberRequest(
@@ -97,6 +103,22 @@ record CardPatchRequest(
         String body,
         Urgency urgency,
         Boolean needsReview
+) {}
+
+/** 공지 작성. pinned와 important는 생략할 수 있다. */
+record NoticeRequest(
+        @NotBlank(message = "공지 제목을 입력해 주세요.") @Size(max = 120, message = "제목은 120자 이하입니다.") String title,
+        @NotBlank(message = "공지 내용을 입력해 주세요.") @Size(max = 4000, message = "내용은 4000자 이하 입니다.") String body,
+        Boolean pinned,
+        Boolean important
+) {}
+
+/** 공지 일부 수정. 안 보낸 필드는 그대로 둔다. */
+record NoticePatchRequest(
+        @Size(max = 120, message = "제목은 120자 이하입니다.") String title,
+        @Size(max = 4000, message = "내용은 4000자 이하입니다.") String body,
+        Boolean pinned,
+        Boolean important
 ) {}
 
 
