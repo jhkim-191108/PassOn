@@ -3,7 +3,6 @@ package com.nextshift.api;
 import com.nextshift.domain.CardType;
 import com.nextshift.domain.HandoffStatus;
 import com.nextshift.domain.MemberStatus;
-import com.nextshift.domain.ShiftTeam;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.StoreType;
 import com.nextshift.domain.Urgency;
@@ -39,7 +38,18 @@ public final class Views {
             String email,
             StoreRole role,
             MemberStatus status,
-            ShiftTeam team,
+            UUID teamId,
+            String teamName,
+            OffsetDateTime createdAt,
+            OffsetDateTime leftAt
+    ) {}
+
+    /** 매장 팀. memberCount는 재직 중인 배정 인원이다. */
+    public record TeamView(
+            UUID id,
+            UUID storeId,
+            String name,
+            long memberCount,
             OffsetDateTime createdAt
     ) {}
 
@@ -75,6 +85,20 @@ public final class Views {
             int position,
             OffsetDateTime completedAt,
             UUID completedBy,
+            OffsetDateTime createdAt,
+            OffsetDateTime updatedAt
+    ) {}
+
+    /** 매장 공지. pinned는 목록 위, important는 중요 표시. */
+    public record NoticeView(
+            UUID id,
+            UUID storeId,
+            UUID authorId,
+            String authorName,
+            String title,
+            String body,
+            boolean pinned,
+            boolean important,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt
     ) {}

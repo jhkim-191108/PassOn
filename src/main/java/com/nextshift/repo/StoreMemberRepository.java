@@ -15,5 +15,9 @@ public interface StoreMemberRepository extends JpaRepository<StoreMember, UUID> 
 
     List<StoreMember> findByStoreIdOrderByCreatedAtAsc(UUID storeId);
 
+    List<StoreMember> findByTeamId(UUID teamId);
+
+    long countByTeamIdAndStatus(UUID teamId, MemberStatus status);
+
     boolean existsByStoreIdAndUserId(UUID storeId, UUID userId);
 }
