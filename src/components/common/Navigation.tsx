@@ -6,6 +6,7 @@ function Navigation() {
     const userName = "전재형";
     const [open, setOpen] = useState<"noti" | "profile" | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
+    // DOM 요소<div>를 참조하며 current 값의 초기값을 null로 설정
 
     useEffect(() => {
         const closeMenu = (e: MouseEvent) => {
@@ -20,6 +21,7 @@ function Navigation() {
 
         return () => {
             document.removeEventListener("mousedown", closeMenu);
+            // 컴포넌트가 사라질 때 이벤트 리스너를 제거하여 메모리 누수를 방지
         };
     }, []);
 

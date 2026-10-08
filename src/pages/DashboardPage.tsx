@@ -1,5 +1,6 @@
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 
 function DashboardPage() {
     return (
@@ -21,6 +22,12 @@ function DashboardPage() {
                 <Badge variant="danger">긴급</Badge>
                 <Badge variant="primary">진행 중</Badge>
                 <Badge variant="success">완료</Badge>
+            </div>
+            <div style={{ display: "flex", gap: "8px", marginTop: "24px" }}>
+                <Input label="이메일" type="email" placeholder="example@example.com" /><br/>
+                <Input label="비밀번호" type="password" placeholder="비밀번호를 입력하세요" hint="8자 이상 입력해주세요." /><br/>
+                <Input label="이름" value="전재형" disabled /><br/>
+                <Input type="submit" value="보내기" />
             </div>
         </section>
     );
