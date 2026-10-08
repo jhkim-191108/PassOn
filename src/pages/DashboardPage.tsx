@@ -1,6 +1,7 @@
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
+import Textarea from "../components/ui/Textarea";
 
 function DashboardPage() {
     return (
@@ -28,6 +29,17 @@ function DashboardPage() {
                 <Input label="비밀번호" type="password" placeholder="비밀번호를 입력하세요" hint="8자 이상 입력해주세요." /><br/>
                 <Input label="이름" value="전재형" disabled /><br/>
                 <Input type="submit" value="보내기" />
+            </div>
+            <div style={{
+                width: "600px",
+                margin: "24px",
+            }}>
+                <Textarea
+                    label="인수인계 내용"
+                    placeholder="예) 원두가 거의 없습니다. 우유는 내일 아침 입고 예정이고 냉장고 아래칸 청소 부탁드립니다."
+                    hint="근무 중 있었던 일을 자연스럽게 입력해주세요."
+                    rows={6}
+                />
             </div>
         </section>
     );
