@@ -3,8 +3,11 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import Textarea from "../components/ui/Textarea";
 import Select from "../components/ui/Select";
+import { useState } from "react";
+import Modal from "../components/ui/Modal";
 
 function DashboardPage() {
+    const [open, setOpen] = useState(false);
     return (
         <section className="dashboard">
             <p className="dashboard__date">10월02일</p>
@@ -64,6 +67,32 @@ function DashboardPage() {
                     <option value="STAFF">직원</option>
                 </Select>
             </div>
+
+            <Button onClick={() => setOpen(true)} style={{
+                marginTop: "10px"
+            }}>모달 열기</Button>
+
+            <Modal
+                open={open}
+                title="인수인계 등록"
+                onClose={() => setOpen(false)}>
+                    <p>작성한 인수인계를 등록하시겠습니까?</p>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: "8px",
+                        marginTop: "20px",
+                    }}
+                    >
+                        <Button variant="secondary" onClick={() => setOpen(false)}>
+                            취소
+                        </Button>
+
+                        <Button>
+                            등록
+                        </Button>
+                    </div>
+                </Modal>
         </section>
     );
 }
