@@ -6,6 +6,9 @@ import Select from "../components/ui/Select";
 import { useState } from "react";
 import Modal from "../components/ui/Modal";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import Loading from "../components/ui/Loading";
+import EmptyState from "../components/ui/EmptyState";
+import ErrorState from "../components/ui/ErrorState";
 
 function DashboardPage() {
     const [open, setOpen] = useState(false);
@@ -112,6 +115,16 @@ function DashboardPage() {
                             console.log("삭제 실행");
                             setConfirm(false);
                     }}
+                />
+                <Loading text="AI가 인수인계를 정리하고 있어요..." />
+                <EmptyState
+                    title="등록된 인수인계가 없습니다."
+                    description="새로운 인수인계를 작성해봐요!"
+                />
+                <ErrorState
+                    title="인수인계를 불러오지 못했습니다."
+                    description="네트워크 상태를 확인해주세요."
+                    onRetry={() => console.log("다시 시도")}
                 />
         </section>
     );
