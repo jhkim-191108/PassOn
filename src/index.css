@@ -70,14 +70,23 @@ a {
   display: flex;
   width: 100%;
   min-height: 100vh;
-  background: #fff;
+  background: var(--color-background-soft)
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .app-main {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  min-height: 100vh;
   padding: 32px 40px;
-  background: var(--color-background-soft);
+}
+
+.navigation,
+.bottom-nav {
+  display: none;
 }
 
 /* =========================
@@ -87,29 +96,22 @@ a {
 .sidebar {
   width: 240px;
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
-
   flex-shrink: 0;
-
   padding: 24px 16px;
-
   border-right: 1px solid var(--color-border);
-
   background: #ffffff;
 }
 
 .sidebar__logo {
   display: block;
-
   padding: 0 12px;
   margin-bottom: 28px;
 }
 
 .sidebar__logo img {
   display: block;
-
   width: 100px;
   height: auto;
 }
@@ -118,17 +120,14 @@ a {
   display: flex;
   flex-direction: column;
   gap: 4px;
-
   margin: 0 8px 20px;
   padding: 12px;
-
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
 
 .sidebar__store-label {
   color: var(--color-text-muted);
-
   font-size: 11px;
 }
 
@@ -144,11 +143,8 @@ a {
 
 .sidebar__link {
   padding: 11px 12px;
-
   border-radius: var(--radius-md);
-
   color: var(--color-text-sub);
-
   font-size: 14px;
   font-weight: 600;
 }
@@ -164,9 +160,7 @@ a {
 
 .sidebar__divider {
   height: 1px;
-
   margin: 8px 0;
-
   background: var(--color-border);
 }
 
@@ -174,30 +168,22 @@ a {
   display: flex;
   flex-direction: column;
   gap: 4px;
-
   margin-top: auto;
 }
 
 .sidebar__action,
 .sidebar__profile {
   width: 100%;
-
   display: flex;
   align-items: center;
   gap: 10px;
-
   padding: 10px 12px;
-
   border: 0;
   border-radius: var(--radius-md);
-
   background: transparent;
-
   color: var(--color-text);
-
   font-size: 14px;
   text-align: left;
-
   cursor: pointer;
 }
 
@@ -209,18 +195,13 @@ a {
 .sidebar__avatar {
   width: 32px;
   height: 32px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   border-radius: 50%;
-
   color: #ffffff;
   background: var(--color-primary);
-
   font-weight: 700;
 }
 
@@ -230,31 +211,24 @@ a {
 
 .navigation {
   width: 100%;
-  height: 64px;
-  display: flex;
+  height: 60px;
   align-items: center;
-  padding: 0 32px;
-  border-bottom: 1px solid #e5e7eb;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-border);
   background: #ffffff;
 }
 
 .navigation__logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  margin-right: 40px;
+  margin: 0;
 }
 
 .navigation__logo img {
-  display: block;
-  width: 94px;
-  height: auto;
+  width: 88px;
 }
 
 .navigation__menu {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  margin-left: auto;
 }
 
 .navigation__link {
@@ -826,6 +800,38 @@ a {
 }
 
 /* =========================
+  Bottom Navigation
+========================= */
+
+.bottom-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  grid-template-columns: repeat(6, 1fr);
+  min-height: 64px;
+  border-top: 1px solid var(--color-border);
+  background: #ffffff;
+  z-index: 500;
+}
+
+.bottom-nav__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 8px 2px;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.bottom-nav__link--active {
+  color: var(--color-primary-dark);
+}
+
+/* =========================
   Loading
 ========================= */
 
@@ -904,4 +910,73 @@ a {
   color: var(--color-text-sub);
   font-size: 13px;
   line-height: 1.6;
+}
+
+/* =========================
+  Tablet
+  768px ~ 1199px
+========================= */
+
+@media (max-width: 1199px) {
+  .sidebar {
+    display: none;
+  }
+
+  .navigation {
+    display: flex;
+  }
+
+  .bottom-nav {
+    display: none;
+  }
+
+  .app-layout {
+    display: block;
+  }
+
+  .app-content {
+    width: 100%;
+  }
+
+  .app-main {
+    padding: 28px;
+  }
+
+  .navigation__menu {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+/* =========================
+  Mobile
+  ~ 767px
+========================= */
+
+@media (max-width: 767px) {
+  .sidebar {
+    display: none;
+  }
+
+  .navigation {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: grid;
+  }
+
+  .app-layout {
+    display: block;
+  }
+
+  .app-content {
+    width: 100%;
+  }
+
+  .app-main {
+    min-height: 100vh;
+    padding: 20px 16px 88px;
+  }
 }

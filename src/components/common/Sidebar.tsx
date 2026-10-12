@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
+import { navItems } from "./navItems";
 
 function Sidebar() {
     const userName = "전재형";
@@ -16,73 +17,19 @@ function Sidebar() {
             </div>
 
             <nav className="sidebar__menu">
-                <NavLink
-                    to="/app/dashboard"
-                    className={({ isActive }) =>
-                    isActive
-                    ? "sidebar__link sidebar__link--active"
-                    : "sidebar__link"
-                    }
-                >
-                    대시보드
-                </NavLink>
-
-                <NavLink
-                    to="/app/handovers"
-                    className={({ isActive }) =>
-                    isActive
-                    ? "sidebar__link sidebar__link--active"
-                    : "sidebar__link"
-                    }
-                >
-                    인수인계
-                </NavLink>
-
-                <NavLink
-                    to="/app/notices"
-                    className={({ isActive }) =>
-                    isActive
-                    ? "sidebar__link sidebar__link--active"
-                    : "sidebar__link"
-                    }
-                >
-                    공지사항
-                </NavLink>
-
-                <div className="sidebar__divider" />
-
-                <NavLink
-                    to="/app/employees"
-                    className={({ isActive }) =>
-                    isActive
-                    ? "sidebar__link sidebar__link--active"
-                    : "sidebar__link"
-                    }
-                >
-                    직원 관리
-                </NavLink>
-
-                <NavLink
-                    to="/app/schedule"
-                    className={({ isActive }) =>
-                    isActive
-                    ? "sidebar__link sidebar__link--active"
-                    : "sidebar__link"
-                    }
-                >
-                    근무표
-                </NavLink>
-
-                <NavLink
-                    to="/app/history"
-                    className={({ isActive }) =>
-                    isActive
-                    ? "sidebar__link sidebar__link--active"
-                    : "sidebar__link"
-                    }
-                >
-                    기록 조회
-                </NavLink>
+                {navItems.map((item) => (
+                    <NavLink
+                        key={item.to}
+                        to={item.to}
+                        className={({ isActive }) =>
+                        isActive
+                            ? "sidebar__link sidebar__link--active"
+                            : "sidebar__link"
+                        }
+                    >
+                        {item.label}
+                    </NavLink>
+                ))}
             </nav>
             <div className="sidebar__bottom">
                 <button type="button" className="sidebar__action">

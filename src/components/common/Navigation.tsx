@@ -77,6 +77,7 @@ function Navigation() {
                 <button 
                     type="button" 
                     className="navigation__notification"
+                    aria-label="알림"
                     onClick={() => setOpen(open === "noti" ? null : "noti")}
                 >🔔
                 </button>
