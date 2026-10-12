@@ -1,0 +1,46 @@
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dashboard-header__date {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.dashboard-header__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+  color: #1c1917;              /* stone-900 */
+}
+
+.dashboard-header__message {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #78716c;              /* stone-500 */
+}
+
+.dashboard-header__write {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-header__title {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}

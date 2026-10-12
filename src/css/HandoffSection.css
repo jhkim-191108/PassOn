@@ -1,0 +1,84 @@
+.handoff-section {
+  margin-bottom: 24px;
+}
+
+.handoff-section:last-child {
+  margin-bottom: 0;
+}
+
+.handoff-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.handoff-section__title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #78716c;              /* stone-500 */
+}
+
+.handoff-section__hint {
+  padding: 2px 8px;
+  background: #eff6ff;         /* blue-50 */
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  color: #2563eb;              /* blue-600 */
+}
+
+.handoff-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── 빈 상태 ───────────────────────────────────────── */
+.handoff-empty {
+  padding: 48px 0;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;   /* stone-200 */
+  border-radius: 16px;
+  text-align: center;
+}
+
+.handoff-empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  background: #f5f5f4;         /* stone-100 */
+  border-radius: 16px;
+  color: #d6d3d1;              /* stone-300 */
+}
+
+.handoff-empty__text {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: #57534e;              /* stone-600 */
+}
+
+.handoff-empty__link {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #059669;              /* emerald-600 */
+  cursor: pointer;
+}
+
+.handoff-empty__link:hover {
+  text-decoration: underline;
+}
