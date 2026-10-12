@@ -5,9 +5,11 @@ import Textarea from "../components/ui/Textarea";
 import Select from "../components/ui/Select";
 import { useState } from "react";
 import Modal from "../components/ui/Modal";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
 
 function DashboardPage() {
     const [open, setOpen] = useState(false);
+    const [confirm, setConfirm] = useState(false);
     return (
         <section className="dashboard">
             <p className="dashboard__date">10월02일</p>
@@ -93,6 +95,24 @@ function DashboardPage() {
                         </Button>
                     </div>
                 </Modal>
+                <Button
+                    variant="danger"
+                    onClick={() => setConfirm(true)}
+                >
+                    삭제 테스트
+                </Button>
+                <ConfirmDialog
+                    open={confirm}
+                    title="인수인계를 삭제할까요?"
+                    description="삭제한 인수인계는 제거됩니다."
+                    confirmText="삭제"
+                    variant="danger"
+                    onClose={() => setConfirm(false)}
+                    onConfirm={() => {
+                            console.log("삭제 실행");
+                            setConfirm(false);
+                    }}
+                />
         </section>
     );
 }

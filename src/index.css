@@ -659,3 +659,21 @@ a {
 .modal__content {
   padding: 20px;
 }
+
+/* =========================
+  Confirm Dialog
+========================= */
+
+.confirm-dialog__description {
+  margin: 0;
+  color: var(--color-text-sub);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
