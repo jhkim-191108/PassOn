@@ -1,10 +1,11 @@
 import {Outlet} from "react-router-dom";
 import Navigation from "../components/common/Navigation";
+import Sidebar from "../components/common/Sidebar";
 
 function AppLayout() {
     return (
         <div className="app-layout">
-            <Navigation/>
+            <Sidebar/>
 
             <main className="app-main">
                 <Outlet/>

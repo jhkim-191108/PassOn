@@ -67,15 +67,162 @@ a {
 ========================= */
 
 .app-layout {
+  display: flex;
   width: 100%;
   min-height: 100vh;
+  background: #fff;
 }
 
 .app-main {
-  width: 100%;
-  padding: 40px;
+  flex: 1;
+  min-width: 0;
+  padding: 32px 40px;
+  background: var(--color-background-soft);
 }
 
+/* =========================
+  Sidebar
+========================= */
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  flex-shrink: 0;
+
+  padding: 24px 16px;
+
+  border-right: 1px solid var(--color-border);
+
+  background: #ffffff;
+}
+
+.sidebar__logo {
+  display: block;
+
+  padding: 0 12px;
+  margin-bottom: 28px;
+}
+
+.sidebar__logo img {
+  display: block;
+
+  width: 100px;
+  height: auto;
+}
+
+.sidebar__store {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin: 0 8px 20px;
+  padding: 12px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.sidebar__store-label {
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+}
+
+.sidebar__store strong {
+  font-size: 14px;
+}
+
+.sidebar__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar__link {
+  padding: 11px 12px;
+
+  border-radius: var(--radius-md);
+
+  color: var(--color-text-sub);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sidebar__link:hover {
+  background: var(--color-background-soft);
+}
+
+.sidebar__link--active {
+  color: var(--color-primary-dark);
+  background: var(--color-primary-light);
+}
+
+.sidebar__divider {
+  height: 1px;
+
+  margin: 8px 0;
+
+  background: var(--color-border);
+}
+
+.sidebar__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin-top: auto;
+}
+
+.sidebar__action,
+.sidebar__profile {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border: 0;
+  border-radius: var(--radius-md);
+
+  background: transparent;
+
+  color: var(--color-text);
+
+  font-size: 14px;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.sidebar__action:hover,
+.sidebar__profile:hover {
+  background: var(--color-background-soft);
+}
+
+.sidebar__avatar {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+  background: var(--color-primary);
+
+  font-weight: 700;
+}
 
 /* =========================
   Navigation
