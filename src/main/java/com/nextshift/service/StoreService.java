@@ -51,6 +51,9 @@ public class StoreService {
         owner.setUserId(principal.id());
         owner.setRole(StoreRole.OWNER);
         owner.setStatus(MemberStatus.ACTIVE);
+        owner.setWorksMorning(true);
+        owner.setWorksAfternoon(true);
+        owner.setWorksClose(true);
         memberRepository.save(owner);
         return toView(store, StoreRole.OWNER);
     }

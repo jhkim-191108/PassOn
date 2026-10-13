@@ -1,15 +1,19 @@
 package com.nextshift.web;
 
+import com.nextshift.domain.CardType;
+import com.nextshift.domain.EscalationPriority;
 import com.nextshift.domain.MemberStatus;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.StoreType;
-import com.nextshift.domain.CardType;
 import com.nextshift.domain.Urgency;
+import com.nextshift.domain.WorkSlot;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /** 요청 본문. 검증 메시지는 그대로 클라이언트에 내려간다. */
@@ -73,6 +77,24 @@ record TeamNameRequest(
         String name
 ) {}
 
+/** 근무 형태. fullTime이 true면 오전·오후·마감을 모두 켠다. */
+record AvailabilityRequest(
+        Boolean fullTime,
+        List<WorkSlot> slots
+) {}
+
+/** 근무표 배정. */
+record ShiftRequest(
+        @NotNull(message = "멤버를 지정해 주세요.") UUID memberId,
+        @NotNull(message = "날짜를 지정해 주세요.") LocalDate workDate,
+        @NotNull(message = "시간을 지정해 주세요.") WorkSlot slot
+) {}
+
+/** 오너에게 올리는 위임. IMPORTANT는 중요, URGENT는 긴급. */
+record EscalationRequest(
+        @NotNull(message = "우선순위를 지정해 주세요.") EscalationPriority priority
+) {}
+
 /** 이미 가입한 사용자를 매장에 직접 넣는다. */
 record AddMemberRequest(
         @NotNull(message = "사용자를 지정해 주세요.") UUID userId,
@@ -120,6 +142,3 @@ record NoticePatchRequest(
         Boolean pinned,
         Boolean important
 ) {}
-
-
-

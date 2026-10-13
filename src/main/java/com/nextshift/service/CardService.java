@@ -6,13 +6,18 @@ import com.nextshift.common.AuthPrincipal;
 import com.nextshift.domain.Card;
 import com.nextshift.domain.CardType;
 import com.nextshift.domain.CardTypeCorrection;
+import com.nextshift.domain.Escalation;
+import com.nextshift.domain.EscalationStatus;
 import com.nextshift.domain.Handoff;
 import com.nextshift.domain.HandoffStatus;
 import com.nextshift.domain.StoreMember;
 import com.nextshift.domain.Urgency;
+import com.nextshift.domain.User;
 import com.nextshift.repo.CardRepository;
 import com.nextshift.repo.CardTypeCorrectionRepository;
+import com.nextshift.repo.EscalationRepository;
 import com.nextshift.repo.HandoffRepository;
+import com.nextshift.repo.UserRepository;
 import com.nextshift.security.StoreGuard;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -27,17 +32,23 @@ public class CardService {
     private final CardRepository cardRepository;
     private final HandoffRepository handoffRepository;
     private final CardTypeCorrectionRepository correctionRepository;
+    private final EscalationRepository escalationRepository;
+    private final UserRepository userRepository;
     private final StoreGuard guard;
 
     public CardService(
             CardRepository cardRepository,
             HandoffRepository handoffRepository,
             CardTypeCorrectionRepository correctionRepository,
+            EscalationRepository escalationRepository,
+            UserRepository userRepository,
             StoreGuard guard
     ) {
         this.cardRepository = cardRepository;
         this.handoffRepository = handoffRepository;
         this.correctionRepository = correctionRepository;
+        this.escalationRepository = escalationRepository;
+        this.userRepository = userRepository;
         this.guard = guard;
     }
 
@@ -45,13 +56,16 @@ public class CardService {
     @Transactional(readOnly = true)
     public List<CardView> list(AuthPrincipal principal, UUID handoffId) {
         Handoff handoff = readableHandoff(principal, handoffId);
-        return cardRepository.findByHandoffIdOrderByPositionAsc(handoff.getId()).stream().map(CardService::toView).toList();
+        return cardRepository.findByHandoffIdOrderByPositionAsc(handoff.getId()).stream()
+                .map(card -> toView(card, handoff))
+                .toList();
     }
 
     /** 카드가 속한 매장의 멤버만 한 장을 본다. */
     @Transactional(readOnly = true)
     public CardView get(AuthPrincipal principal, UUID cardId) {
-        return toView(readableCard(principal, cardId).card());
+        Loaded loaded = readableCard(principal, cardId);
+        return toView(loaded.card(), loaded.handoff());
     }
 
     /** 보낸 필드만 고친다. 종류가 바뀌면 수정 이력을 남긴다. */
@@ -100,7 +114,7 @@ public class CardService {
         if (card.getSourceQuote().isBlank() || !loaded.handoff().getRawText().contains(card.getSourceQuote())) {
             card.setNeedsReview(true);
         }
-        return toView(card);
+        return toView(card, loaded.handoff());
     }
 
     /** 확정 전이고 작성 권한이 있을 때만 카드를 지운다. */
@@ -113,12 +127,13 @@ public class CardService {
     /** 카드를 처리 완료로 표시한다. 이미 완료면 시각을 바꾸지 않는다. */
     @Transactional
     public CardView complete(AuthPrincipal principal, UUID cardId) {
-        Card card = readableCard(principal, cardId).card();
+        Loaded loaded = readableCard(principal, cardId);
+        Card card = loaded.card();
         if (card.getCompletedAt() == null) {
             card.setCompletedAt(OffsetDateTime.now(ZoneOffset.UTC));
             card.setCompletedBy(principal.id());
         }
-        return toView(card);
+        return toView(card, loaded.handoff());
     }
 
     /** 완료를 취소한다. 작성자이거나 매니저 이상만 가능하다. */
@@ -129,7 +144,7 @@ public class CardService {
         guard.requireAuthored(actor, loaded.handoff().getAuthorId());
         loaded.card().setCompletedAt(null);
         loaded.card().setCompletedBy(null);
-        return toView(loaded.card());
+        return toView(loaded.card(), loaded.handoff());
     }
 
     private Loaded authoredCard(AuthPrincipal principal, UUID cardId) {
@@ -155,7 +170,21 @@ public class CardService {
         return handoff;
     }
 
-    private static CardView toView(Card card) {
+    private Escalation latestEscalation(UUID cardId) {
+        return escalationRepository.findByCardIdAndStatus(cardId, EscalationStatus.PENDING)
+                .orElseGet(() -> escalationRepository.findFirstByCardIdOrderByCreatedAtDesc(cardId).orElse(null));
+    }
+
+    private String authorName(UUID userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null || user.getDeletedAt() != null) {
+            return "탈퇴한 사용자";
+        }
+        return user.getName();
+    }
+
+    private CardView toView(Card card, Handoff handoff) {
+        Escalation escalation = latestEscalation(card.getId());
         return new CardView(
                 card.getId(),
                 card.getHandoffId(),
@@ -169,7 +198,10 @@ public class CardService {
                 card.getCompletedAt(),
                 card.getCompletedBy(),
                 card.getCreatedAt(),
-                card.getUpdatedAt()
+                card.getUpdatedAt(),
+                authorName(handoff.getAuthorId()),
+                escalation == null ? null : escalation.getStatus(),
+                escalation == null ? null : escalation.getPriority()
         );
     }
 
