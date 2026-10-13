@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 매장 멤버의 역할, 근무조, 상태. 권한은 MemberService가 StoreGuard로 확인한다. */
+/** 매장 멤버의 역할, 팀, 근무 형태, 상태. 권한은 MemberService가 StoreGuard로 확인한다. */
 @RestController
 @RequestMapping("/api/stores/{storeId}/members")
 public class MemberController {
@@ -52,7 +52,7 @@ public class MemberController {
         return memberService.changeRole(AuthPrincipal.current(), storeId, memberId, request.role());
     }
 
-    /** 근무조를 바꾼다. 값을 안 보내면 조 지정이 빠진다. */
+    /** 팀을 바꾼다. 값을 안 보내면 미배정이 된다. */
     @PatchMapping("/{memberId}/team")
     public MemberView changeTeam(
             @PathVariable UUID storeId,
@@ -60,6 +60,22 @@ public class MemberController {
             @RequestBody TeamRequest request
     ) {
         return memberService.changeTeam(AuthPrincipal.current(), storeId, memberId, request.teamId());
+    }
+
+    /** 풀타임 또는 오전·오후·마감 조합을 저장한다. */
+    @PatchMapping("/{memberId}/availability")
+    public MemberView changeAvailability(
+            @PathVariable UUID storeId,
+            @PathVariable UUID memberId,
+            @RequestBody AvailabilityRequest request
+    ) {
+        return memberService.changeAvailability(
+                AuthPrincipal.current(),
+                storeId,
+                memberId,
+                request.fullTime(),
+                request.slots()
+        );
     }
 
     /** 정지하거나 퇴사 처리한다. */

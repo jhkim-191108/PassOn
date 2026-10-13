@@ -8,21 +8,25 @@ import com.nextshift.domain.StoreMember;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.Team;
 import com.nextshift.domain.User;
+import com.nextshift.domain.WorkSlot;
 import com.nextshift.repo.StoreMemberRepository;
 import com.nextshift.repo.TeamRepository;
 import com.nextshift.repo.UserRepository;
 import com.nextshift.security.StoreGuard;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 매장 멤버 추가·역할·팀 배정·상태. 행위자와 대상의 역할을 StoreGuard로 비교한다. */
+/** 매장 멤버 추가·역할·팀 배정·근무 형태·상태. 행위자와 대상의 역할을 StoreGuard로 비교한다. */
 @Service
 public class MemberService {
     private final StoreMemberRepository memberRepository;
@@ -105,6 +109,29 @@ public class MemberService {
         return toView(target, userRepository.findById(target.getUserId()).orElse(null), name);
     }
 
+    /** 본인 근무 형태는 본인이 바꾸고, 다른 사람은 멤버 수정 권한이 있어야 바꾼다. */
+    @Transactional
+    public MemberView changeAvailability(AuthPrincipal principal, UUID storeId, UUID memberId, Boolean fullTime, List<WorkSlot> slots) {
+        StoreMember actor = guard.requireActiveMember(storeId, principal.id());
+        StoreMember target = memberInStore(storeId, memberId);
+        if (!actor.getUserId().equals(target.getUserId())) {
+            guard.requireMemberModify(actor, target);
+        }
+        if (Boolean.TRUE.equals(fullTime)) {
+            target.setWorksMorning(true);
+            target.setWorksAfternoon(true);
+            target.setWorksClose(true);
+        } else if (slots != null) {
+            Set<WorkSlot> chosen = new HashSet<>(slots);
+            target.setWorksMorning(chosen.contains(WorkSlot.MORNING));
+            target.setWorksAfternoon(chosen.contains(WorkSlot.AFTERNOON));
+            target.setWorksClose(chosen.contains(WorkSlot.CLOSE));
+        } else {
+            throw ApiException.badRequest("근무 형태를 지정해 주세요.");
+        }
+        return toView(target, userRepository.findById(target.getUserId()).orElse(null), teamName(target.getTeamId()));
+    }
+
     @Transactional
     public MemberView changeStatus(AuthPrincipal principal, UUID storeId, UUID memberId, MemberStatus status) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -155,9 +182,24 @@ public class MemberService {
         return teamRepository.findById(teamId).map(Team::getName).orElse(null);
     }
 
+    private static List<WorkSlot> workSlotsOf(StoreMember member) {
+        List<WorkSlot> slots = new ArrayList<>();
+        if (member.isWorksMorning()) {
+            slots.add(WorkSlot.MORNING);
+        }
+        if (member.isWorksAfternoon()) {
+            slots.add(WorkSlot.AFTERNOON);
+        }
+        if (member.isWorksClose()) {
+            slots.add(WorkSlot.CLOSE);
+        }
+        return slots;
+    }
+
     /** 탈퇴한 계정이면 이름만 "탈퇴한 사용자"로 바꾸고 이메일은 비운다. */
     private static MemberView toView(StoreMember member, User user, String teamName) {
         boolean gone = user == null || user.getDeletedAt() != null;
+        List<WorkSlot> workSlots = workSlotsOf(member);
         return new MemberView(
                 member.getId(),
                 member.getStoreId(),
@@ -169,7 +211,9 @@ public class MemberService {
                 member.getTeamId(),
                 teamName,
                 member.getCreatedAt(),
-                member.getLeftAt()
+                member.getLeftAt(),
+                workSlots,
+                workSlots.size() == 3
         );
     }
 }

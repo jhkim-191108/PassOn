@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-/** 사용자와 매장의 소속. 역할, 재직 상태, 팀 id를 같이 가진다. */
+/** 사용자와 매장의 소속. 역할, 재직 상태, 팀, 근무 형태를 같이 가진다. */
 @Entity
 @Table(name = "store_members")
 public class StoreMember extends UuidEntity {
@@ -33,6 +33,15 @@ public class StoreMember extends UuidEntity {
     /** 퇴사로 바꾼 시각. 재직이나 정지로 돌아오면 비운다. */
     @Column(name = "left_at")
     private OffsetDateTime leftAt;
+
+    @Column(name = "works_morning", nullable = false)
+    private boolean worksMorning;
+
+    @Column(name = "works_afternoon", nullable = false)
+    private boolean worksAfternoon;
+
+    @Column(name = "works_close", nullable = false)
+    private boolean worksClose;
 
     /** 소속 매장 id를 반환한다. */
     public UUID getStoreId() {
@@ -92,5 +101,35 @@ public class StoreMember extends UuidEntity {
     /** 퇴사 시각을 저장한다. */
     public void setLeftAt(OffsetDateTime leftAt) {
         this.leftAt = leftAt;
+    }
+
+    /** 오전 근무가 가능하면 true를 반환한다. */
+    public boolean isWorksMorning() {
+        return worksMorning;
+    }
+
+    /** 오전 근무 가능 여부를 저장한다. */
+    public void setWorksMorning(boolean worksMorning) {
+        this.worksMorning = worksMorning;
+    }
+
+    /** 오후 근무가 가능하면 true를 반환한다. */
+    public boolean isWorksAfternoon() {
+        return worksAfternoon;
+    }
+
+    /** 오후 근무 가능 여부를 저장한다. */
+    public void setWorksAfternoon(boolean worksAfternoon) {
+        this.worksAfternoon = worksAfternoon;
+    }
+
+    /** 마감 근무가 가능하면 true를 반환한다. */
+    public boolean isWorksClose() {
+        return worksClose;
+    }
+
+    /** 마감 근무 가능 여부를 저장한다. */
+    public void setWorksClose(boolean worksClose) {
+        this.worksClose = worksClose;
     }
 }

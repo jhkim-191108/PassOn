@@ -1,12 +1,17 @@
 package com.nextshift.api;
 
 import com.nextshift.domain.CardType;
+import com.nextshift.domain.EscalationPriority;
+import com.nextshift.domain.EscalationStatus;
 import com.nextshift.domain.HandoffStatus;
 import com.nextshift.domain.MemberStatus;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.StoreType;
 import com.nextshift.domain.Urgency;
+import com.nextshift.domain.WorkSlot;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /** API 응답 모양. 엔티티를 그대로 내보내지 않기 위해 따로 둔다. */
@@ -41,7 +46,9 @@ public final class Views {
             UUID teamId,
             String teamName,
             OffsetDateTime createdAt,
-            OffsetDateTime leftAt
+            OffsetDateTime leftAt,
+            List<WorkSlot> workSlots,
+            boolean fullTime
     ) {}
 
     /** 매장 팀. memberCount는 재직 중인 배정 인원이다. */
@@ -50,6 +57,17 @@ public final class Views {
             UUID storeId,
             String name,
             long memberCount,
+            OffsetDateTime createdAt
+    ) {}
+
+    /** 근무표 한 칸. slot은 오전 MORNING, 오후 AFTERNOON, 마감 CLOSE. */
+    public record ShiftView(
+            UUID id,
+            UUID storeId,
+            UUID memberId,
+            String memberName,
+            LocalDate workDate,
+            WorkSlot slot,
             OffsetDateTime createdAt
     ) {}
 
@@ -86,7 +104,10 @@ public final class Views {
             OffsetDateTime completedAt,
             UUID completedBy,
             OffsetDateTime createdAt,
-            OffsetDateTime updatedAt
+            OffsetDateTime updatedAt,
+            String authorName,
+            EscalationStatus escalationStatus,
+            EscalationPriority escalationPriority
     ) {}
 
     /** 매장 공지. pinned는 목록 위, important는 중요 표시. */
@@ -101,5 +122,21 @@ public final class Views {
             boolean important,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt
+    ) {}
+
+    /** 오너에게 올라간 카드. authorName은 인수인계를 쓴 사람이다. */
+    public record EscalationView(
+            UUID id,
+            UUID storeId,
+            UUID cardId,
+            String title,
+            String body,
+            String authorName,
+            UUID requestedBy,
+            String requestedByName,
+            EscalationPriority priority,
+            EscalationStatus status,
+            OffsetDateTime createdAt,
+            OffsetDateTime resolvedAt
     ) {}
 }
