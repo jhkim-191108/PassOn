@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useEffectEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 interface ModalProps {
@@ -14,20 +14,21 @@ function Modal ({
     children,
     onClose,
 }: ModalProps) {
+    const handleEsc = useEffectEvent((e: KeyboardEvent) => {
+        if(e.key === "Escape") {
+            onClose();
+        }
+    });
+
     useEffect(() => {
         if (!open) return;
 
-        const esc = (e: KeyboardEvent) => {
-            if(e.key === "Escape") {
-                onClose();
-            }
-        };
-        document.addEventListener("keydown", esc);
+        document.addEventListener("keydown", handleEsc);
 
         return () => {
-            document.removeEventListener("keydown", esc);
-        }
-    }, [open, onClose]);
+            document.removeEventListener("keydown", handleEsc);
+        };
+    }, [open]);
 
     if (!open) return null;
 
