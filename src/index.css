@@ -80,11 +80,18 @@ a {
 
 .app-main {
   width: 100%;
-  min-height: 100vh;
+  min-height: calc(100vh - 60px);
   padding: 32px 40px;
 }
 
-.navigation,
+.sidebar {
+  display: none;
+}
+
+.navigation {
+  display: flex;
+}
+
 .bottom-nav {
   display: none;
 }
@@ -96,7 +103,6 @@ a {
 .sidebar {
   width: 240px;
   min-height: 100vh;
-  display: flex;
   flex-direction: column;
   flex-shrink: 0;
   padding: 24px 16px;
@@ -930,17 +936,19 @@ a {
 }
 
 /* =========================
-  Tablet
-  768px ~ 1199px
+  Tablet 768px ~ 1199px
 ========================= */
 
 @media (max-width: 1199px) {
   .sidebar {
-    display: none;
+    display: flex;
+
+    width: 190px;
+    padding: 20px 12px;
   }
 
   .navigation {
-    display: flex;
+    display: none;
   }
 
   .bottom-nav {
@@ -948,27 +956,31 @@ a {
   }
 
   .app-layout {
-    display: block;
+    display: flex;
   }
 
   .app-content {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 
   .app-main {
+    min-height: 100vh;
     padding: 28px;
   }
 
-  .navigation__menu {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  .sidebar__logo img {
+    width: 88px;
+  }
+
+  .sidebar__link {
+    padding: 10px;
+    font-size: 13px;
   }
 }
 
 /* =========================
-  Mobile
-  ~ 767px
+  Mobile ~ 767px
 ========================= */
 
 @media (max-width: 767px) {
