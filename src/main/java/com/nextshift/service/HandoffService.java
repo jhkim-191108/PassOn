@@ -9,7 +9,9 @@ import com.nextshift.domain.Card;
 import com.nextshift.domain.Handoff;
 import com.nextshift.domain.HandoffRead;
 import com.nextshift.domain.HandoffStatus;
+import com.nextshift.domain.MemberStatus;
 import com.nextshift.domain.StoreMember;
+import com.nextshift.domain.Urgency;
 import com.nextshift.domain.User;
 import com.nextshift.handoff.HandoffAnalyzer;
 import com.nextshift.handoff.HandoffAnalyzer.CardDraft;
@@ -19,6 +21,7 @@ import com.nextshift.repo.CardRepository;
 import com.nextshift.repo.CardTypeCorrectionRepository;
 import com.nextshift.repo.HandoffReadRepository;
 import com.nextshift.repo.HandoffRepository;
+import com.nextshift.repo.StoreMemberRepository;
 import com.nextshift.repo.UserRepository;
 import com.nextshift.security.StoreGuard;
 import jakarta.persistence.EntityManager;
@@ -48,10 +51,12 @@ public class HandoffService {
     private final CardTypeCorrectionRepository correctionRepository;
     private final AiRequestRepository aiRequestRepository;
     private final UserRepository userRepository;
+    private final StoreMemberRepository memberRepository;
     private final StoreGuard guard;
     private final HandoffAnalyzer analyzer;
     private final AppProperties properties;
     private final EntityManager entityManager;
+    private final NotificationService notificationService;
     private final TransactionTemplate transactionTemplate;
 
     public HandoffService(
@@ -61,10 +66,12 @@ public class HandoffService {
             CardTypeCorrectionRepository correctionRepository,
             AiRequestRepository aiRequestRepository,
             UserRepository userRepository,
+            StoreMemberRepository memberRepository,
             StoreGuard guard,
             HandoffAnalyzer analyzer,
             AppProperties properties,
             EntityManager entityManager,
+            NotificationService notificationService,
             PlatformTransactionManager transactionManager
     ) {
         this.handoffRepository = handoffRepository;
@@ -73,10 +80,12 @@ public class HandoffService {
         this.correctionRepository = correctionRepository;
         this.aiRequestRepository = aiRequestRepository;
         this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
         this.guard = guard;
         this.analyzer = analyzer;
         this.properties = properties;
         this.entityManager = entityManager;
+        this.notificationService = notificationService;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
@@ -93,15 +102,15 @@ public class HandoffService {
         return one(principal, handoff);
     }
 
-    /** 활동 중인 멤버에게 그 매장 인수인계를 최신순으로 돌려준다. */
+    /** 활동 중인 멤버에게 삭제되지 않은 인수인계를 최신순으로 돌려준다. */
     @Transactional(readOnly = true)
     public List<HandoffView> list(AuthPrincipal principal, UUID storeId) {
         guard.requireActiveMember(storeId, principal.id());
-        List<Handoff> handoffs = handoffRepository.findByStoreIdOrderByCreatedAtDesc(storeId);
+        List<Handoff> handoffs = handoffRepository.findByStoreIdAndDeletedAtIsNullOrderByCreatedAtDesc(storeId);
         return toViews(principal.id(), handoffs);
     }
 
-    /** 그 매장 멤버만 인수인계 한 건을 본다. */
+    /** 그 매장 멤버만 인수인계 한 건을 본다. 휴지통에 있으면 없는 것으로 친다. */
     @Transactional(readOnly = true)
     public HandoffView get(AuthPrincipal principal, UUID handoffId) {
         Handoff handoff = requireReadable(principal, handoffId);
@@ -128,14 +137,33 @@ public class HandoffService {
         return one(principal, handoff);
     }
 
-    /** 작성 권한이 있고 확정 전일 때만 지운다. */
+    /** 작성 권한이 있고 확정 전일 때만 휴지통으로 보낸다. */
     @Transactional
     public void delete(AuthPrincipal principal, UUID handoffId) {
         Handoff handoff = requireReadable(principal, handoffId);
         StoreMember actor = guard.requireActiveMember(handoff.getStoreId(), principal.id());
         guard.requireAuthored(actor, handoff.getAuthorId());
         requireOpen(handoff, "삭제");
-        handoffRepository.delete(handoff);
+        handoff.setDeletedAt(OffsetDateTime.now(ZoneOffset.UTC));
+        handoff.setDeletedBy(principal.id());
+    }
+
+    /** 2주 안의 삭제 인수인계를 다시 목록으로 되돌린다. */
+    @Transactional
+    public HandoffView restore(AuthPrincipal principal, UUID handoffId) {
+        Handoff handoff = handoffRepository.findById(handoffId)
+                .orElseThrow(() -> ApiException.notFound("인수인계를 찾을 수 없습니다."));
+        StoreMember actor = guard.requireActiveMember(handoff.getStoreId(), principal.id());
+        if (handoff.getDeletedAt() == null) {
+            throw ApiException.conflict("삭제된 인수인계가 아닙니다.");
+        }
+        if (handoff.getDeletedAt().plusDays(TrashService.DAYS).isBefore(OffsetDateTime.now(ZoneOffset.UTC))) {
+            throw ApiException.conflict("2주가 지나 복원할 수 없습니다.");
+        }
+        guard.requireAuthored(actor, handoff.getAuthorId());
+        handoff.setDeletedAt(null);
+        handoff.setDeletedBy(null);
+        return one(principal, handoff);
     }
 
     /** 분석 시작을 먼저 저장한 뒤 모델을 부르고, 성공·실패를 각각 다시 저장한다. */
@@ -223,19 +251,38 @@ public class HandoffService {
             String title = draft.title() == null ? "" : draft.title().trim();
             card.setTitle(title.isBlank() ? "확인 필요" : trim(title, 120));
             card.setBody(draft.body() == null ? "" : draft.body());
-            card.setUrgency(draft.urgency() == null ? com.nextshift.domain.Urgency.LATER : draft.urgency());
+            card.setUrgency(draft.urgency() == null ? Urgency.LATER : draft.urgency());
             String quote = draft.sourceQuote() == null ? "" : draft.sourceQuote();
             boolean quoted = !quote.isBlank() && rawText.contains(quote);
             card.setSourceQuote(quoted ? quote : "");
             card.setNeedsReview(draft.needsReview() || !quoted);
             card.setPosition(position++);
             cardRepository.save(card);
+            if (card.getUrgency() == Urgency.NOW) {
+                notifyUrgent(handoff, card, handoff.getAuthorId());
+            }
         }
         handoff.setStatus(HandoffStatus.ANALYZED);
         handoff.setAnalyzedAt(OffsetDateTime.now(ZoneOffset.UTC));
         handoff.setAnalyzeError(null);
         entityManager.flush();
         return one(principal, handoff);
+    }
+
+    private void notifyUrgent(Handoff handoff, Card card, UUID actorId) {
+        for (StoreMember member : memberRepository.findByStoreIdOrderByCreatedAtAsc(handoff.getStoreId())) {
+            if (member.getStatus() != MemberStatus.ACTIVE) {
+                continue;
+            }
+            notificationService.urgent(
+                    handoff.getStoreId(),
+                    actorId,
+                    member.getUserId(),
+                    handoff.getId(),
+                    card.getId(),
+                    card.getTitle()
+            );
+        }
     }
 
     private HandoffView fail(AuthPrincipal principal, UUID handoffId, String message) {
@@ -248,10 +295,14 @@ public class HandoffService {
     private Handoff requireReadable(AuthPrincipal principal, UUID handoffId) {
         Handoff handoff = handoffRepository.findById(handoffId)
                 .orElseThrow(() -> ApiException.notFound("인수인계를 찾을 수 없습니다."));
+        if (handoff.getDeletedAt() != null) {
+            throw ApiException.notFound("인수인계를 찾을 수 없습니다.");
+        }
         guard.requireActiveMember(handoff.getStoreId(), principal.id());
         return handoff;
     }
 
+    /** 분석을 다시 만들 때 초안 카드는 휴지통에 넣지 않고 지운다. */
     private void deleteCards(UUID handoffId) {
         cardRepository.deleteAll(cardRepository.findByHandoffIdOrderByPositionAsc(handoffId));
         entityManager.flush();

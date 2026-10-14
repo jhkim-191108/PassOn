@@ -1,12 +1,16 @@
 package com.nextshift.api;
 
+import com.nextshift.domain.CardProgress;
+import com.nextshift.domain.CardRevisionField;
 import com.nextshift.domain.CardType;
 import com.nextshift.domain.EscalationPriority;
 import com.nextshift.domain.EscalationStatus;
 import com.nextshift.domain.HandoffStatus;
 import com.nextshift.domain.MemberStatus;
+import com.nextshift.domain.NotificationType;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.StoreType;
+import com.nextshift.domain.TrashKind;
 import com.nextshift.domain.Urgency;
 import com.nextshift.domain.WorkSlot;
 import java.time.LocalDate;
@@ -18,19 +22,24 @@ import java.util.UUID;
 public final class Views {
     private Views() {}
 
-    /** 로그인 사용자 요약. */
-    public record UserView(UUID id, String email, String name) {}
+    /** 로그인 사용자 요약. photo는 프로필 사진이 디스크에 있을 때 true. */
+    public record UserView(UUID id, String email, String name, boolean photo) {}
 
     /** accessToken만 본문에 있다. refresh는 쿠키로 나간다. expiresIn은 초. */
     public record AuthView(String accessToken, String tokenType, long expiresIn, UserView user) {}
 
-    /** 매장 한 건. inviteCode는 STAFF에게 null. */
+    /**
+     * 매장 한 건.
+     * inviteCode와 invitePath는 STAFF에게 null.
+     * 화면의 초대 링크는 사이트 주소 뒤에 invitePath를 붙인다.
+     */
     public record StoreView(
             UUID id,
             String name,
             StoreType type,
             StoreRole myRole,
             String inviteCode,
+            String invitePath,
             OffsetDateTime createdAt
     ) {}
 
@@ -71,6 +80,13 @@ public final class Views {
             OffsetDateTime createdAt
     ) {}
 
+    /** 지금 근무 중. slot이 null이면 새벽이라 해당 시간대가 없다. */
+    public record OnDutyView(
+            LocalDate workDate,
+            WorkSlot slot,
+            List<ShiftView> shifts
+    ) {}
+
     /** 인수인계 목록용. 카드 수와 내가 읽었는지를 같이 담는다. */
     public record HandoffView(
             UUID id,
@@ -90,7 +106,7 @@ public final class Views {
             long openCardCount
     ) {}
 
-    /** 인수인계에서 잘라 낸 카드 한 장. */
+    /** 인수인계에서 잘라 낸 카드 한 장. progress는 OPEN, IN_PROGRESS, DONE. edited가 true면 수정됨. */
     public record CardView(
             UUID id,
             UUID handoffId,
@@ -107,7 +123,61 @@ public final class Views {
             OffsetDateTime updatedAt,
             String authorName,
             EscalationStatus escalationStatus,
-            EscalationPriority escalationPriority
+            EscalationPriority escalationPriority,
+            UUID assigneeMemberId,
+            String assigneeName,
+            OffsetDateTime acknowledgedAt,
+            UUID acknowledgedBy,
+            String acknowledgedByName,
+            CardProgress progress,
+            boolean edited
+    ) {}
+
+    /** 카드 내용이 바뀐 기록 한 줄. */
+    public record CardRevisionView(
+            UUID id,
+            UUID cardId,
+            CardRevisionField field,
+            String beforeValue,
+            String afterValue,
+            UUID editorId,
+            String editorName,
+            OffsetDateTime createdAt
+    ) {}
+
+    /** 카드 아래에 붙은 후속 메모. */
+    public record MemoView(
+            UUID id,
+            UUID cardId,
+            UUID authorId,
+            String authorName,
+            String body,
+            OffsetDateTime createdAt
+    ) {}
+
+    /** 내가 받은 알림 한 건. read가 true면 이미 읽었다. */
+    public record NotificationView(
+            UUID id,
+            UUID storeId,
+            NotificationType type,
+            UUID handoffId,
+            UUID cardId,
+            String title,
+            String body,
+            boolean read,
+            OffsetDateTime createdAt
+    ) {}
+
+    /** 인수인계 사진 한 장. path로 파일을 받는다. */
+    public record PhotoView(
+            UUID id,
+            UUID handoffId,
+            String originalName,
+            String contentType,
+            long sizeBytes,
+            int position,
+            String path,
+            OffsetDateTime createdAt
     ) {}
 
     /** 매장 공지. pinned는 목록 위, important는 중요 표시. */
@@ -138,5 +208,53 @@ public final class Views {
             EscalationStatus status,
             OffsetDateTime createdAt,
             OffsetDateTime resolvedAt
+    ) {}
+
+    /** 내 알림 켜기. assignment 업무 배정, urgent 긴급, memo 메모, completed 처리 완료. */
+    public record NotificationSettingsView(
+            boolean assignment,
+            boolean urgent,
+            boolean memo,
+            boolean completed
+    ) {}
+
+    /** 휴지통 한 줄. kept가 true면 2주가 지나도 지우지 않는다. */
+    public record TrashItemView(
+            TrashKind kind,
+            UUID id,
+            UUID storeId,
+            UUID handoffId,
+            String title,
+            UUID deletedBy,
+            String deletedByName,
+            OffsetDateTime deletedAt,
+            OffsetDateTime restoreUntil,
+            boolean kept
+    ) {}
+
+    /** 영구 보관 체크 결과. */
+    public record KeepView(
+            TrashKind kind,
+            UUID id,
+            boolean kept,
+            OffsetDateTime keptAt
+    ) {}
+
+    /** 2주가 지난 미보관 항목을 지운 개수. */
+    public record PurgeView(int handoffs, int cards) {}
+
+    /**
+     * 기록 조회 한 줄.
+     * action은 CREATED 작성, UPDATED 수정, COMPLETED 처리, DELETED 삭제.
+     */
+    public record RecordView(
+            String action,
+            UUID id,
+            UUID storeId,
+            UUID handoffId,
+            UUID cardId,
+            String title,
+            String actorName,
+            OffsetDateTime at
     ) {}
 }

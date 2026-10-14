@@ -1,5 +1,6 @@
 package com.nextshift.web;
 
+import com.nextshift.api.Views.OnDutyView;
 import com.nextshift.api.Views.ShiftView;
 import com.nextshift.common.AuthPrincipal;
 import com.nextshift.service.ShiftService;
@@ -28,6 +29,7 @@ public class ShiftController {
         this.shiftService = shiftService;
     }
 
+    /** 기간 안의 근무표를 돌려준다. */
     @GetMapping
     public List<ShiftView> list(
             @PathVariable UUID storeId,
@@ -37,6 +39,13 @@ public class ShiftController {
         return shiftService.list(AuthPrincipal.current(), storeId, from, to);
     }
 
+    /** 지금 시간대에 근무 중인 직원을 돌려준다. */
+    @GetMapping("/now")
+    public OnDutyView now(@PathVariable UUID storeId) {
+        return shiftService.now(AuthPrincipal.current(), storeId);
+    }
+
+    /** 근무 한 칸을 만든다. */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ShiftView create(@PathVariable UUID storeId, @Valid @RequestBody ShiftRequest request) {
@@ -49,6 +58,7 @@ public class ShiftController {
         );
     }
 
+    /** 근무 한 칸을 지운다. */
     @DeleteMapping("/{shiftId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID storeId, @PathVariable UUID shiftId) {

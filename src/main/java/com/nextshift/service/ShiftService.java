@@ -1,5 +1,6 @@
 package com.nextshift.service;
 
+import com.nextshift.api.Views.OnDutyView;
 import com.nextshift.api.Views.ShiftView;
 import com.nextshift.common.ApiException;
 import com.nextshift.common.AuthPrincipal;
@@ -13,6 +14,8 @@ import com.nextshift.repo.StoreMemberRepository;
 import com.nextshift.repo.UserRepository;
 import com.nextshift.security.StoreGuard;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 /** 근무표 조회·배정·취소. 배정과 취소는 오너와 매니저만 할 수 있다. */
 @Service
 public class ShiftService {
+    private static final ZoneId SEOUL = ZoneId.of("Asia/Seoul");
+
     private final ShiftRepository shiftRepository;
     private final StoreMemberRepository memberRepository;
     private final UserRepository userRepository;
@@ -43,6 +48,7 @@ public class ShiftService {
         this.guard = guard;
     }
 
+    /** 기간 안의 근무표를 날짜, 시간대 순으로 돌려준다. */
     @Transactional(readOnly = true)
     public List<ShiftView> list(AuthPrincipal principal, UUID storeId, LocalDate from, LocalDate to) {
         guard.requireActiveMember(storeId, principal.id());
@@ -61,6 +67,25 @@ public class ShiftService {
                 .toList();
     }
 
+    /** 서울 시각의 오늘, 현재 시간대에 배정된 직원을 돌려준다. */
+    @Transactional(readOnly = true)
+    public OnDutyView now(AuthPrincipal principal, UUID storeId) {
+        guard.requireActiveMember(storeId, principal.id());
+        LocalDate today = LocalDate.now(SEOUL);
+        WorkSlot slot = slotAt(LocalTime.now(SEOUL));
+        if (slot == null) {
+            return new OnDutyView(today, null, List.of());
+        }
+        List<Shift> shifts = shiftRepository.findByStoreIdAndWorkDateAndSlot(storeId, today, slot);
+        Map<UUID, StoreMember> members = membersOf(shifts);
+        Map<UUID, User> users = usersOf(members.values().stream().map(StoreMember::getUserId).distinct().toList());
+        List<ShiftView> views = shifts.stream()
+                .map(shift -> toView(shift, members.get(shift.getMemberId()), users))
+                .toList();
+        return new OnDutyView(today, slot, views);
+    }
+
+    /** 재직 중인 직원을 그 날짜와 시간대에 넣는다. */
     @Transactional
     public ShiftView create(AuthPrincipal principal, UUID storeId, UUID memberId, LocalDate workDate, WorkSlot slot) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -84,6 +109,7 @@ public class ShiftService {
         return toView(shift, memberName(user));
     }
 
+    /** 그 매장의 근무 한 칸을 지운다. */
     @Transactional
     public void delete(AuthPrincipal principal, UUID storeId, UUID shiftId) {
         StoreMember actor = guard.requireActiveMember(storeId, principal.id());
@@ -94,6 +120,21 @@ public class ShiftService {
             throw ApiException.notFound("근무를 찾을 수 없습니다.");
         }
         shiftRepository.delete(shift);
+    }
+
+    /** 06시부터 오전, 14시부터 오후, 18시부터 마감. 새벽에는 시간대가 없다. */
+    private static WorkSlot slotAt(LocalTime time) {
+        int hour = time.getHour();
+        if (hour >= 6 && hour < 14) {
+            return WorkSlot.MORNING;
+        }
+        if (hour >= 14 && hour < 18) {
+            return WorkSlot.AFTERNOON;
+        }
+        if (hour >= 18) {
+            return WorkSlot.CLOSE;
+        }
+        return null;
     }
 
     private Map<UUID, StoreMember> membersOf(List<Shift> shifts) {

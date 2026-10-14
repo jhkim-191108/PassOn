@@ -22,6 +22,22 @@ public class User extends UuidEntity {
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
 
+    /** 내게 업무가 배정됐을 때. */
+    @Column(name = "notify_assignment", nullable = false)
+    private boolean notifyAssignment = true;
+
+    /** 긴급 업무가 등록됐을 때. */
+    @Column(name = "notify_urgent", nullable = false)
+    private boolean notifyUrgent = true;
+
+    /** 내 업무에 메모가 추가됐을 때. */
+    @Column(name = "notify_memo", nullable = false)
+    private boolean notifyMemo = true;
+
+    /** 내가 작성한 업무가 완료됐을 때. */
+    @Column(name = "notify_completed", nullable = false)
+    private boolean notifyCompleted = false;
+
     /** 로그인 이메일을 반환한다. */
     public String getEmail() {
         return email;
@@ -60,5 +76,45 @@ public class User extends UuidEntity {
     /** 탈퇴 시각을 저장한다. */
     public void setDeletedAt(OffsetDateTime deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    /** 업무 배정 알림을 받을지 반환한다. */
+    public boolean isNotifyAssignment() {
+        return notifyAssignment;
+    }
+
+    /** 업무 배정 알림을 받을지 저장한다. */
+    public void setNotifyAssignment(boolean notifyAssignment) {
+        this.notifyAssignment = notifyAssignment;
+    }
+
+    /** 긴급 인수인계 알림을 받을지 반환한다. */
+    public boolean isNotifyUrgent() {
+        return notifyUrgent;
+    }
+
+    /** 긴급 인수인계 알림을 받을지 저장한다. */
+    public void setNotifyUrgent(boolean notifyUrgent) {
+        this.notifyUrgent = notifyUrgent;
+    }
+
+    /** 메모 알림을 받을지 반환한다. */
+    public boolean isNotifyMemo() {
+        return notifyMemo;
+    }
+
+    /** 메모 알림을 받을지 저장한다. */
+    public void setNotifyMemo(boolean notifyMemo) {
+        this.notifyMemo = notifyMemo;
+    }
+
+    /** 처리 완료 알림을 받을지 반환한다. */
+    public boolean isNotifyCompleted() {
+        return notifyCompleted;
+    }
+
+    /** 처리 완료 알림을 받을지 저장한다. */
+    public void setNotifyCompleted(boolean notifyCompleted) {
+        this.notifyCompleted = notifyCompleted;
     }
 }

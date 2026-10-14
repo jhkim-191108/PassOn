@@ -95,6 +95,24 @@ record EscalationRequest(
         @NotNull(message = "우선순위를 지정해 주세요.") EscalationPriority priority
 ) {}
 
+/** 알림 켜기. 안 보낸 값은 그대로 둔다. */
+record NotificationSettingsRequest(
+        Boolean assignment,
+        Boolean urgent,
+        Boolean memo,
+        Boolean completed
+) {}
+
+/** 카드 담당자. memberId가 없으면 배정을 해제한다. */
+record AssigneeRequest(UUID memberId) {}
+
+/** 카드 후속 메모. */
+record MemoRequest(
+        @NotBlank(message = "메모 내용을 입력해 주세요.")
+        @Size(max = 1000, message = "메모는 1000자 이하입니다.")
+        String body
+) {}
+
 /** 이미 가입한 사용자를 매장에 직접 넣는다. */
 record AddMemberRequest(
         @NotNull(message = "사용자를 지정해 주세요.") UUID userId,
@@ -115,7 +133,7 @@ record HandoffRequest(
 
 /** 아직 확정 전인 원문 수정. */
 record HandoffPatchRequest(
-        @NotBlank(message = "인수인계 내용을 입력해 주세요.") @Size(max= 4000, message = "인수인계는 4000자 이하입니다.") String rawText
+        @NotBlank(message = "인수인계 내용을 입력해 주세요.") @Size(max = 4000, message = "인수인계는 4000자 이하입니다.") String rawText
 ) {}
 
 /** 카드 일부만 고친다. 안 보낸 필드는 그대로 둔다. */
@@ -130,7 +148,7 @@ record CardPatchRequest(
 /** 공지 작성. pinned와 important는 생략할 수 있다. */
 record NoticeRequest(
         @NotBlank(message = "공지 제목을 입력해 주세요.") @Size(max = 120, message = "제목은 120자 이하입니다.") String title,
-        @NotBlank(message = "공지 내용을 입력해 주세요.") @Size(max = 4000, message = "내용은 4000자 이하 입니다.") String body,
+        @NotBlank(message = "공지 내용을 입력해 주세요.") @Size(max = 4000, message = "내용은 4000자 이하입니다.") String body,
         Boolean pinned,
         Boolean important
 ) {}

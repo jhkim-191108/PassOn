@@ -60,6 +60,12 @@ public class HandoffController {
         handoffService.delete(AuthPrincipal.current(), handoffId);
     }
 
+    /** 2주 안의 삭제 인수인계를 되돌린다. */
+    @PostMapping("/{handoffId}/restore")
+    public HandoffView restore(@PathVariable UUID handoffId) {
+        return handoffService.restore(AuthPrincipal.current(), handoffId);
+    }
+
     /** 원문을 카드로 나눈다. 키가 없으면 키워드 분류를 쓴다. */
     @PostMapping("/{handoffId}/analyze")
     public HandoffView analyze(@PathVariable UUID handoffId) {
