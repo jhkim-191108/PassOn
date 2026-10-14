@@ -1,0 +1,52 @@
+/* Figma 원본(Tailwind stone / emerald 팔레트) 기준 */
+.signup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 48px 24px;
+  background: #fafaf9;     /* stone-50 */
+  color: #1c1917;          /* stone-900 */
+}
+
+.signup__container {
+  width: 100%;
+  max-width: 448px;
+}
+
+.signup__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 32px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #a8a29e;          /* stone-400 */
+  text-decoration: none;
+  transition: color 150ms;
+}
+
+.signup__back:hover {
+  color: #57534e;          /* stone-600 */
+}
+
+.signup__header {
+  margin-bottom: 32px;
+}
+
+.signup__title {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+  color: #1c1917;          /* stone-900 */
+}
+
+.signup__desc {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #78716c;          /* stone-500 */
+}

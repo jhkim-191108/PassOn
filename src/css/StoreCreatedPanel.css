@@ -1,0 +1,186 @@
+.store-created__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  background: #d1fae5;         /* emerald-100 */
+  border-radius: 16px;
+  color: #059669;              /* emerald-600 */
+}
+
+.store-created__title {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+  text-align: center;
+  color: #1c1917;              /* stone-900 */
+}
+
+.store-created__desc {
+  margin: 0 0 32px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+  color: #78716c;              /* stone-500 */
+}
+
+.store-created__card {
+  margin-bottom: 16px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;   /* stone-200 */
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.store-created__card-heading {
+  margin: 0 0 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.store-created__section {
+  margin-bottom: 20px;
+}
+
+.store-created__section--link {
+  margin-bottom: 0;
+  padding-top: 16px;
+  border-top: 1px solid #f5f5f4; /* stone-100 */
+}
+
+.store-created__label {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  color: #78716c;              /* stone-500 */
+}
+
+.store-created__code-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.store-created__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 2rem;
+  letter-spacing: 0.2em;
+  color: #292524;              /* stone-800 */
+}
+
+.store-created__copy {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  background: #f5f5f4;         /* stone-100 */
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  color: #57534e;              /* stone-600 */
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms;
+}
+
+.store-created__copy:hover {
+  background: #e7e5e4;         /* stone-200 */
+}
+
+.store-created__copy--link {
+  padding: 8px 12px;
+}
+
+.store-created__copy--done,
+.store-created__copy--done:hover {
+  background: #d1fae5;         /* emerald-100 */
+  color: #047857;              /* emerald-700 */
+}
+
+.store-created__hint {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.store-created__link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.store-created__link {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 8px 12px;
+  background: #fafaf9;         /* stone-50 */
+  border-radius: 8px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #57534e;              /* stone-600 */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.store-created__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 14px;
+  background: #fffbeb;         /* amber-50 */
+  border: 1px solid #fde68a;   /* amber-200 */
+  border-radius: 12px;
+}
+
+.store-created__notice svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #d97706;              /* amber-600 */
+}
+
+.store-created__notice p {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.625;
+  color: #b45309;              /* amber-700 */
+}
+
+.store-created__notice strong {
+  font-weight: 700;
+}
+
+/* 공통 Button을 전체 너비로 */
+.store-created__start > * {
+  width: 100%;
+}
+
+.store-created__later {
+  margin: 12px 0 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-align: center;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.store-created__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

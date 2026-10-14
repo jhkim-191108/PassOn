@@ -1,0 +1,37 @@
+.signup-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.signup-form__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: #44403c;              /* stone-700 */
+}
+
+.signup-form__hint {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #ef4444;              /* red-500 */
+}
+
+.signup-form__error {
+  margin: 16px 0 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #ef4444;              /* red-500 */
+}
+
+.signup-form__submit {
+  margin-top: 28px;
+}
+
+/* 공통 Button을 전체 너비로 */
+.signup-form__submit > * {
+  width: 100%;
+}
