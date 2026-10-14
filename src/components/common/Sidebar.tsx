@@ -4,8 +4,12 @@ import { navItems } from "./navItems";
 import { useEffect, useRef, useState } from "react";
 import ConfirmDialog from "../ui/ConfirmDialog";
 
-function Sidebar() {
-    const userName = "전재형";
+interface SidebarProps {
+    userName: string;
+    storeName: string;
+}
+
+function Sidebar({ userName, storeName, }: SidebarProps) {
     const [open, setOpen] = useState<"noti" | "profile" | null>(null);
     const [logoutConfirm, setLogoutConfirm] = useState(false);
 
@@ -32,7 +36,7 @@ function Sidebar() {
 
             <div className="sidebar__store">
                 <span className="sidebar__store-label">현재 매장</span>
-                <strong>PassOn 카페</strong>
+                <strong>{storeName}</strong>
             </div>
 
             <nav className="sidebar__menu">

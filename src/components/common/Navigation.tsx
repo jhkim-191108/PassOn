@@ -2,8 +2,11 @@ import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
 import { useEffect, useRef, useState } from "react";
 
-function Navigation() {
-    const userName = "전재형";
+interface NavigationProps {
+    userName: string;
+}
+
+function Navigation({userName}: NavigationProps) {
     const [open, setOpen] = useState<"noti" | "profile" | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     // DOM 요소<div>를 참조하며 current 값의 초기값을 null로 설정

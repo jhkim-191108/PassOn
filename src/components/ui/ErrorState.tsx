@@ -3,7 +3,7 @@ import Button from "./Button";
 interface ErrorStateProps {
     title?: string;
     description?: string;
-    onRetry: () => void;
+    onRetry?: () => void;
 }
 
 function ErrorState({
