@@ -5,7 +5,7 @@ import type {
 
 const API_URL =
   import.meta.env.VITE_API_URL ??
-  "http://localhost:18080";
+  "https://nextshift-1065882590623.asia-northeast3.run.app";
 
 let accessToken: string | null = null;
 

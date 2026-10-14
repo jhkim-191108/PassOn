@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PassOn API</title>
+  <style>
+    :root { --get:#61affe; --post:#49cc90; --patch:#50e3c2; --delete:#f93e3e; --line:#e8e8e8; --ink:#3b4151; --muted:#6b7280; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", sans-serif; color: var(--ink); background: #fafafa; }
+    header { background: #1b1b1b; color: #fff; padding: 18px 28px 22px; }
+    header h1 { margin: 0 0 6px; font-size: 28px; }
+    header p { margin: 0; color: #c7c7c7; }
+    .bar { display: flex; gap: 10px; align-items: center; padding: 12px 28px; background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; }
+    .bar input, .bar button, textarea, .op input { font: inherit; }
+    .bar input { flex: 1; border: 1px solid #d0d0d0; border-radius: 6px; padding: 8px 10px; }
+    .bar button, .send { background: #4990e2; color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+    main { max-width: 980px; margin: 0 auto; padding: 18px 16px 64px; }
+    .tag { margin: 22px 0 8px; font-size: 20px; }
+    .op { background: #fff; border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; overflow: hidden; }
+    .op summary { list-style: none; display: flex; gap: 10px; align-items: center; padding: 10px 12px; cursor: pointer; }
+    .op summary::-webkit-details-marker { display: none; }
+    .method { color: #fff; font-weight: 700; font-size: 12px; border-radius: 4px; min-width: 64px; text-align: center; padding: 4px 0; }
+    .GET { background: var(--get); } .POST { background: var(--post); } .PATCH { background: #1f8a70; } .DELETE { background: var(--delete); }
+    .path { font-family: Consolas, monospace; }
+    .summary { color: var(--muted); margin-left: auto; font-size: 14px; }
+    .body { padding: 0 14px 14px; }
+    label { display: block; font-size: 13px; margin: 10px 0 4px; color: var(--muted); }
+    .op input, textarea { width: 100%; border: 1px solid #d9d9d9; border-radius: 6px; padding: 8px; }
+    textarea { min-height: 120px; font-family: Consolas, monospace; font-size: 13px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    pre { background: #41444e; color: #fff; border-radius: 6px; padding: 12px; overflow: auto; white-space: pre-wrap; }
+    .note { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+    code { font-family: Consolas, monospace; }
+    .lock { font-size: 12px; color: #b45309; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PassOn API</h1>
+    <p>기본 주소 <code id="base-url">https://nextshift-1065882590623.asia-northeast3.run.app</code></p>
+    <p>가입·로그인·재발급·로그아웃·이메일 확인만 비로그인입니다. 나머지 API는 <code>Authorization: Bearer 액세스토큰</code>이 필요합니다.</p>
+  </header>
+  <div class="bar">
+    <input id="token" placeholder="액세스 토큰. 로그인 응답의 accessToken을 여기에 붙입니다.">
+    <button id="save" type="button">토큰 저장</button>
+  </div>
+  <main>
+    <section class="note">
+      <p>실행은 위 기본 주소의 API로 갑니다. 예: <code id="sample-url">https://nextshift-1065882590623.asia-northeast3.run.app/api/auth/signup</code>. 주소창에 경로만 열면 GET이라 401이 납니다. 실행 버튼은 각 API의 POST, PATCH, DELETE를 그대로 보냅니다.</p>
+      <p>가입·로그인 응답의 <code>accessToken</code>만 위 칸에 넣고 토큰 저장을 누릅니다. 인증이 필요한 요청에는 <code>Bearer</code>가 자동으로 붙습니다. 토큰 문자열 안에 Bearer를 다시 적지 않습니다. 액세스 토큰은 15분입니다.</p>
+      <p>리프레시 토큰은 본문이 아니라 쿠키 <code>refresh_token</code>입니다. 경로 <code>/api/auth</code>, 14일, HttpOnly입니다.</p>
+      <p>오류는 <code>{ "status", "code", "message" }</code>입니다. 검증 실패는 <code>fields</code>가 추가되고 code는 <code>VALIDATION_ERROR</code>입니다. 비밀번호는 8자 이상, 영문 대문자·소문자·특수문자입니다.</p>
+      <p>이 페이지를 배포 주소로 열면 클라우드 API를 호출합니다. <code>http://localhost:18080/swagger.html</code>로 열면 그 PC의 API를 호출합니다. 파일을 더블클릭해서 열면 호출이 막힙니다.</p>
+    </section>
+    <div id="list"></div>
+    <h2>응답 모델</h2>
+    <div id="models"></div>
+  </main>
+  <script>
+    const models = {
+      AuthView: "accessToken, tokenType, expiresIn(초), user{id,email,name}",
+      UserView: "id, email, name, photo(프로필 사진이 있으면 true)",
+      StoreView: "id, name, type, myRole, inviteCode(STAFF는 null), invitePath(STAFF는 null, 예: /join/MORNING7), createdAt",
+      MemberView: "id, storeId, userId, name, email, role, status, teamId, teamName, createdAt, leftAt, workSlots, fullTime",
+      TeamView: "id, storeId, name, memberCount, createdAt",
+      ShiftView: "id, storeId, memberId, memberName, workDate, slot, createdAt",
+      OnDutyView: "workDate, slot(새벽이면 null), shifts[]",
+      HandoffView: "id, storeId, authorId, authorName, rawText, status, analyzeError, analyzedAt, confirmedAt, confirmedBy, createdAt, updatedAt, read, cardCount, openCardCount",
+      CardView: "id, handoffId, type, title, body, urgency, needsReview, sourceQuote, position, completedAt, completedBy, authorName, escalationStatus, escalationPriority, assigneeMemberId, assigneeName, acknowledgedAt, progress, edited",
+      CardRevisionView: "id, cardId, field, beforeValue, afterValue, editorId, editorName, createdAt",
+      MemoView: "id, cardId, authorId, authorName, body, createdAt",
+      PhotoView: "id, handoffId, originalName, contentType, sizeBytes, position, path, createdAt",
+      NoticeView: "id, storeId, authorId, authorName, title, body, pinned, important, createdAt, updatedAt",
+      NotificationView: "id, storeId, type, handoffId, cardId, title, body, read, createdAt",
+      NotificationSettingsView: "assignment, urgent, memo, completed",
+      EscalationView: "id, storeId, cardId, title, body, authorName, requestedBy, requestedByName, priority, status, createdAt, resolvedAt",
+      TrashItemView: "kind, id, storeId, handoffId, title, deletedBy, deletedByName, deletedAt, restoreUntil, kept",
+      KeepView: "kind, id, kept, keptAt",
+      PurgeView: "handoffs, cards",
+      RecordView: "action(CREATED 작성|UPDATED 수정|COMPLETED 처리|DELETED 삭제), id, storeId, handoffId, cardId, title, actorName, at"
+    };
+    const enums = "StoreType CAFE|CONVENIENCE|STUDY_CAFE|RESTAURANT|OTHER · StoreRole OWNER|MANAGER|STAFF · MemberStatus ACTIVE|SUSPENDED|LEFT · WorkSlot MORNING|AFTERNOON|CLOSE · HandoffStatus DRAFT|ANALYZING|ANALYZED|FAILED|CONFIRMED · CardType STOCK|TASK|GUEST|NOTICE · Urgency NOW|TODAY|LATER · CardProgress OPEN|IN_PROGRESS|DONE · EscalationPriority IMPORTANT|URGENT · EscalationStatus PENDING|RESOLVED · NotificationType ASSIGNMENT|URGENT|MEMO|COMPLETED · TrashKind HANDOFF|CARD · CardRevisionField TYPE|TITLE|BODY|URGENCY|NEEDS_REVIEW";
+    const ops = [
+      ["인증", "POST", "/api/auth/signup", false, 201, "가입. 리프레시 쿠키도 같이 내려간다.", {email:"mina@example.com", password:"Test1234!", name:"김민지"}, "AuthView"],
+      ["인증", "POST", "/api/auth/login", false, 200, "로그인.", {email:"mina@example.com", password:"Test1234!"}, "AuthView"],
+      ["인증", "POST", "/api/auth/refresh", false, 200, "쿠키의 리프레시 토큰으로 액세스 토큰을 다시 받는다.", null, "AuthView"],
+      ["인증", "POST", "/api/auth/logout", false, 204, "리프레시 토큰을 폐기하고 쿠키를 지운다.", null, "없음"],
+      ["인증", "POST", "/api/auth/email-check", false, 204, "이메일이 없으면 204, 이미 있으면 409.", {email:"mina@example.com"}, "없음"],
+      ["내 정보", "GET", "/api/users/me", true, 200, "로그인한 내 정보.", null, "UserView"],
+      ["내 정보", "PATCH", "/api/users/me", true, 200, "내 이름을 고친다.", {name:"김민지"}, "UserView"],
+      ["내 정보", "PATCH", "/api/users/me/password", true, 204, "현재 비밀번호를 확인하고 바꾼다. 이후 다시 로그인한다.", {currentPassword:"Test1234!", newPassword:"New1234!"}, "없음"],
+      ["내 정보", "GET", "/api/users/me/notification-settings", true, 200, "알림 켜기.", null, "NotificationSettingsView"],
+      ["내 정보", "PATCH", "/api/users/me/notification-settings", true, 200, "보낸 알림 항목만 바꾼다.", {assignment:true, urgent:true, memo:true, completed:false}, "NotificationSettingsView"],
+      ["내 정보", "POST", "/api/users/me/photo", true, 200, "프로필 사진. multipart 필드 이름은 file. jpeg, png, webp, gif, 5MB 이하.", null, "UserView", [], true],
+      ["내 정보", "GET", "/api/users/me/photo", true, 200, "내 프로필 사진 파일. 없으면 404.", null, "파일"],
+      ["내 정보", "DELETE", "/api/users/me/photo", true, 204, "프로필 사진을 지운다.", null, "없음"],
+      ["내 정보", "DELETE", "/api/users/me", true, 204, "탈퇴. 행은 남고 리프레시 토큰을 모두 폐기한다. 사진 파일도 지운다.", null, "없음"],
+      ["매장", "POST", "/api/stores", true, 201, "매장을 만들고 요청자를 오너로 넣는다. type을 생략하면 CAFE.", {name:"카페 모닝", type:"CAFE"}, "StoreView"],
+      ["매장", "GET", "/api/stores", true, 200, "내가 활동 중인 매장.", null, "StoreView[]"],
+      ["매장", "GET", "/api/stores/{storeId}", true, 200, "매장 한 건. 직원에게는 초대 코드와 invitePath가 없다. 초대 링크는 기본 주소 + invitePath.", null, "StoreView"],
+      ["매장", "PATCH", "/api/stores/{storeId}", true, 200, "매장 이름 수정. 오너와 매니저. type은 바꾸지 않는다.", {name:"카페 모닝"}, "StoreView"],
+      ["매장", "DELETE", "/api/stores/{storeId}", true, 204, "매장 삭제. 오너만.", null, "없음"],
+      ["매장", "POST", "/api/stores/join", true, 200, "초대 코드로 합류. 역할은 MANAGER 또는 STAFF.", {code:"MORNIN", role:"STAFF"}, "StoreView"],
+      ["매장", "POST", "/api/stores/{storeId}/invite", true, 200, "초대 코드를 새로 발급한다. 이전 코드는 무효.", null, "StoreView"],
+      ["멤버", "POST", "/api/stores/{storeId}/members", true, 201, "이미 가입한 사용자를 매장에 넣는다.", {userId:"사용자 UUID", role:"STAFF"}, "MemberView"],
+      ["멤버", "GET", "/api/stores/{storeId}/members", true, 200, "멤버 목록.", null, "MemberView[]"],
+      ["멤버", "GET", "/api/stores/{storeId}/members/{memberId}", true, 200, "멤버 한 명.", null, "MemberView"],
+      ["멤버", "PATCH", "/api/stores/{storeId}/members/{memberId}", true, 200, "역할 변경. 오너는 다른 오너를 바꾸지 못한다.", {role:"MANAGER"}, "MemberView"],
+      ["멤버", "PATCH", "/api/stores/{storeId}/members/{memberId}/team", true, 200, "팀 배정. teamId를 빼거나 null이면 미배정.", {teamId:null}, "MemberView"],
+      ["멤버", "PATCH", "/api/stores/{storeId}/members/{memberId}/availability", true, 200, "풀타임이면 오전·오후·마감을 모두 켠다.", {fullTime:false, slots:["MORNING","CLOSE"]}, "MemberView"],
+      ["멤버", "PATCH", "/api/stores/{storeId}/members/{memberId}/status", true, 200, "정지 또는 퇴사.", {status:"SUSPENDED"}, "MemberView"],
+      ["멤버", "DELETE", "/api/stores/{storeId}/members/{memberId}", true, 204, "멤버 행만 지운다. 사용자 계정은 남는다.", null, "없음"],
+      ["팀", "POST", "/api/stores/{storeId}/teams", true, 201, "팀 생성. 오너.", {name:"오픈"}, "TeamView"],
+      ["팀", "GET", "/api/stores/{storeId}/teams", true, 200, "팀 목록.", null, "TeamView[]"],
+      ["팀", "PATCH", "/api/stores/{storeId}/teams/{teamId}", true, 200, "팀 이름 변경. 오너.", {name:"마감"}, "TeamView"],
+      ["팀", "DELETE", "/api/stores/{storeId}/teams/{teamId}", true, 204, "팀 삭제. 오너.", null, "없음"],
+      ["근무표", "GET", "/api/stores/{storeId}/shifts", true, 200, "기간 안 근무표.", null, "ShiftView[]", [{name:"from", example:"2026-10-13", required:true},{name:"to", example:"2026-10-19", required:true}]],
+      ["근무표", "GET", "/api/stores/{storeId}/shifts/now", true, 200, "지금 시간대 근무자. 새벽이면 slot이 null.", null, "OnDutyView"],
+      ["근무표", "POST", "/api/stores/{storeId}/shifts", true, 201, "근무 한 칸. 오너와 매니저.", {memberId:"멤버 UUID", workDate:"2026-10-13", slot:"MORNING"}, "ShiftView"],
+      ["근무표", "DELETE", "/api/stores/{storeId}/shifts/{shiftId}", true, 204, "근무 한 칸 삭제. 오너와 매니저.", null, "없음"],
+      ["인수인계", "POST", "/api/handoffs", true, 201, "원문 저장. 분석은 하지 않는다.", {storeId:"매장 UUID", rawText:"원두 거의 없음. 2번 테이블 단골은 디카페인."}, "HandoffView"],
+      ["인수인계", "GET", "/api/handoffs", true, 200, "매장 인수인계 최신순.", null, "HandoffView[]", [{name:"storeId", example:"", required:true}]],
+      ["인수인계", "GET", "/api/handoffs/{handoffId}", true, 200, "인수인계 한 건.", null, "HandoffView"],
+      ["인수인계", "PATCH", "/api/handoffs/{handoffId}", true, 200, "확정 전 원문 수정.", {rawText:"수정한 메모"}, "HandoffView"],
+      ["인수인계", "DELETE", "/api/handoffs/{handoffId}", true, 204, "확정 전 인수인계를 휴지통으로.", null, "없음"],
+      ["인수인계", "POST", "/api/handoffs/{handoffId}/restore", true, 200, "2주 안의 삭제를 되돌린다.", null, "HandoffView"],
+      ["인수인계", "POST", "/api/handoffs/{handoffId}/analyze", true, 200, "원문을 카드로 나눈다. 키가 없으면 키워드 분류.", null, "HandoffView"],
+      ["인수인계", "POST", "/api/handoffs/{handoffId}/confirm", true, 200, "분석이 끝난 인수인계를 확정한다.", null, "HandoffView"],
+      ["인수인계", "POST", "/api/handoffs/{handoffId}/read", true, 200, "내가 읽었다고 기록한다.", null, "HandoffView"],
+      ["카드", "GET", "/api/handoffs/{handoffId}/cards", true, 200, "그 인수인계의 카드.", null, "CardView[]"],
+      ["카드", "GET", "/api/stores/{storeId}/open-cards", true, 200, "매장의 미완료 카드. 오래된 순.", null, "CardView[]"],
+      ["카드", "GET", "/api/stores/{storeId}/cards", true, 200, "진행, 중요도, 내 담당, 작성자, 날짜, 제목·내용·작성자·담당자 검색.", null, "CardView[]", [{name:"progress", example:"OPEN"},{name:"urgency", example:"NOW"},{name:"mine", example:"true"},{name:"authorId", example:""},{name:"from", example:"2026-10-01"},{name:"to", example:"2026-10-13"},{name:"q", example:"원두"}]],
+      ["기록", "GET", "/api/stores/{storeId}/records", true, 200, "작성·수정·처리·삭제 기록. q는 제목과 이름. 삭제는 휴지통에 남은 것만.", null, "RecordView[]", [{name:"q", example:"김민지"},{name:"from", example:"2026-10-01"},{name:"to", example:"2026-10-13"}]],
+      ["카드", "GET", "/api/cards/{cardId}", true, 200, "카드 한 장.", null, "CardView"],
+      ["카드", "GET", "/api/cards/{cardId}/revisions", true, 200, "수정 이력. 최근이 앞.", null, "CardRevisionView[]"],
+      ["카드", "PATCH", "/api/cards/{cardId}", true, 200, "보낸 필드만 수정. 확정 전에만. 바뀌면 이력이 남는다.", {type:"STOCK", title:"원두 부족", body:"원두가 거의 없음", urgency:"NOW", needsReview:true}, "CardView"],
+      ["카드", "DELETE", "/api/cards/{cardId}", true, 204, "확정 전 카드를 휴지통으로.", null, "없음"],
+      ["카드", "POST", "/api/cards/{cardId}/restore", true, 200, "2주 안의 삭제 카드를 되돌린다.", null, "CardView"],
+      ["카드", "PATCH", "/api/cards/{cardId}/assignee", true, 200, "담당자 지정. memberId가 없으면 해제.", {memberId:"멤버 UUID"}, "CardView"],
+      ["카드", "PATCH", "/api/cards/{cardId}/acknowledge", true, 200, "처리중으로 확인.", null, "CardView"],
+      ["카드", "PATCH", "/api/cards/{cardId}/unacknowledge", true, 200, "처리중 확인을 취소.", null, "CardView"],
+      ["카드", "PATCH", "/api/cards/{cardId}/complete", true, 200, "처리 완료.", null, "CardView"],
+      ["카드", "PATCH", "/api/cards/{cardId}/reopen", true, 200, "완료를 취소.", null, "CardView"],
+      ["메모", "GET", "/api/cards/{cardId}/memos", true, 200, "후속 메모 목록.", null, "MemoView[]"],
+      ["메모", "POST", "/api/cards/{cardId}/memos", true, 201, "후속 메모를 붙인다.", {body:"오후에 다시 확인함"}, "MemoView"],
+      ["메모", "DELETE", "/api/cards/{cardId}/memos/{memoId}", true, 204, "본인 메모이거나 매니저 이상만 삭제.", null, "없음"],
+      ["사진", "GET", "/api/handoffs/{handoffId}/photos", true, 200, "사진 주소 목록.", null, "PhotoView[]"],
+      ["사진", "POST", "/api/handoffs/{handoffId}/photos", true, 201, "사진 업로드. multipart 필드 이름은 file. 최대 5MB.", null, "PhotoView", [], true],
+      ["사진", "GET", "/api/handoffs/{handoffId}/photos/{photoId}", true, 200, "사진 파일 바이트.", null, "파일"],
+      ["사진", "DELETE", "/api/handoffs/{handoffId}/photos/{photoId}", true, 204, "확정 전 사진 삭제.", null, "없음"],
+      ["공지", "POST", "/api/stores/{storeId}/notices", true, 201, "공지 작성. 오너와 매니저. pinned, important 생략 시 false.", {title:"우유 입고", body:"내일 아침 입고", pinned:true, important:false}, "NoticeView"],
+      ["공지", "GET", "/api/stores/{storeId}/notices", true, 200, "고정이 먼저, 그다음 최신순.", null, "NoticeView[]"],
+      ["공지", "GET", "/api/stores/{storeId}/notices/{noticeId}", true, 200, "공지 한 건.", null, "NoticeView"],
+      ["공지", "PATCH", "/api/stores/{storeId}/notices/{noticeId}", true, 200, "보낸 필드만 수정. 오너와 매니저.", {title:"우유 입고", pinned:false}, "NoticeView"],
+      ["공지", "DELETE", "/api/stores/{storeId}/notices/{noticeId}", true, 204, "공지 삭제. 오너와 매니저.", null, "없음"],
+      ["알림", "GET", "/api/stores/{storeId}/notifications", true, 200, "그 매장에서 내가 받은 알림. 최신순.", null, "NotificationView[]"],
+      ["알림", "POST", "/api/notifications/{notificationId}/read", true, 200, "알림 한 건 읽음.", null, "NotificationView"],
+      ["알림", "POST", "/api/stores/{storeId}/notifications/read-all", true, 200, "안 읽은 알림을 모두 읽음. 개수를 돌려준다.", null, "number"],
+      ["위임", "POST", "/api/cards/{cardId}/escalations", true, 201, "매니저가 카드를 오너에게 올린다.", {priority:"URGENT"}, "EscalationView"],
+      ["위임", "GET", "/api/stores/{storeId}/escalations", true, 200, "오너의 처리 대기 목록.", null, "EscalationView[]"],
+      ["위임", "POST", "/api/cards/{cardId}/escalations/resolve", true, 200, "오너가 처리 완료한다.", null, "EscalationView"],
+      ["휴지통", "GET", "/api/stores/{storeId}/trash", true, 200, "최근 2주 삭제 항목.", null, "TrashItemView[]"],
+      ["휴지통", "POST", "/api/stores/{storeId}/trash/purge", true, 200, "2주가 지난 미보관 항목을 지운다. 오너.", null, "PurgeView"],
+      ["보관", "GET", "/api/stores/{storeId}/kept", true, 200, "오너가 보관한 항목.", null, "TrashItemView[]"],
+      ["보관", "POST", "/api/handoffs/{handoffId}/keep", true, 200, "인수인계 영구 보관.", null, "KeepView"],
+      ["보관", "DELETE", "/api/handoffs/{handoffId}/keep", true, 200, "인수인계 보관 해제.", null, "KeepView"],
+      ["보관", "POST", "/api/cards/{cardId}/keep", true, 200, "카드 영구 보관.", null, "KeepView"],
+      ["보관", "DELETE", "/api/cards/{cardId}/keep", true, 200, "카드 보관 해제.", null, "KeepView"]
+    ].map(([tag, method, path, auth, status, summary, body, response, query, multipart]) => ({tag, method, path, auth, status, summary, body, response, query: query || [], multipart: !!multipart}));
+
+    const base = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+      ? (location.port === "18080" ? "" : "http://localhost:18080")
+      : "";
+    const shownBase = base || location.origin;
+    document.getElementById("base-url").textContent = shownBase;
+    document.getElementById("sample-url").textContent = shownBase + "/api/auth/signup";
+
+    const tokenInput = document.getElementById("token");
+    tokenInput.value = localStorage.getItem("passon.swagger") || localStorage.getItem("passon.token") || "";
+    document.getElementById("save").onclick = () => {
+      localStorage.setItem("passon.swagger", tokenInput.value.trim());
+    };
+
+    const list = document.getElementById("list");
+    let last = "";
+    ops.forEach((op, index) => {
+      if (op.tag !== last) {
+        last = op.tag;
+        const h = document.createElement("h2");
+        h.className = "tag";
+        h.textContent = op.tag;
+        list.appendChild(h);
+      }
+      const details = document.createElement("details");
+      details.className = "op";
+      const params = [...op.path.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]);
+      const fields = params.map((name) => `<label>${name}</label><input data-path="${name}" placeholder="${name}">`).join("");
+      const queries = op.query.map((q) => `<label>${q.name}${q.required ? " *" : ""}</label><input data-query="${q.name}" value="${q.example || ""}">`).join("");
+      const body = op.multipart
+        ? `<label>file</label><input data-file type="file">`
+        : (op.body ? `<label>본문</label><textarea>${JSON.stringify(op.body, null, 2)}</textarea>` : "");
+      details.innerHTML = `
+        <summary>
+          <span class="method ${op.method}">${op.method}</span>
+          <span class="path">${op.path}</span>
+          <span class="summary">${op.summary}</span>
+        </summary>
+        <div class="body">
+          <div class="lock">${op.auth ? "인증 필요" : "공개"} · 성공 ${op.status} · 응답 ${op.response}</div>
+          ${fields || queries ? `<div class="row">${fields}${queries}</div>` : ""}
+          ${body}
+          <p><button class="send" type="button" data-i="${index}">실행</button></p>
+          <pre class="out">응답이 여기 표시됩니다.</pre>
+        </div>`;
+      list.appendChild(details);
+    });
+
+    document.getElementById("models").innerHTML = `<div class="note"><p>${enums}</p><pre>${Object.entries(models).map(([name, fields]) => name + "\\n  " + fields).join("\\n\\n")}</pre></div>`;
+
+    list.onclick = async (event) => {
+      const button = event.target.closest(".send");
+      if (!button) return;
+      const op = ops[Number(button.dataset.i)];
+      const box = button.closest(".body");
+      const out = box.querySelector(".out");
+      let path = op.path;
+      box.querySelectorAll("[data-path]").forEach((input) => {
+        path = path.replace("{" + input.dataset.path + "}", encodeURIComponent(input.value));
+      });
+      const query = new URLSearchParams();
+      box.querySelectorAll("[data-query]").forEach((input) => { if (input.value) query.set(input.dataset.query, input.value); });
+      const headers = {};
+      const token = tokenInput.value.trim();
+      if (op.auth && token) headers.Authorization = "Bearer " + token;
+      const options = { method: op.method, headers, credentials: "include" };
+      if (op.multipart) {
+        const file = box.querySelector("[data-file]").files[0];
+        const form = new FormData();
+        if (file) form.append("file", file);
+        options.body = form;
+      } else if (op.body) {
+        headers["Content-Type"] = "application/json";
+        options.body = box.querySelector("textarea").value;
+      }
+      out.textContent = "요청 중...";
+      try {
+        const response = await fetch(base + path + (query.toString() ? "?" + query : ""), options);
+        const text = await response.text();
+        let shown = text || "(본문 없음)";
+        try {
+          const json = JSON.parse(text);
+          shown = JSON.stringify(json, null, 2);
+          if (json.accessToken) {
+            tokenInput.value = json.accessToken;
+            localStorage.setItem("passon.swagger", json.accessToken);
+          }
+        } catch (error) { /* 파일 응답은 그대로 둔다 */ }
+        out.textContent = response.status + " " + response.statusText + "\\n" + shown;
+      } catch (error) {
+        out.textContent = error.message;
+      }
+    };
+  </script>
+</body>
+</html>

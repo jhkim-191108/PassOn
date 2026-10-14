@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import DashboardPage from "./pages/DashboardPage";
+import EmployeesPage from "./pages/EmployeePage"
 
 function App() {
 
@@ -16,7 +17,9 @@ function App() {
             {/* app으로 들어왔을 때 */}
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="employees" element={<EmployeesPage />} />
             {/* 아직 페이지 만들어지지 않은 메뉴 */}
+            
             <Route
               path="*"
               element={
