@@ -11,5 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ShiftRepository extends JpaRepository<Shift, UUID> {
     List<Shift> findByStoreIdAndWorkDateBetween(UUID storeId, LocalDate from, LocalDate to);
 
+    List<Shift> findByStoreIdAndWorkDateAndSlot(UUID storeId, LocalDate workDate, WorkSlot slot);
+
     boolean existsByStoreIdAndMemberIdAndWorkDateAndSlot(UUID storeId, UUID memberId, LocalDate workDate, WorkSlot slot);
 }

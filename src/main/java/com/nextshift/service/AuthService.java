@@ -28,6 +28,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AppProperties properties;
+    private final ProfilePhotoService profilePhotoService;
     private final SecureRandom random = new SecureRandom();
 
     public AuthService(
@@ -35,13 +36,15 @@ public class AuthService {
             RefreshTokenRepository refreshTokenRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            AppProperties properties
+            AppProperties properties,
+            ProfilePhotoService profilePhotoService
     ) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.properties = properties;
+        this.profilePhotoService = profilePhotoService;
     }
 
     /** 이메일을 소문자로 맞춘 뒤 계정을 만들고 토큰을 발급한다. */
@@ -118,7 +121,7 @@ public class AuthService {
         token.setTokenHash(sha256(raw));
         token.setExpiresAt(OffsetDateTime.now(ZoneOffset.UTC).plusDays(properties.jwt().refreshDays()));
         refreshTokenRepository.save(token);
-        UserView view = new UserView(user.getId(), user.getEmail(), user.getName());
+        UserView view = new UserView(user.getId(), user.getEmail(), user.getName(), profilePhotoService.exists(user.getId()));
         return new Issued(new AuthView(jwtService.accessToken(user.getId()), "Bearer", jwtService.accessMinutes() * 60L, view), raw);
     }
 

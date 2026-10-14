@@ -98,6 +98,7 @@ public class StoreService {
     /** 직원에게는 초대 코드를 숨긴다. */
     static StoreView toView(Store store, StoreRole role) {
         String inviteCode = role == StoreRole.STAFF ? null : store.getInviteCode();
-        return new StoreView(store.getId(), store.getName(), store.getType(), role, inviteCode, store.getCreatedAt());
+        String invitePath = inviteCode == null ? null : "/join/" + inviteCode;
+        return new StoreView(store.getId(), store.getName(), store.getType(), role, inviteCode, invitePath, store.getCreatedAt());
     }
 }

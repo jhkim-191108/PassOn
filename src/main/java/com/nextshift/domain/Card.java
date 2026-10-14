@@ -47,6 +47,35 @@ public class Card extends UuidEntity {
     @Column(name = "completed_by")
     private UUID completedBy;
 
+    /** 확인해서 처리중으로 넘긴 시각. */
+    @Column(name = "acknowledged_at")
+    private OffsetDateTime acknowledgedAt;
+
+    @Column(name = "acknowledged_by")
+    private UUID acknowledgedBy;
+
+    /** 값이 있으면 휴지통에 있다. 2주 동안 복원할 수 있다. */
+    @Column(name = "deleted_at")
+    private OffsetDateTime deletedAt;
+
+    @Column(name = "deleted_by")
+    private UUID deletedBy;
+
+    /** 값이 있으면 오너가 영구 보관으로 체크한 항목이다. */
+    @Column(name = "kept_at")
+    private OffsetDateTime keptAt;
+
+    @Column(name = "kept_by")
+    private UUID keptBy;
+
+    /** 담당 직원. 없으면 미배정. */
+    @Column(name = "assignee_member_id")
+    private UUID assigneeMemberId;
+
+    /** 내용이 한 번이라도 수정되면 true. */
+    @Column(nullable = false)
+    private boolean edited = false;
+
     /** 이 카드가 속한 인수인계 id를 반환한다. */
     public UUID getHandoffId() {
         return handoffId;
@@ -145,5 +174,85 @@ public class Card extends UuidEntity {
     /** 처리한 사용자 id를 저장한다. */
     public void setCompletedBy(UUID completedBy) {
         this.completedBy = completedBy;
+    }
+
+    /** 처리중으로 확인한 시각을 반환한다. */
+    public OffsetDateTime getAcknowledgedAt() {
+        return acknowledgedAt;
+    }
+
+    /** 처리중으로 확인한 시각을 저장한다. */
+    public void setAcknowledgedAt(OffsetDateTime acknowledgedAt) {
+        this.acknowledgedAt = acknowledgedAt;
+    }
+
+    /** 처리중으로 확인한 사용자 id를 반환한다. */
+    public UUID getAcknowledgedBy() {
+        return acknowledgedBy;
+    }
+
+    /** 처리중으로 확인한 사용자 id를 저장한다. */
+    public void setAcknowledgedBy(UUID acknowledgedBy) {
+        this.acknowledgedBy = acknowledgedBy;
+    }
+
+    /** 휴지통에 넣은 시각을 반환한다. null이면 아직 사용 중이다. */
+    public OffsetDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    /** 휴지통에 넣은 시각을 저장한다. */
+    public void setDeletedAt(OffsetDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    /** 휴지통에 넣은 사용자 id를 반환한다. */
+    public UUID getDeletedBy() {
+        return deletedBy;
+    }
+
+    /** 휴지통에 넣은 사용자 id를 저장한다. */
+    public void setDeletedBy(UUID deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    /** 영구 보관으로 체크한 시각을 반환한다. */
+    public OffsetDateTime getKeptAt() {
+        return keptAt;
+    }
+
+    /** 영구 보관으로 체크한 시각을 저장한다. */
+    public void setKeptAt(OffsetDateTime keptAt) {
+        this.keptAt = keptAt;
+    }
+
+    /** 영구 보관을 체크한 오너 id를 반환한다. */
+    public UUID getKeptBy() {
+        return keptBy;
+    }
+
+    /** 영구 보관을 체크한 오너 id를 저장한다. */
+    public void setKeptBy(UUID keptBy) {
+        this.keptBy = keptBy;
+    }
+
+    /** 담당 멤버 id를 반환한다. null이면 미배정이다. */
+    public UUID getAssigneeMemberId() {
+        return assigneeMemberId;
+    }
+
+    /** 담당 멤버 id를 저장한다. */
+    public void setAssigneeMemberId(UUID assigneeMemberId) {
+        this.assigneeMemberId = assigneeMemberId;
+    }
+
+    /** 수정된 카드이면 true를 반환한다. */
+    public boolean isEdited() {
+        return edited;
+    }
+
+    /** 수정 여부를 저장한다. */
+    public void setEdited(boolean edited) {
+        this.edited = edited;
     }
 }
