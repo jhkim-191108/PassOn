@@ -409,6 +409,29 @@ a {
   font-size: 11px;
 }
 
+.notification-dropdown__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notification-dropdown__item strong {
+  font-size: 13px;
+}
+
+.notification-dropdown__item span {
+  color: var(--color-text-sub);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.notification-dropdown__empty {
+  padding: 20px 16px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
 /* =========================
   Dashboard
 ========================= */
