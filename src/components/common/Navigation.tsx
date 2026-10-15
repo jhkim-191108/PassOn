@@ -1,7 +1,9 @@
 import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { Notification } from "../../types/api";
+import useDropdown from "../hooks/useDropdown";
+import ConfirmDialog from "../ui/ConfirmDialog";
 
 interface NavigationProps {
     userName: string;
@@ -9,26 +11,9 @@ interface NavigationProps {
 }
 
 function Navigation({userName, notifications = [], }: NavigationProps) {
-    const [open, setOpen] = useState<"noti" | "profile" | null>(null);
-    const menuRef = useRef<HTMLDivElement>(null);
-    // DOM 요소<div>를 참조하며 current 값의 초기값을 null로 설정
+    const { open, ref, toggle, close } = useDropdown();
+    const [logoutConfirm, setLogoutConfirm] = useState(false);
 
-    useEffect(() => {
-        const closeMenu = (e: MouseEvent) => {
-            if (
-                menuRef.current && !menuRef.current.contains(e.target as Node)
-            ) {
-                setOpen(null);
-            }
-        };
-
-        document.addEventListener("mousedown", closeMenu);
-
-        return () => {
-            document.removeEventListener("mousedown", closeMenu);
-            // 컴포넌트가 사라질 때 이벤트 리스너를 제거하여 메모리 누수를 방지
-        };
-    }, []);
 
     return (
     <nav className="navigation">
@@ -76,14 +61,14 @@ function Navigation({userName, notifications = [], }: NavigationProps) {
                 기록 조회
             </NavLink>
         </div>
-        <div className="navigation__actions" ref={menuRef}>
+        <div className="navigation__actions" ref={ref}>
             <div className="navigation__dropdown-wrap">
                 {/* 알림버튼 드롭다운 */}
                 <button 
                     type="button" 
                     className="navigation__notification"
                     aria-label="알림"
-                    onClick={() => setOpen(open === "noti" ? null : "noti")}
+                    onClick={() => toggle("noti")}
                 >🔔
                 </button>
                 {open === "noti" && (
@@ -99,6 +84,7 @@ function Navigation({userName, notifications = [], }: NavigationProps) {
                         ) : (
                             notifications.map((notification) => (
                                 <button
+                                    type="button"
                                     key={notification.id}
                                     className="notification-dropdown__item"
                                 >
@@ -108,14 +94,6 @@ function Navigation({userName, notifications = [], }: NavigationProps) {
                             ))
                         )
                         }
-
-                        {/* <button type="button" className="notification-dropdown__item">
-                            새로운 인수인계가 등록되었습니다.
-                        </button>
-
-                        <button type="button" className="notification-dropdown__item dropdown__danger">
-                            긴급 인수인계를 확인해주세요.
-                        </button> */}
                     </div>
                 )}
             </div>
@@ -124,7 +102,7 @@ function Navigation({userName, notifications = [], }: NavigationProps) {
                 <button 
                     type="button"
                     className="navigation__profile"
-                    onClick={() => setOpen(open === "profile" ? null : "profile")}
+                    onClick={() => toggle("profile")}
                 >
                     <span className="navigation__avatar">{userName.charAt(0)}</span>
                     <span className="navigation__user">{userName}</span>
@@ -133,13 +111,33 @@ function Navigation({userName, notifications = [], }: NavigationProps) {
                     <div className="navigation__dropdown profile-dropdown">
                         <button type="button" className="profile-dropdown__item">내 정보</button>
                         <div className="profile-dropdown__divider"></div>
-                        <button type="button" className="profile-dropdown__item dropdown__danger">
+                        <button 
+                            type="button" 
+                            className="profile-dropdown__item dropdown__danger" 
+                            onClick={() => {
+                                close();
+                                setLogoutConfirm(true);
+                            }}
+                        >
                             로그아웃
                         </button>
                     </div>
                 )}
             </div>
         </div>
+        <ConfirmDialog
+            open={logoutConfirm}
+            title="로그아웃"
+            description="로그아웃 하시겠습니까?"
+            confirmText="로그아웃"
+            variant="danger"
+            cancelText="취소"
+            onClose={() => setLogoutConfirm(false)}
+            onConfirm={() => {
+                console.log("로그아웃");
+                setLogoutConfirm(false);
+            }}
+        />
     </nav>
     );
 }

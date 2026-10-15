@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
 import { navItems } from "./navItems";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import type { Notification } from "../../types/api";
+import useDropdown from "../hooks/useDropdown";
 
 interface SidebarProps {
     userName: string;
@@ -12,23 +13,9 @@ interface SidebarProps {
 }
 
 function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
-    const [open, setOpen] = useState<"noti" | "profile" | null>(null);
     const [logoutConfirm, setLogoutConfirm] = useState(false);
 
-    const menuRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const closeMenu = (e: MouseEvent) => {
-            if(menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                setOpen(null);
-            }
-        };
-        document.addEventListener("mousedown", closeMenu);
-
-        return () => {
-            document.removeEventListener("mousedown", closeMenu);
-        };
-    }, []);
+    const {open, ref, toggle, close, } = useDropdown();
 
     return (
         <aside className="sidebar">
@@ -56,9 +43,9 @@ function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
                     </NavLink>
                 ))}
             </nav>
-            <div className="sidebar__bottom" ref={menuRef}>
+            <div className="sidebar__bottom" ref={ref}>
                 <div className="sidebar__dropdown-wrap">
-                    <button type="button" className="sidebar__action" onClick={() => setOpen(open === "noti" ? null : "noti")}>
+                    <button type="button" className="sidebar__action" onClick={() => toggle("noti")}>
                         🔔알림
                     </button>
                     {open === "noti" && (
@@ -73,6 +60,7 @@ function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
                             ) : (
                                 notifications.map((notification) => (
                                     <button 
+                                        type="button"
                                         key={notification.id}
                                         className="notification-dropdown__item"
                                     >
@@ -82,12 +70,6 @@ function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
                                 ))
                             )
                         }
-                            {/* <button type="button" className="notification-dropdown__item">
-                                새로운 인수인계가 등록되었습니다.
-                            </button>
-                            <button type="button" className="notification-dropdown__item dropdown__danger">
-                                긴급 인수인계를 확인해주세요.
-                            </button> */}
                         </div>
                     )}
                 </div>
@@ -96,7 +78,7 @@ function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
                     <button 
                         type="button" 
                         className="sidebar__profile" 
-                        onClick={() => setOpen(open === "profile" ? null : "profile")}
+                        onClick={() => toggle("profile")}
                     >
                         <span className="sidebar__avatar">
                             {userName.charAt(0)}
@@ -113,7 +95,10 @@ function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
                             <button 
                                 type="button" 
                                 className="profile-dropdown__item dropdown__danger"
-                                onClick={() => setLogoutConfirm(true)}
+                                onClick={() => {
+                                    close();
+                                    setLogoutConfirm(true)
+                                }}
                             >
                                 로그아웃
                             </button>
