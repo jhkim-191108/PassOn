@@ -8,6 +8,9 @@ import ErrorState from "../components/ui/ErrorState";
 import { getMe } from "../api/users";
 import { getStores } from "../api/stores";
 
+import { getNotifications } from "../api/notification"; 
+import type { Notification } from "../types/api";
+
 import type {
     User,
     Store,
@@ -19,6 +22,8 @@ function AppLayout() {
     const [stores, setStores] = useState<Store[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [notifications, setNotifications] =
+        useState<Notification[]>([]);
 
     useEffect(() => {
         const loadApp = async () => {
@@ -34,6 +39,18 @@ function AppLayout() {
 
                 setUser(userData);
                 setStores(storeData);
+
+                if(storeData.length > 0) {
+                    try {
+                        const notificationData = 
+                            await getNotifications(storeData[0].id);
+
+                        setNotifications(notificationData);
+                    } catch (error) {
+                        console.error("알림 조회 실패:", error);
+                        setNotifications([]);
+                    }
+                }
             } catch (error) {
                 console.error(error);
                 setError(true);
@@ -61,10 +78,14 @@ function AppLayout() {
 
     return (
         <div className="app-layout">
-            <Sidebar userName={user.name} storeName={currentStore?.name ?? "매장 없음"} />
+            <Sidebar 
+                userName={user.name} 
+                storeName={currentStore?.name ?? "매장 없음"} 
+                notifications={notifications}
+            />
 
             <div className="app-content">
-                <Navigation userName={user.name} />
+                <Navigation userName={user.name} notifications={notifications} />
                 
                 <main className="app-main">
                     <Outlet/>

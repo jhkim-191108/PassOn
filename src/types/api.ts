@@ -38,3 +38,21 @@ export interface ApiErrorBody {
     message: string;
     fields?: Record<string, string>;
 }
+
+export type NotificationType =
+    | "ASSIGNMENT"
+    | "URGENT"
+    | "MEMO"
+    | "COMPLETED";
+
+export interface Notification {
+    id: string;
+    storeId: string;
+    type: NotificationType;
+    handoffId: string | null;
+    cardId: string | null;
+    title: string;
+    body: string;
+    read: boolean;
+    createdAt: string;
+}

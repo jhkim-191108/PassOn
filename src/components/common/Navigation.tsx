@@ -1,12 +1,14 @@
 import { NavLink } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
 import { useEffect, useRef, useState } from "react";
+import type { Notification } from "../../types/api";
 
 interface NavigationProps {
     userName: string;
+    notifications: Notification[];
 }
 
-function Navigation({userName}: NavigationProps) {
+function Navigation({userName, notifications = [], }: NavigationProps) {
     const [open, setOpen] = useState<"noti" | "profile" | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     // DOM 요소<div>를 참조하며 current 값의 초기값을 null로 설정
@@ -90,13 +92,30 @@ function Navigation({userName}: NavigationProps) {
                             <strong>알림</strong>
                         </div>
 
-                        <button type="button" className="notification-dropdown__item">
+                        {notifications.length === 0 ? (
+                            <div className="notification-dropdown__empty">
+                                새로운 알림이 없습니다.
+                            </div>
+                        ) : (
+                            notifications.map((notification) => (
+                                <button
+                                    key={notification.id}
+                                    className="notification-dropdown__item"
+                                >
+                                    <strong>{notification.title}</strong>
+                                    <span>{notification.body}</span>
+                                </button>
+                            ))
+                        )
+                        }
+
+                        {/* <button type="button" className="notification-dropdown__item">
                             새로운 인수인계가 등록되었습니다.
                         </button>
 
                         <button type="button" className="notification-dropdown__item dropdown__danger">
                             긴급 인수인계를 확인해주세요.
-                        </button>
+                        </button> */}
                     </div>
                 )}
             </div>

@@ -4,8 +4,7 @@ import type {
 } from "../types/api";
 
 const API_URL =
-  import.meta.env.VITE_API_URL ??
-  "http://localhost:18080";
+  import.meta.env.VITE_API_URL ?? "";
 
 let accessToken: string | null = null;
 
