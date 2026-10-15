@@ -1,0 +1,183 @@
+.today-shifts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.today-shifts__heading {
+  margin: 0 0 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #78716c;              /* stone-500 */
+}
+
+/* ── 오늘 내 근무 ──────────────────────────────────── */
+.today-shifts__mine {
+  flex: 1;
+  padding: 16px;
+  background: #fafaf9;         /* stone-50 */
+  border: 1px solid #e7e5e4;   /* stone-200 */
+  border-radius: 16px;
+}
+
+.today-shifts__mine .today-shifts__heading {
+  color: #a8a29e;              /* stone-400 */
+}
+
+.today-shifts__mine--working {
+  background: #ecfdf5;         /* emerald-50 */
+  border-color: #a7f3d0;       /* emerald-200 */
+}
+
+.today-shifts__mine--working .today-shifts__heading {
+  color: #059669;              /* emerald-600 */
+}
+
+.today-shifts__my-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.today-shifts__my-slot {
+  padding: 10px 12px;
+  background: var(--shift-100);
+  border: 1px solid var(--shift-200);
+  border-radius: 12px;
+  color: var(--shift-700);
+}
+
+.today-shifts__my-shift {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+}
+
+.today-shifts__my-time {
+  margin: 2px 0 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  opacity: 0.8;
+}
+
+.today-shifts__off {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  text-align: center;
+  color: #d6d3d1;              /* stone-300 */
+}
+
+.today-shifts__off svg {
+  margin-bottom: 8px;
+}
+
+.today-shifts__off p {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: #78716c;              /* stone-500 */
+}
+
+/* ── 오늘 근무 현황 ────────────────────────────────── */
+.today-shifts__status {
+  flex: 2;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;   /* stone-200 */
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.today-shifts__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.today-shifts__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* 강조 배경용 여백을 음수 마진으로 상쇄 → 줄 간격은 Figma와 동일 */
+  margin: -4px -8px;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+/* 현재 근무 중인 시간대 강조 */
+.today-shifts__row--live {
+  background: #ecfdf5;         /* emerald-50 */
+}
+
+.today-shifts__people {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.today-shifts__person {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #57534e;              /* stone-600 */
+}
+
+.today-shifts__person--me {
+  font-weight: 600;
+  color: #047857;              /* emerald-700 */
+}
+
+.today-shifts__empty {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.today-shifts__live {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #10b981;         /* emerald-500 */
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1rem;
+  color: #ffffff;
+}
+
+.today-shifts__live::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+@media (min-width: 640px) {
+  .today-shifts {
+    flex-direction: row;
+  }
+}
