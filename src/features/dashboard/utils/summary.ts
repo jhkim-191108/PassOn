@@ -24,7 +24,7 @@ const byNewest = (a: HandoffItem, b: HandoffItem) =>
   new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 
 export const getCurrentRole = (user: AppUser): UserRole =>
-  user.memberships.find((m) => m.storeId === user.currentStoreId)?.role ?? 'staff';
+  user.memberships.find((m) => m.storeId === user.currentStoreId)?.role ?? 'STAFF';
 
 // Figma DashboardPage의 집계 규칙 그대로
 export const buildDashboardSummary = (items: HandoffItem[], user: AppUser): DashboardSummary => {
@@ -42,9 +42,9 @@ export const buildDashboardSummary = (items: HandoffItem[], user: AppUser): Dash
   const announcements = items.filter((i) => i.isAnnouncement && i.announcementPinned && !i.isDeleted);
 
   const highlighted =
-    role === 'owner'
+    role === 'OWNER'
       ? uniqueById([...ownerReports, ...urgent]).slice(0, 4)
-      : role === 'manager'
+      : role === 'MANAGER'
         ? needsReview.slice(0, 5)
         : uniqueById([...mine, ...urgent]).slice(0, 5);
 

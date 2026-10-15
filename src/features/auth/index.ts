@@ -1,7 +1,8 @@
 // components
-export { LoginForm } from './components/LoginForm';
-export { SignupForm, PASSWORD_MIN_LENGTH } from './components/SignupForm';
-export { PasswordInput } from './components/PasswordInput';
+export { default as LoginForm } from './components/LoginForm';
+export { default as SignupForm } from './components/SignupForm';
+export { PASSWORD_MIN_LENGTH } from './components/SignupForm';
+export { default as PasswordInput } from './components/PasswordInput';
 export { DemoAccountList } from './components/DemoAccountList';
 export { StoreSetupChoice } from './components/StoreSetupChoice';
 export { StoreCreateForm } from './components/StoreCreateForm';

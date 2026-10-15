@@ -1,6 +1,9 @@
 // Figma types.ts의 사용자/매장 소속 타입과 동일한 형태
 // TODO: 팀 공용 타입 위치가 정해지면 UserRole · ShiftType · AppUser 이동
-export type UserRole = 'owner' | 'manager' | 'staff';
+import type { StoreRole, StoreType } from "@/types/api";
+
+export type { StoreType };
+export type UserRole = StoreRole;
 export type ShiftType = '오전' | '오후' | '마감' | '풀타임' | '홀' | '주방';
 
 export interface StoreMembership {
@@ -40,8 +43,6 @@ export interface SignupRequest {
 export type SignupResponse = LoginResponse;
 
 // ── 매장 생성 / 합류 ───────────────────────────────────
-export type StoreType = 'cafe' | 'convenience' | 'study-cafe' | 'restaurant' | 'other';
-
 export interface CreateStoreRequest {
   name: string;
   type: StoreType;

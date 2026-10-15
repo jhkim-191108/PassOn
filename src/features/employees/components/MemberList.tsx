@@ -1,34 +1,36 @@
+import type { StoreRole } from "@/types/api";
+import type { Member, Team } from "../types";
 import MemberRow from "./MemberRow";
-import type { StoreRole } from "../../types/api";
-import type { Member, Team } from "./types";
 
 interface MemberListProps {
     members: Member[];
     teams: Team[];
-    canEdit: boolean;
+    actorRole: StoreRole;
+    myUserId: string | null;
     onRoleChange: (member: Member, role: StoreRole) => void;
     onTeamChange: (member: Member, teamId: string) => void;
+    onLeave: (member: Member) => void;
 }
 
-// 재직과 정지 멤버. 퇴사는 LeftMemberList로 보낸다.
-function MemberList({ members, teams, canEdit, onRoleChange, onTeamChange }: MemberListProps) {
-    const active = members.filter((member) => member.status !== "LEFT");
-
+// 재직 목록. 넘어온 members는 이미 퇴사자를 뺀 목록이다.
+function MemberList({ members, teams, actorRole, myUserId, onRoleChange, onTeamChange, onLeave }: MemberListProps) {
     return (
         <section className="employees__panel">
             <div className="employees__panel-head">
-                <h2>재직 중 {active.length}명</h2>
-                {canEdit && <span>역할 · 팀 변경 가능</span>}
+                <h2>재직 중 {members.length}명</h2>
+                {(actorRole === "OWNER" || actorRole === "MANAGER") && <span>역할 · 팀 · 퇴사 처리 가능</span>}
             </div>
             <ul className="employees__members">
-                {active.map((member) => (
+                {members.map((member) => (
                     <MemberRow
                         key={member.id}
                         member={member}
                         teams={teams}
-                        canEdit={canEdit}
+                        actorRole={actorRole}
+                        isSelf={member.userId === myUserId}
                         onRoleChange={onRoleChange}
                         onTeamChange={onTeamChange}
+                        onLeave={onLeave}
                     />
                 ))}
             </ul>

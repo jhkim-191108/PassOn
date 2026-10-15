@@ -22,9 +22,9 @@ export const SHIFT_TONE: Record<ShiftType, string> = {
 type BadgeVariant = ComponentProps<typeof Badge>['variant'];
 
 export const ROLE_BADGE: Record<UserRole, { label: string; variant: BadgeVariant }> = {
-  owner: { label: 'Owner', variant: 'primary' },
-  manager: { label: 'Manager', variant: 'success' },
-  staff: { label: 'Staff', variant: 'neutral' },
+  OWNER: { label: 'Owner', variant: 'primary' },
+  MANAGER: { label: 'Manager', variant: 'success' },
+  STAFF: { label: 'Staff', variant: 'neutral' },
 };
 
 const toMinutes = (hhmm: string) => {

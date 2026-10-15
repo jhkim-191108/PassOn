@@ -1,4 +1,4 @@
-import Button from "../ui/Button";
+import Button from "@/components/ui/Button";
 
 interface EmployeeHeaderProps {
     storeName: string;
@@ -8,7 +8,8 @@ interface EmployeeHeaderProps {
     onInvite: () => void;
 }
 
-// 제목, 인원 수, 초대 버튼. 직원은 초대 코드를 받지 못하므로 버튼도 숨긴다.
+// 상단 제목과 재직 인원, 초대 버튼.
+// canEdit는 오너·매니저만 true. 직원 계정은 초대 코드와 버튼을 보지 못한다.
 function EmployeeHeader({ storeName, count, inviteCode, canEdit, onInvite }: EmployeeHeaderProps) {
     return (
         <header className="employees__header">

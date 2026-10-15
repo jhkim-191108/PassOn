@@ -84,6 +84,13 @@
   gap: 12px;
 }
 
+.landing__start {
+  min-width: 220px;
+  min-height: 52px;
+  padding: 0 32px;
+  font-size: 16px;
+}
+
 .landing__caption {
   margin: 16px 0 0;
   font-size: 0.75rem;

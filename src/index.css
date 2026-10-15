@@ -782,6 +782,8 @@ a {
   justify-content: center;
   padding: 20px;
   background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 1000;
 }
 

@@ -3,3 +3,4 @@
    export const Button = ({ variant: _v, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: string }) => (
      <button {...props} />
    );
+   export default Button;

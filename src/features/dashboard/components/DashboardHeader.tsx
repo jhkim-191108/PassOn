@@ -16,10 +16,10 @@ interface Props {
 
 // 역할별 한 줄 요약 (Figma 문구 그대로)
 const roleMessage = (role: UserRole, s: DashboardSummary) => {
-  if (role === 'owner') {
+  if (role === 'OWNER') {
     return s.ownerReports.length > 0 ? `보고 필요 ${s.ownerReports.length}건이 있어요` : '오늘도 잘 부탁드려요';
   }
-  if (role === 'manager') {
+  if (role === 'MANAGER') {
     return s.needsReview.length > 0 ? `확인 필요 ${s.needsReview.length}건이 있어요` : '모든 업무가 확인됐어요';
   }
   return s.mine.length > 0 ? `내 담당 업무 ${s.mine.length}건이 있어요` : '배정된 업무가 없어요';

@@ -35,7 +35,7 @@ interface Props {
 }
 
 export const DashboardStats = ({ summary, onViewItem }: Props) => {
-  const isStaff = summary.role === 'staff';
+  const isStaff = summary.role === 'STAFF';
 
   const stats: StatDef[] = [
     { key: 'pending', label: '미처리', tone: 'pending', items: summary.pending, emptyLabel: '처리 대기 없음', icon: <Icon d={ICONS.clock} /> },
