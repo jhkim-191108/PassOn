@@ -13,7 +13,7 @@ function HandoverForm({
 }: HandoverFormProps) {
     const [rawText, setRawText] = useState("");
     const handleSubmit = (
-        e: React.FormEvent<HTMLFormElement>
+        e: React.SubmitEvent<HTMLFormElement>
     ) => {
         e.preventDefault();
         const text = rawText.trim();
