@@ -88,7 +88,7 @@ function AppLayout() {
                 <Navigation userName={user.name} notifications={notifications} />
                 
                 <main className="app-main">
-                    <Outlet/>
+                    <Outlet context={{ currentStore }}/>
                 </main>
                 <BottomNavigation />
             </div>

@@ -56,3 +56,28 @@ export interface Notification {
     read: boolean;
     createdAt: string;
 }
+
+export type HandoffStatus =
+    | "DRAFT"
+    | "ANALYZING"
+    | "ANALYZED"
+    | "FAILED"
+    | "CONFIRMED";
+
+export interface Handoff {
+    id: string;
+    storeId: string;
+    authorId: string;
+    authorName: string;
+    rawText: string;
+    status: HandoffStatus;
+    analyzeError: string | null;
+    analyzedAt: string | null;
+    confirmedAt: string | null;
+    confirmedBy: string | null;
+    createdAt: string;
+    updatedAt: string;
+    read: boolean;
+    cardCount: number;
+    openCardCount: number;
+}
