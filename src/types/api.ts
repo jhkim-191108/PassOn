@@ -134,3 +134,11 @@ export interface Notice {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface UpdateCardRequest {
+    type: CardType;
+    title: string;
+    body: string;
+    urgency: Urgency;
+    needsReview: boolean;
+}
