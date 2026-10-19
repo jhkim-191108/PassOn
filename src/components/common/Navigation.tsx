@@ -4,13 +4,17 @@ import { useState } from "react";
 import type { Notification } from "../../types/api";
 import useDropdown from "../hooks/useDropdown";
 import ConfirmDialog from "../ui/ConfirmDialog";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface NavigationProps {
     userName: string;
     notifications: Notification[];
+    onReadNotification: (notification: Notification) => void;
+    onReadAllNotifications: () => void;
 }
 
-function Navigation({userName, notifications = [], }: NavigationProps) {
+function Navigation({ userName, notifications = [], onReadNotification, onReadAllNotifications }: NavigationProps) {
+    const unreadCount = notifications.filter((notification) => !notification.read).length;
     const { open, ref, toggle, close } = useDropdown();
     const [logoutConfirm, setLogoutConfirm] = useState(false);
 
@@ -64,36 +68,22 @@ function Navigation({userName, notifications = [], }: NavigationProps) {
         <div className="navigation__actions" ref={ref}>
             <div className="navigation__dropdown-wrap">
                 {/* 알림버튼 드롭다운 */}
-                <button 
-                    type="button" 
+                <button
+                    type="button"
                     className="navigation__notification"
-                    aria-label="알림"
+                    aria-label={unreadCount > 0 ? `알림 ${unreadCount}건` : "알림"}
                     onClick={() => toggle("noti")}
-                >🔔
+                >
+                    🔔
+                    {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
                 </button>
                 {open === "noti" && (
-                    <div className="navigation__dropdown notification-dropdown">
-                        <div className="navigation__dropdown-header">
-                            <strong>알림</strong>
-                        </div>
-
-                        {notifications.length === 0 ? (
-                            <div className="notification-dropdown__empty">
-                                새로운 알림이 없습니다.
-                            </div>
-                        ) : (
-                            notifications.map((notification) => (
-                                <button
-                                    type="button"
-                                    key={notification.id}
-                                    className="notification-dropdown__item"
-                                >
-                                    <strong>{notification.title}</strong>
-                                    <span>{notification.body}</span>
-                                </button>
-                            ))
-                        )
-                        }
+                    <div className="navigation__dropdown">
+                        <NotificationDropdown
+                            notifications={notifications}
+                            onRead={onReadNotification}
+                            onReadAll={onReadAllNotifications}
+                        />
                     </div>
                 )}
             </div>

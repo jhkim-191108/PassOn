@@ -5,14 +5,18 @@ import { useState } from "react";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import type { Notification } from "../../types/api";
 import useDropdown from "../hooks/useDropdown";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface SidebarProps {
     userName: string;
     storeName: string;
     notifications: Notification[];
+    onReadNotification: (notification: Notification) => void;
+    onReadAllNotifications: () => void;
 }
 
-function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
+function Sidebar({ userName, storeName, notifications = [], onReadNotification, onReadAllNotifications }: SidebarProps) {
+    const unreadCount = notifications.filter((notification) => !notification.read).length;
     const [logoutConfirm, setLogoutConfirm] = useState(false);
 
     const {open, ref, toggle, close, } = useDropdown();
@@ -47,29 +51,15 @@ function Sidebar({ userName, storeName, notifications = [], }: SidebarProps) {
                 <div className="sidebar__dropdown-wrap">
                     <button type="button" className="sidebar__action" onClick={() => toggle("noti")}>
                         🔔알림
+                        {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
                     </button>
                     {open === "noti" && (
-                        <div className="sidebar__dropdown notification-dropdown">
-                            <div className="navigation__dropdown-header">
-                                <strong>알림</strong>
-                            </div>
-                            {notifications.length === 0 ? (
-                                <div className="notification-dropdown__empty">
-                                    새로운 알림이 없습니다.
-                                </div>
-                            ) : (
-                                notifications.map((notification) => (
-                                    <button 
-                                        type="button"
-                                        key={notification.id}
-                                        className="notification-dropdown__item"
-                                    >
-                                        <strong>{notification.title}</strong>
-                                        <span>{notification.body}</span>
-                                    </button>
-                                ))
-                            )
-                        }
+                        <div className="sidebar__dropdown">
+                            <NotificationDropdown
+                                notifications={notifications}
+                                onRead={onReadNotification}
+                                onReadAll={onReadAllNotifications}
+                            />
                         </div>
                     )}
                 </div>

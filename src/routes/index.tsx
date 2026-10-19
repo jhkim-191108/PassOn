@@ -3,6 +3,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
 import DashboardPage from '@/pages/DashboardPage';
 import EmployeesPage from '@/pages/employees/EmployeePage';
+import NoticePage from '@/pages/notices/NoticePage';
+import NoticeDetailPage from '@/pages/notices/NoticeDetailPage';
 // import { PrivateRoute } from '@/routes/guards/PrivateRoute';
 // import { PublicOnlyRoute } from '@/routes/guards/PublicOnlyRoute';
 import { PATHS } from '@/routes/paths';
@@ -58,6 +60,8 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'employees', element: <EmployeesPage /> },
+      { path: 'notices', element: <NoticePage /> },
+      { path: 'notices/:noticeId', element: <NoticeDetailPage /> },
       // 아직 페이지가 만들어지지 않은 메뉴
       {
         path: '*',

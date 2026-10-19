@@ -56,3 +56,18 @@ export interface Notification {
     read: boolean;
     createdAt: string;
 }
+
+export type NoticePriority = "NORMAL" | "IMPORTANT" | "URGENT";
+
+export interface Notice {
+    id: string;
+    storeId: string;
+    authorId: string;
+    authorName: string;
+    title: string;
+    body: string;
+    pinned: boolean;
+    priority: NoticePriority;
+    createdAt: string;
+    updatedAt: string;
+}
