@@ -3,12 +3,13 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/common/Sidebar";
 import Navigation from "../components/common/Navigation";
 import BottomNavigation from "../components/common/BottomNavigation";
+import RightPanel from "../components/common/RightPanel";
 import Loading from "../components/ui/Loading";
 import ErrorState from "../components/ui/ErrorState";
 import { getMe } from "../api/users";
 import { getStores } from "../api/stores";
 
-import { getNotifications } from "../api/notification"; 
+import { getNotifications, readAllNotifications, readNotification } from "../api/notification";
 import type { Notification } from "../types/api";
 
 import type {
@@ -62,6 +63,29 @@ function AppLayout() {
         loadApp();
     }, []);
 
+    async function markRead(notification: Notification) {
+        if (notification.read) return;
+        try {
+            const updated = await readNotification(notification.id);
+            setNotifications((current) =>
+                current.map((item) => (item.id === updated.id ? updated : item)),
+            );
+        } catch (error) {
+            console.error("알림 읽음 처리 실패:", error);
+        }
+    }
+
+    async function markAllRead() {
+        const storeId = stores[0]?.id;
+        if (!storeId) return;
+        try {
+            await readAllNotifications(storeId);
+            setNotifications((current) => current.map((item) => ({ ...item, read: true })));
+        } catch (error) {
+            console.error("알림 전체 읽음 처리 실패:", error);
+        }
+    }
+
     if (loading) {
         return <Loading text="사용자 정보를 불러오는 중입니다..." />
     }
@@ -82,14 +106,30 @@ function AppLayout() {
                 userName={user.name} 
                 storeName={currentStore?.name ?? "매장 없음"} 
                 notifications={notifications}
+                onReadNotification={markRead}
+                onReadAllNotifications={markAllRead}
             />
 
             <div className="app-content">
-                <Navigation userName={user.name} notifications={notifications} />
+                <Navigation
+                    userName={user.name}
+                    notifications={notifications}
+                    onReadNotification={markRead}
+                    onReadAllNotifications={markAllRead}
+                />
                 
-                <main className="app-main">
-                    <Outlet/>
-                </main>
+                <div className="app-body">
+                    <main className="app-main">
+                        <Outlet/>
+                    </main>
+                    {currentStore && (
+                        <RightPanel
+                            storeId={currentStore.id}
+                            userName={user.name}
+                            notifications={notifications}
+                        />
+                    )}
+                </div>
                 <BottomNavigation />
             </div>
         </div>

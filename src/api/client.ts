@@ -7,17 +7,21 @@ const API_URL =
   import.meta.env.VITE_API_URL ??
   "https://nextshift-1065882590623.asia-northeast3.run.app";
 
-let accessToken: string | null = null;
+const TOKEN_KEY = "passon.accessToken";
+
+let accessToken: string | null = sessionStorage.getItem(TOKEN_KEY);
 
 let refreshPromise: Promise<string | null> | null =
   null;
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
+  if (token) sessionStorage.setItem(TOKEN_KEY, token);
+  else sessionStorage.removeItem(TOKEN_KEY);
 }
 
 export function clearAccessToken() {
-  accessToken = null;
+  setAccessToken(null);
 }
 
 export class ApiError extends Error {
@@ -60,14 +64,14 @@ async function refreshAccessToken() {
     )
       .then(async (response) => {
         if (!response.ok) {
-          accessToken = null;
+          setAccessToken(null);
           return null;
         }
 
         const data =
           (await response.json()) as AuthResponse;
 
-        accessToken = data.accessToken;
+        setAccessToken(data.accessToken);
 
         return data.accessToken;
       })

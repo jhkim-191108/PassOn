@@ -59,7 +59,6 @@ function InviteModal({ open, storeName, inviteCode, inviteLink, onClose }: Invit
         setNotice("");
     }
 
-    // 서버에 초대 메일 API가 없어서, 메일 앱에 코드와 링크를 넣어 연다.
     function sendEmail(event: FormEvent) {
         event.preventDefault();
         const address = email.trim();

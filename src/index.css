@@ -78,10 +78,19 @@ a {
   min-width: 0;
 }
 
+.app-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  padding: 32px 28px 32px 40px;
+}
+
 .app-main {
   width: 100%;
-  min-height: calc(100vh - 60px);
-  padding: 32px 40px;
+  min-width: 0;
+  flex: 1;
+  min-height: calc(100vh - 72px);
+  padding: 0;
 }
 
 .sidebar {
@@ -179,6 +188,7 @@ a {
 
 .sidebar__action,
 .sidebar__profile {
+  position: relative;
   width: 100%;
   display: flex;
   align-items: center;
@@ -305,6 +315,35 @@ a {
   width: 320px;
 }
 
+.notification-dropdown__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-dropdown__read-all {
+  border: 0;
+  background: transparent;
+  color: var(--color-primary-dark);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--color-danger);
+  color: #ffffff;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+}
+
 .notification-dropdown__item {
   width: 100%;
   padding: 14px 16px;
@@ -348,6 +387,7 @@ a {
 }
 
 .navigation__notification {
+  position: relative;
   width: 40px;
   height: 40px;
   display: flex;
@@ -415,8 +455,24 @@ a {
   gap: 4px;
 }
 
+.notification-dropdown__item em {
+  color: var(--color-primary-dark);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+}
+
 .notification-dropdown__item strong {
   font-size: 13px;
+}
+
+.notification-dropdown__item time {
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.notification-dropdown__item--unread {
+  background: var(--color-primary-light);
 }
 
 .notification-dropdown__item span {
@@ -989,6 +1045,11 @@ a {
     min-width: 0;
   }
 
+  .app-body {
+    display: block;
+    padding-right: 0;
+  }
+
   .app-main {
     min-height: 100vh;
     padding: 28px;
@@ -1027,6 +1088,11 @@ a {
 
   .app-content {
     width: 100%;
+  }
+
+  .app-body {
+    display: block;
+    padding-right: 0;
   }
 
   .app-main {
