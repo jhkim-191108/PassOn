@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import type { Store } from "@/types/api";
 import HandoverForm from "@/components/handovers/HandoverForm";
 import {
     createHandoff,
     analyzeHandoff,
 } from "../../api/handoffs";
+import { getHandoffCards } from "../../api/cards";
+import type { Store, Card } from "@/types/api";
+import AiResultCard from "@/components/handovers/AiResultCard";
 
 
 interface AppContext {
@@ -15,38 +17,43 @@ interface AppContext {
 function HandoverCreatePage() {
     const { currentStore } =
         useOutletContext<AppContext>();
+    
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [cards, setCards] = useState<Card[]>([]);
 
-        const [loading, setLoading] = useState(false);
-        const [error, setError] = useState("");
 
-        const handleSubmit = async (rawText: string) => {
-            if (!currentStore) {
-                setError("매장 정보를 찾을 수 없습니다.");
-                return;
-            }
-
-            try {
-                setLoading(true);
-                setError("");
-
-                // 1. 자연어 저장
-                const handoff = await createHandoff(
-                    currentStore.id,
-                    rawText
-                );
-
-                console.log("원문 저장 완료:", handoff);
-
-                // 2. AI가 분석
-                await analyzeHandoff(handoff.id);
-                console.log("AI 분석 완료");
-            } catch (error) {
-                console.error(error);
-                setError("인수인계 분석에 실패했습니다.");
-            } finally {
-                setLoading(false);
-            }
-        };
+    const handleSubmit = async (rawText: string) => {
+        if (!currentStore) {
+            setError("매장 정보를 찾을 수 없습니다.");
+            return;
+        }
+        try {
+            setLoading(true);
+            setError("");
+            // 1. 자연어 저장
+            const handoff = await createHandoff(
+                currentStore.id,
+                rawText
+            );
+            console.log("원문 저장 완료:", handoff);
+            // 2. AI가 분석
+            await analyzeHandoff(handoff.id);
+            console.log("AI 분석 완료");
+            // 3. 생성된 카드 조회
+            const cardData = await getHandoffCards(
+                handoff.id
+            );
+            setCards(cardData);
+            console.log("AI 카드:", cards);
+            // 에러처리
+        } catch (error) {
+            console.error(error);
+            setError("인수인계 분석에 실패했습니다.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     if (!currentStore) {
@@ -65,6 +72,19 @@ function HandoverCreatePage() {
                 loading={loading}
                 onSubmit={handleSubmit}
             />
+
+            {cards.length > 0 && (
+                <div className="handover-create__results">
+                    <h2>AI 정리 결과</h2>
+
+                    {cards.map((card) => (
+                        <AiResultCard 
+                            key={card.id}
+                            card={card}
+                        />
+                    ))}
+                </div>
+            )}
 
             {error && (
                 <p className="handover-create__error">

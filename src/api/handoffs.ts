@@ -1,7 +1,7 @@
 import { api } from "./client";
 import type { Handoff } from "../types/api"; 
 
-export function creatHandoff(
+export function createHandoff(
     storeId: string,
     rawText: string
 ) {
@@ -16,11 +16,11 @@ export function creatHandoff(
 
 export function getHandoff(handoffId: string) {
     return api<Handoff>(
-        `api/handoffs/${handoffId}`
+        `/api/handoffs/${handoffId}`
     );
 }
 
-export function analtzHandoff(handoffId: string) {
+export function analyzeHandoff(handoffId: string) {
     return api<Handoff>(
         `/api/handoffs/${handoffId}/analyze`,
         {

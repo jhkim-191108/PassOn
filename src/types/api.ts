@@ -81,3 +81,41 @@ export interface Handoff {
     cardCount: number;
     openCardCount: number;
 }
+
+export type CardType =
+    | "STOCK"
+    | "TASK"
+    | "GUEST"
+    | "NOTICE";
+
+export type Urgency =
+    | "NOW"
+    | "TODAY"
+    | "LATER";
+
+export type CardProgress =
+    | "OPEN"
+    | "IN_PROGRESS"
+    | "DONE";
+
+export interface Card {
+    id: string;
+    handoffId: string;
+    type: CardType;
+    title: string;
+    body: string;
+    urgency: Urgency;
+    needsReview: boolean;
+    sourceQuote: string;
+    position: number;
+    completedAt: string | null;
+    completedBy: string | null;
+    authorName: string;
+    escalationStatus: string | null;
+    escalationPriority: string | null;
+    assigneeMemberId: string | null;
+    assigneeName: string | null;
+    acknowledgedAt: string | null;
+    progress: CardProgress;
+    edited: boolean;
+}
