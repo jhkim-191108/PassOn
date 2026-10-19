@@ -8,8 +8,14 @@ const LABEL: Record<NoticePriority, string> = {
     URGENT: "긴급",
 };
 
+const PRIORITIES: NoticePriority[] = ["NORMAL", "IMPORTANT", "URGENT"];
+
 export function noticeLevelLabel(priority: NoticePriority) {
     return LABEL[priority];
+}
+
+export function noticePriority(priority: NoticePriority): NoticePriority {
+    return PRIORITIES.includes(priority) ? priority : "NORMAL";
 }
 
 function readEnds(): Record<string, string> {
