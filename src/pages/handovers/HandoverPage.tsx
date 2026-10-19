@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom";
+import { useNavigate  } from "react-router-dom";
+import Button from "@/components/ui/Button";
 
 function HandoverPage() {
+    const navigate = useNavigate();
     return (
-        <section>
+        <section className="handover-page">
             <h1>인수인계</h1>
 
-            <Link to="/app/handovers/new">
+            <Button type="button" onClick={() => navigate("/app/handovers/new")}>
                 새 인수인계 작성
-            </Link>
+            </Button>
         </section>
     );
 }
