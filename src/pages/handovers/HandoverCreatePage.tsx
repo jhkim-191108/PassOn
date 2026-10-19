@@ -4,10 +4,12 @@ import HandoverForm from "@/components/handovers/HandoverForm";
 import {
     createHandoff,
     analyzeHandoff,
+    confirmHandoff,
 } from "../../api/handoffs";
 import { getHandoffCards } from "../../api/cards";
 import type { Store, Card } from "@/types/api";
 import AiResultCard from "@/components/handovers/AiResultCard";
+import Button from "@/components/ui/Button";
 
 
 interface AppContext {
@@ -21,6 +23,9 @@ function HandoverCreatePage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [cards, setCards] = useState<Card[]>([]);
+    const [handoffId, setHandoffId] = useState<string | null>(null);
+    const [confirming, setConfirming] = useState(false);
+    const [confirmed,setConfirmed] = useState(false);
 
 
     const handleSubmit = async (rawText: string) => {
@@ -36,6 +41,7 @@ function HandoverCreatePage() {
                 currentStore.id,
                 rawText
             );
+            setHandoffId(handoff.id);
             console.log("원문 저장 완료:", handoff);
             // 2. AI가 분석
             await analyzeHandoff(handoff.id);
@@ -54,6 +60,25 @@ function HandoverCreatePage() {
             setLoading(false);
         }
     };
+
+    const handleConfirm = async () => {
+        if (!handoffId) return;
+
+        try {
+            setConfirming(true);
+            setError("");
+
+            const result = await confirmHandoff(handoffId);
+
+            console.log("인수인계 등록 완료:", result);
+            setConfirmed(true);
+        } catch (error) {
+            console.error(error);
+            setError("인수인계 등록에 실패했습니다.");
+        } finally {
+            setConfirming(false);
+        }
+    }
 
 
     if (!currentStore) {
@@ -83,6 +108,19 @@ function HandoverCreatePage() {
                             card={card}
                         />
                     ))}
+                    {!confirmed ? (
+                        <Button
+                            type="button"
+                            onClick={handleConfirm}
+                            disabled={confirming}
+                        >
+                            {confirming
+                                ?"등록 중..."
+                                :"인수인계 등록하기"}
+                        </Button>
+                    ): (
+                        <p>인수인계가 등록되었습니다.</p>
+                    )}
                 </div>
             )}
 
