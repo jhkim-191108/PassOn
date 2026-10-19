@@ -47,6 +47,12 @@ public class NotificationService {
         push(storeId, actorId, recipientId, NotificationType.URGENT, handoffId, cardId, "긴급 업무가 등록되었습니다", cardTitle);
     }
 
+    /** 긴급 공지가 생기면 작성자를 뺀 멤버에게 알린다. 받는 사람 목록은 호출하는 쪽이 고른다. */
+    @Transactional
+    public void urgentNotice(UUID storeId, UUID actorId, UUID recipientId, String noticeTitle) {
+        push(storeId, actorId, recipientId, NotificationType.URGENT, null, null, "긴급 공지가 등록되었습니다", noticeTitle);
+    }
+
     /** 내 업무에 메모가 붙으면 작성자와 담당자에게 알린다. */
     @Transactional
     public void memo(

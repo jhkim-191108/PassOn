@@ -3,6 +3,7 @@ package com.nextshift.web;
 import com.nextshift.domain.CardType;
 import com.nextshift.domain.EscalationPriority;
 import com.nextshift.domain.MemberStatus;
+import com.nextshift.domain.NoticePriority;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.StoreType;
 import com.nextshift.domain.Urgency;
@@ -145,12 +146,12 @@ record CardPatchRequest(
         Boolean needsReview
 ) {}
 
-/** 공지 작성. pinned와 important는 생략할 수 있다. */
+/** 공지 작성. pinned와 priority는 생략할 수 있다. priority를 빼면 일반이다. */
 record NoticeRequest(
         @NotBlank(message = "공지 제목을 입력해 주세요.") @Size(max = 120, message = "제목은 120자 이하입니다.") String title,
         @NotBlank(message = "공지 내용을 입력해 주세요.") @Size(max = 4000, message = "내용은 4000자 이하입니다.") String body,
         Boolean pinned,
-        Boolean important
+        NoticePriority priority
 ) {}
 
 /** 공지 일부 수정. 안 보낸 필드는 그대로 둔다. */
@@ -158,5 +159,5 @@ record NoticePatchRequest(
         @Size(max = 120, message = "제목은 120자 이하입니다.") String title,
         @Size(max = 4000, message = "내용은 4000자 이하입니다.") String body,
         Boolean pinned,
-        Boolean important
+        NoticePriority priority
 ) {}

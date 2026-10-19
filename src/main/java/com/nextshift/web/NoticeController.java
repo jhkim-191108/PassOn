@@ -2,6 +2,7 @@ package com.nextshift.web;
 
 import com.nextshift.api.Views.NoticeView;
 import com.nextshift.common.AuthPrincipal;
+import com.nextshift.domain.NoticePriority;
 import com.nextshift.service.NoticeService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +29,7 @@ public class NoticeController {
         this.noticeService = noticeService;
     }
 
-    /** 공지를 만든다. pinned와 important를 생략하면 거짓이다. */
+    /** 공지를 만든다. pinned를 생략하면 거짓, priority를 생략하면 일반이다. */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public NoticeView create(@PathVariable UUID storeId, @Valid @RequestBody NoticeRequest request) {
@@ -37,14 +39,14 @@ public class NoticeController {
                 request.title(),
                 request.body(),
                 request.pinned(),
-                request.important()
+                request.priority()
         );
     }
 
-    /** 고정 공지를 먼저, 그다음 최신순으로 돌려준다. */
+    /** 고정 공지를 먼저, 그다음 긴급·중요·일반, 그다음 최신순으로 돌려준다. priority가 있으면 그 단계만 남긴다. */
     @GetMapping
-    public List<NoticeView> list(@PathVariable UUID storeId) {
-        return noticeService.list(AuthPrincipal.current(), storeId);
+    public List<NoticeView> list(@PathVariable UUID storeId, @RequestParam(required = false) NoticePriority priority) {
+        return noticeService.list(AuthPrincipal.current(), storeId, priority);
     }
 
     /** 공지 한 건을 돌려준다. */
@@ -62,7 +64,7 @@ public class NoticeController {
                 request.title(),
                 request.body(),
                 request.pinned(),
-                request.important()
+                request.priority()
         );
     }
 
