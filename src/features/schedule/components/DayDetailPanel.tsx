@@ -1,5 +1,5 @@
 // TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
-import Badge from '@/features/auth/components/common/Badge';
+import Badge from '@/components/ui/Badge';
 
 import type { ShiftSlot, StaffMember } from '../types';
 import { formatLongDate } from '../utils/calendar';

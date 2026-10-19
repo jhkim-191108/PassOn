@@ -50,3 +50,20 @@ export interface StaffDirectory {
   staff: StaffMember[];
   teams: StoreTeam[];
 }
+
+// ── 서버 응답 (GET /api/stores/{storeId}/shifts) ─────────────
+/** 서버 시간대 값. 오전 MORNING, 오후 AFTERNOON, 마감 CLOSE */
+export type WorkSlot = 'MORNING' | 'AFTERNOON' | 'CLOSE';
+
+/** 서버 근무표 한 칸 (직원 1명 × 시간대 1개) */
+export interface ShiftResponse {
+  id: string;
+  storeId: string;
+  /** 매장 멤버 id (user id 아님) */
+  memberId: string;
+  memberName: string;
+  /** YYYY-MM-DD */
+  workDate: string;
+  slot: WorkSlot;
+  createdAt: string;
+}

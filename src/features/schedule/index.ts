@@ -11,7 +11,7 @@ export { useSchedule } from './hooks/useSchedule';
 export { useStaffDirectory } from './hooks/useStaffDirectory';
 
 // api
-export { scheduleApi } from './api/scheduleApi';
+export { useStoreSession } from './hooks/useStoreSession';
 
 // utils
 export {
@@ -28,14 +28,16 @@ export {
   type CalendarCell,
   type YearMonth,
 } from './utils/calendar';
-export { filterSlotsByStaff, isOngoing, ROLE_BADGE, SHIFT_TONE, SHIFTS } from './utils/shift';
+export { filterSlotsByStaff, groupShifts, isOngoing, ROLE_BADGE, SHIFT_TONE, SHIFTS, SLOT_TO_SHIFT, toStaffMember } from './utils/shift';
 
 // types
 export type {
   GetScheduleRequest,
+  ShiftResponse,
   ShiftSlot,
   ShiftType,
   StaffDirectory,
   StaffMember,
   StoreTeam,
+  WorkSlot,
 } from './types';
