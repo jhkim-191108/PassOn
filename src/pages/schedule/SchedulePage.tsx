@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-// TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
-import Button from '@/features/auth/components/common/Button';
-
-// TODO: 로그인 상태 저장 위치 확정 후 실제 로그인 사용자로 교체 (지금은 대시보드와 같은 ?as= 임시 사용자)
-import { useCurrentUser } from '@/features/dashboard';
++import Button from '@/components/ui/Button';
 import {
   DayDetailPanel,
   MonthCalendar,
@@ -19,6 +15,7 @@ import {
   todayISO,
   useSchedule,
   useStaffDirectory,
+  useStoreSession,
   type ShiftSlot,
   type YearMonth,
 } from '@/features/schedule';
@@ -28,9 +25,11 @@ import '../../css/SchedulePage.css';
 export const SchedulePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = useCurrentUser();
-  const storeId = user.currentStoreId;
-  const storeName = user.memberships.find((m) => m.storeId === storeId)?.storeName ?? '';
+
+  const session = useStoreSession();
+  const userId = session.user?.id ?? '';
+  const storeId = session.store?.id ?? '';
+  const storeName = session.store?.name ?? '';
 
   const today = todayISO();
   const [yearMonth, setYearMonth] = useState<YearMonth>(() => {
@@ -76,7 +75,17 @@ export const SchedulePage = () => {
     <div className="schedule">
       <ScheduleHeader storeName={storeName} onBack={handleBack} />
 
-      <TodayShiftCards slots={todaySchedule.slots} userId={user.id} isLoading={todaySchedule.isLoading} />
+            {session.error && (
+        <div className="schedule__error" role="alert">
+          <p>{session.error}</p>
+        </div>
+      )}
+
+      <TodayShiftCards
+        slots={todaySchedule.slots}
+        userId={userId}
+        isLoading={session.isLoading || todaySchedule.isLoading}
+      />
 
       <TeamFilter teams={teams} selectedTeamId={teamId} onChange={setTeamId} />
 
@@ -92,20 +101,20 @@ export const SchedulePage = () => {
       <MonthCalendar
         yearMonth={yearMonth}
         slotsByDate={slotsByDate}
-        userId={user.id}
+        userId={userId}
         today={today}
         selectedDate={selectedDate}
         onSelectDate={setSelectedDate}
         onPrevMonth={() => moveMonth(-1)}
         onNextMonth={() => moveMonth(1)}
-        isLoading={month.isLoading}
+        isLoading={session.isLoading || month.isLoading}
       />
 
       {selectedDate && (
         <DayDetailPanel
           date={selectedDate}
           slots={slotsByDate.get(selectedDate) ?? []}
-          userId={user.id}
+          userId={userId}
           isToday={selectedDate === today}
           staffById={staffById}
           onClose={() => setSelectedDate(null)}
