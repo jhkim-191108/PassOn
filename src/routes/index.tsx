@@ -8,6 +8,8 @@ import NoticeDetailPage from '@/pages/notices/NoticeDetailPage';
 // import { PrivateRoute } from '@/routes/guards/PrivateRoute';
 // import { PublicOnlyRoute } from '@/routes/guards/PublicOnlyRoute';
 import { PATHS } from '@/routes/paths';
+import HandoverPage from "@/pages/handovers/HandoverPage";
+import HandoverCreatePage from "@/pages/handovers/HandoverCreatePage";
 
 export const router = createBrowserRouter([
   // ── 인증 / 매장 진입 (공통 레이아웃 없음) ──────────
@@ -62,6 +64,8 @@ export const router = createBrowserRouter([
       { path: 'employees', element: <EmployeesPage /> },
       { path: 'notices', element: <NoticePage /> },
       { path: 'notices/:noticeId', element: <NoticeDetailPage /> },
+      { path: 'handovers', element: <HandoverPage /> },
+      { path: 'handovers/new', element: <HandoverCreatePage /> },
       // 아직 페이지가 만들어지지 않은 메뉴
       {
         path: '*',

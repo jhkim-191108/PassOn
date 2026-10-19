@@ -30,7 +30,7 @@ function HandoverForm({
                 placeholder="말하듯 편하게 작성해주세요. AI가 업무별로 정리해드려요!"
             />
             <Button
-                type="button"
+                type="submit"
                 disabled={loading || !rawText.trim()}
             >
                 {loading ? "정리 중..." : "AI로 정리하기"}

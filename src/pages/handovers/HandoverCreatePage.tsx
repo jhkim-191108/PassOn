@@ -45,7 +45,7 @@ function HandoverCreatePage() {
                 handoff.id
             );
             setCards(cardData);
-            console.log("AI 카드:", cards);
+            console.log("AI 카드:", cardData);
             // 에러처리
         } catch (error) {
             console.error(error);
