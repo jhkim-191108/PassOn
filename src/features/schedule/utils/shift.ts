@@ -1,13 +1,72 @@
 import type { ComponentProps } from 'react';
 
 // TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
-import type Badge from '@/features/auth/components/common/Badge';
+import type Badge from '@/components/ui/Badge';
+import type { Member } from '@/features/employees';
 import type { UserRole } from '@/features/auth';
 
-import type { ShiftSlot, ShiftType } from '../types';
+import type { ShiftResponse, ShiftSlot, ShiftType, StaffMember, WorkSlot } from '../types';
 
 /** 근무표에 표시하는 시간대 (Figma 기준) */
 export const SHIFTS: ShiftType[] = ['오전', '오후', '마감'];
+
+
+// ── 서버 응답 → 화면 타입 ───────────────────────────────────
+
+/** 서버 시간대 값 → 화면 표시 */
+export const SLOT_TO_SHIFT: Record<WorkSlot, ShiftType> = {
+  MORNING: '오전',
+  AFTERNOON: '오후',
+  CLOSE: '마감',
+};
+
+/** 시간대별 근무 시간 — 서버에는 시각이 없어서 화면에서 고정값으로 사용 (Figma 기준) */
+const SLOT_TIME: Record<WorkSlot, Pick<ShiftSlot, 'startTime' | 'endTime'>> = {
+  MORNING: { startTime: '08:00', endTime: '14:00' },
+  AFTERNOON: { startTime: '14:00', endTime: '20:00' },
+  CLOSE: { startTime: '20:00', endTime: '23:00' },
+};
+
+/**
+ * 서버는 "직원 1명 × 시간대 1개"가 한 줄 → 화면은 "날짜 + 시간대"별로 근무자를 묶어서 사용
+ * 화면은 staffIds를 로그인 사용자 id와 비교하므로 memberId를 userId로 바꿔서 담음
+ */
+export const groupShifts = (shifts: ShiftResponse[], members: Member[]): ShiftSlot[] => {
+  const userIdByMember = new Map(members.map((m) => [m.id, m.userId]));
+  const groups = new Map<string, ShiftSlot>();
+
+  for (const shift of shifts) {
+    const key = `${shift.workDate}_${shift.slot}`;
+    const group = groups.get(key) ?? {
+      id: key,
+      date: shift.workDate,
+      shiftType: SLOT_TO_SHIFT[shift.slot],
+      staffIds: [],
+      staffNames: [],
+      ...SLOT_TIME[shift.slot],
+    };
+    group.staffIds.push(userIdByMember.get(shift.memberId) ?? shift.memberId);
+    group.staffNames.push(shift.memberName);
+    groups.set(key, group);
+  }
+
+  const order = (type: ShiftType) => SHIFTS.indexOf(type);
+  return [...groups.values()].sort((a, b) => a.date.localeCompare(b.date) || order(a.shiftType) - order(b.shiftType));
+};
+
+/** 직원관리의 Member → 근무표의 StaffMember (id는 userId로 맞춤) */
+export const toStaffMember = (member: Member): StaffMember => ({
+  id: member.userId,
+  name: member.name,
+  email: member.email,
+  role: member.role,
+  shifts: [], // 근무 가능 시간대는 근무표 화면에서 쓰지 않음
+  teamId: member.teamId,
+  teamName: member.teamName,
+  isActive: member.status === 'ACTIVE',
+  joinedAt: '',
+  departedAt: member.leftAt,
+});
 
 /** CSS 클래스용 영문 키 (shift-tone--morning 등) */
 export const SHIFT_TONE: Record<ShiftType, string> = {
