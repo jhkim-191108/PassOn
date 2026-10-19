@@ -1,0 +1,260 @@
+.right-panel {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+}
+
+.right-panel__block,
+.right-panel__shift {
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #eef0f3;
+    border-radius: 16px;
+}
+
+.right-panel h2 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 14px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.right-panel__mark--green {
+    color: #22c55e;
+    font-size: 10px;
+}
+
+.right-panel__empty {
+    margin: 0;
+    color: #a1a1aa;
+    font-size: 13px;
+}
+
+.right-panel__handoffs,
+.right-panel__notices,
+.right-panel__tips,
+.right-panel__shift ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.right-panel__handoffs li,
+.right-panel__notices li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.right-panel__handoffs li + li,
+.right-panel__notices li + li,
+.right-panel__shift li + li,
+.right-panel__tips li + li {
+    margin-top: 12px;
+}
+
+.right-panel__index {
+    width: 18px;
+    flex-shrink: 0;
+    color: #f97316;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.right-panel__index--urgent {
+    color: #ef4444;
+}
+
+.right-panel__index--notice {
+    color: #22c55e;
+}
+
+.right-panel__handoffs strong,
+.right-panel__notices strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.right-panel__handoffs p,
+.right-panel__notices p {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 0;
+    color: #a1a1aa;
+    font-size: 12px;
+}
+
+.right-panel__chip {
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #fff7ed;
+    color: #f97316;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.right-panel__chip--urgent {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.right-panel__chip--notice {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.right-panel__chip--task {
+    background: #f4f4f5;
+    color: #71717a;
+}
+
+.right-panel__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.right-panel__stat {
+    padding: 12px 10px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.right-panel__stat strong {
+    display: block;
+    font-size: 18px;
+}
+
+.right-panel__stat span {
+    color: #71717a;
+    font-size: 12px;
+}
+
+.right-panel__stat--pending {
+    background: #fff7ed;
+    color: #f97316;
+}
+
+.right-panel__stat--urgent {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.right-panel__stat--mine {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.right-panel__stat--review {
+    background: #f0fdf4;
+    color: #22c55e;
+}
+
+.right-panel__shift {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.right-panel__shift li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.right-panel__slot {
+    min-width: 40px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.right-panel__slot--morning {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.right-panel__slot--afternoon {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+.right-panel__slot--close {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.right-panel__count {
+    margin-left: auto;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+}
+
+.right-panel__dot {
+    width: 8px;
+    height: 8px;
+    margin-top: 5px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+.right-panel__dot--urgent {
+    background: #ef4444;
+}
+
+.right-panel__dot--assignment {
+    background: #3b82f6;
+}
+
+.right-panel__dot--memo {
+    background: #a855f7;
+}
+
+.right-panel__notices p {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 230px;
+}
+
+.right-panel__tips {
+    color: #71717a;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.right-panel__tips li {
+    position: relative;
+    padding-left: 12px;
+}
+
+.right-panel__tips li::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: #a1a1aa;
+}
+
+@media (max-width: 1199px) {
+    .right-panel {
+        display: none;
+    }
+}
