@@ -107,7 +107,7 @@ img.src = URL.createObjectURL(await photo.blob());</pre>
       CardRevisionView: "id, cardId, field, beforeValue, afterValue, editorId, editorName, createdAt",
       MemoView: "id, cardId, authorId, authorName, body, createdAt",
       PhotoView: "id, handoffId, originalName, contentType, sizeBytes, position, path, createdAt",
-      NoticeView: "id, storeId, authorId, authorName, title, body, pinned, important, createdAt, updatedAt",
+      NoticeView: "id, storeId, authorId, authorName, title, body, pinned, priority(NORMAL 일반|IMPORTANT 중요|URGENT 긴급), createdAt, updatedAt",
       NotificationView: "id, storeId, type, handoffId, cardId, title, body, read, createdAt",
       NotificationSettingsView: "assignment, urgent, memo, completed",
       EscalationView: "id, storeId, cardId, title, body, authorName, requestedBy, requestedByName, priority, status, createdAt, resolvedAt",
@@ -116,7 +116,7 @@ img.src = URL.createObjectURL(await photo.blob());</pre>
       PurgeView: "handoffs, cards",
       RecordView: "action(CREATED 작성|UPDATED 수정|COMPLETED 처리|DELETED 삭제), id, storeId, handoffId, cardId, title, actorName, at"
     };
-    const enums = "StoreType CAFE|CONVENIENCE|STUDY_CAFE|RESTAURANT|OTHER · StoreRole OWNER|MANAGER|STAFF · MemberStatus ACTIVE|SUSPENDED|LEFT · WorkSlot MORNING|AFTERNOON|CLOSE · HandoffStatus DRAFT|ANALYZING|ANALYZED|FAILED|CONFIRMED · CardType STOCK|TASK|GUEST|NOTICE · Urgency NOW|TODAY|LATER · CardProgress OPEN|IN_PROGRESS|DONE · EscalationPriority IMPORTANT|URGENT · EscalationStatus PENDING|RESOLVED · NotificationType ASSIGNMENT|URGENT|MEMO|COMPLETED · TrashKind HANDOFF|CARD · CardRevisionField TYPE|TITLE|BODY|URGENCY|NEEDS_REVIEW";
+    const enums = "StoreType CAFE|CONVENIENCE|STUDY_CAFE|RESTAURANT|OTHER · StoreRole OWNER|MANAGER|STAFF · MemberStatus ACTIVE|SUSPENDED|LEFT · WorkSlot MORNING|AFTERNOON|CLOSE · HandoffStatus DRAFT|ANALYZING|ANALYZED|FAILED|CONFIRMED · CardType STOCK|TASK|GUEST|NOTICE · Urgency NOW|TODAY|LATER · CardProgress OPEN|IN_PROGRESS|DONE · NoticePriority NORMAL|IMPORTANT|URGENT · EscalationPriority IMPORTANT|URGENT · EscalationStatus PENDING|RESOLVED · NotificationType ASSIGNMENT|URGENT|MEMO|COMPLETED · TrashKind HANDOFF|CARD · CardRevisionField TYPE|TITLE|BODY|URGENCY|NEEDS_REVIEW";
     const ops = [
       ["인증", "POST", "/api/auth/signup", false, 201, "회원가입. 성공하면 accessToken이 위 칸에 들어갑니다.", {email:"mina@example.com", password:"Test1234!", name:"김민지"}, "AuthView"],
       ["인증", "POST", "/api/auth/login", false, 200, "로그인. 성공하면 accessToken이 위 칸에 들어갑니다.", {email:"mina@example.com", password:"Test1234!"}, "AuthView"],
@@ -185,10 +185,10 @@ img.src = URL.createObjectURL(await photo.blob());</pre>
       ["사진", "POST", "/api/handoffs/{handoffId}/photos", true, 201, "인수인계 사진 올리기. 글을 먼저 만든 뒤 id를 넣습니다. 파일 칸 이름은 file. 3장, 5MB까지.", null, "PhotoView", [], true],
       ["사진", "GET", "/api/handoffs/{handoffId}/photos/{photoId}", true, 200, "사진 파일. img 주소로 넣지 말고 fetch한 뒤 화면에 표시합니다.", null, "파일"],
       ["사진", "DELETE", "/api/handoffs/{handoffId}/photos/{photoId}", true, 204, "인수인계를 확정하기 전에만 사진을 지울 수 있습니다.", null, "없음"],
-      ["공지", "POST", "/api/stores/{storeId}/notices", true, 201, "공지 작성. 오너와 매니저. pinned, important 생략 시 false.", {title:"우유 입고", body:"내일 아침 입고", pinned:true, important:false}, "NoticeView"],
-      ["공지", "GET", "/api/stores/{storeId}/notices", true, 200, "고정이 먼저, 그다음 최신순.", null, "NoticeView[]"],
+      ["공지", "POST", "/api/stores/{storeId}/notices", true, 201, "공지 작성. 오너와 매니저. pinned 생략 시 false, priority 생략 시 NORMAL. URGENT면 다른 멤버에게 긴급 알림.", {title:"우유 입고", body:"내일 아침 입고", pinned:true, priority:"URGENT"}, "NoticeView"],
+      ["공지", "GET", "/api/stores/{storeId}/notices", true, 200, "고정이 먼저, 그다음 긴급·중요·일반, 그다음 최신순. priority로 한 단계만 볼 수 있다.", null, "NoticeView[]", [{name:"priority", example:"URGENT"}]],
       ["공지", "GET", "/api/stores/{storeId}/notices/{noticeId}", true, 200, "공지 한 건.", null, "NoticeView"],
-      ["공지", "PATCH", "/api/stores/{storeId}/notices/{noticeId}", true, 200, "보낸 필드만 수정. 오너와 매니저.", {title:"우유 입고", pinned:false}, "NoticeView"],
+      ["공지", "PATCH", "/api/stores/{storeId}/notices/{noticeId}", true, 200, "보낸 필드만 수정. 오너와 매니저. 일반·중요에서 URGENT로 바꾸면 긴급 알림.", {title:"우유 입고", pinned:false, priority:"IMPORTANT"}, "NoticeView"],
       ["공지", "DELETE", "/api/stores/{storeId}/notices/{noticeId}", true, 204, "공지 삭제. 오너와 매니저.", null, "없음"],
       ["알림", "GET", "/api/stores/{storeId}/notifications", true, 200, "그 매장에서 내가 받은 알림. 최신순.", null, "NotificationView[]"],
       ["알림", "POST", "/api/notifications/{notificationId}/read", true, 200, "알림 한 건 읽음.", null, "NotificationView"],

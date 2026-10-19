@@ -2,10 +2,12 @@ package com.nextshift.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import java.util.UUID;
 
-/** 매장 공지. 인수인계 카드와 따로 두고, 고정과 중요 표시를 가진다. */
+/** 매장 공지. 인수인계 카드와 따로 두고, 고정과 일반·중요·긴급 단계를 가진다. */
 @Entity
 @Table(name = "notices")
 public class Notice extends UuidEntity {
@@ -25,9 +27,10 @@ public class Notice extends UuidEntity {
     @Column(nullable = false)
     private boolean pinned;
 
-    /** 참이면 중요한 공지로 표시한다. */
-    @Column(nullable = false)
-    private boolean important;
+    /** 일반, 중요, 긴급. 비어 있으면 일반이다. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private NoticePriority priority = NoticePriority.NORMAL;
 
     /** 공지가 속한 매장 id를 반환한다. */
     public UUID getStoreId() {
@@ -79,13 +82,13 @@ public class Notice extends UuidEntity {
         this.pinned = pinned;
     }
 
-    /** 중요 공지 여부를 반환한다. */
-    public boolean isImportant() {
-        return important;
+    /** 공지 단계를 반환한다. */
+    public NoticePriority getPriority() {
+        return priority;
     }
 
-    /** 중요 공지 여부를 저장한다. */
-    public void setImportant(boolean important) {
-        this.important = important;
+    /** 공지 단계를 저장한다. */
+    public void setPriority(NoticePriority priority) {
+        this.priority = priority;
     }
 }

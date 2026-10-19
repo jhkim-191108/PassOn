@@ -3,11 +3,17 @@ package com.nextshift.service;
 import com.nextshift.api.Views.NoticeView;
 import com.nextshift.common.ApiException;
 import com.nextshift.common.AuthPrincipal;
+import com.nextshift.domain.MemberStatus;
 import com.nextshift.domain.Notice;
+import com.nextshift.domain.NoticePriority;
+import com.nextshift.domain.StoreMember;
 import com.nextshift.domain.User;
 import com.nextshift.repo.NoticeRepository;
+import com.nextshift.repo.StoreMemberRepository;
 import com.nextshift.repo.UserRepository;
 import com.nextshift.security.StoreGuard;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,19 +25,41 @@ import org.springframework.transaction.annotation.Transactional;
 /** 매장 공지. 쓰기는 매장 수정 권한이 있는 사람만, 읽기는 활동 멤버면 된다. */
 @Service
 public class NoticeService {
+    private static final Comparator<Notice> LIST_ORDER = Comparator
+            .comparing(Notice::isPinned).reversed()
+            .thenComparingInt(notice -> priorityRank(notice.getPriority()))
+            .thenComparing(Notice::getCreatedAt, Comparator.reverseOrder());
+
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
+    private final StoreMemberRepository memberRepository;
+    private final NotificationService notificationService;
     private final StoreGuard guard;
 
-    public NoticeService(NoticeRepository noticeRepository, UserRepository userRepository, StoreGuard guard) {
+    public NoticeService(
+            NoticeRepository noticeRepository,
+            UserRepository userRepository,
+            StoreMemberRepository memberRepository,
+            NotificationService notificationService,
+            StoreGuard guard
+    ) {
         this.noticeRepository = noticeRepository;
         this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
+        this.notificationService = notificationService;
         this.guard = guard;
     }
 
-    /** 오너 또는 매니저가 공지를 저장한다. */
+    /** 오너 또는 매니저가 공지를 저장한다. priority를 빼면 일반이다. 긴급이면 다른 멤버에게 알린다. */
     @Transactional
-    public NoticeView create(AuthPrincipal principal, UUID storeId, String title, String body, Boolean pinned, Boolean important) {
+    public NoticeView create(
+            AuthPrincipal principal,
+            UUID storeId,
+            String title,
+            String body,
+            Boolean pinned,
+            NoticePriority priority
+    ) {
         var member = guard.requireActiveMember(storeId, principal.id());
         guard.requireStoreUpdate(member);
         Notice notice = new Notice();
@@ -40,16 +68,23 @@ public class NoticeService {
         notice.setTitle(title.trim());
         notice.setBody(body.trim());
         notice.setPinned(Boolean.TRUE.equals(pinned));
-        notice.setImportant(Boolean.TRUE.equals(important));
+        notice.setPriority(priority == null ? NoticePriority.NORMAL : priority);
         noticeRepository.save(notice);
+        if (notice.getPriority() == NoticePriority.URGENT) {
+            notifyUrgent(storeId, principal.id(), notice.getTitle());
+        }
         return toView(notice, authorName(principal.id()));
     }
 
-    /** 활동 멤버에게 그 매장 공지를 고정 우선으로 돌려준다. */
+    /** 활동 멤버에게 그 매장 공지를 고정, 긴급, 최신 순으로 돌려준다. priority가 있으면 그 단계만 남긴다. */
     @Transactional(readOnly = true)
-    public List<NoticeView> list(AuthPrincipal principal, UUID storeId) {
+    public List<NoticeView> list(AuthPrincipal principal, UUID storeId, NoticePriority priority) {
         guard.requireActiveMember(storeId, principal.id());
-        List<Notice> notices = noticeRepository.findByStoreId(storeId);
+        List<Notice> notices = new ArrayList<>(noticeRepository.findByStoreId(storeId));
+        if (priority != null) {
+            notices.removeIf(notice -> notice.getPriority() != priority);
+        }
+        notices.sort(LIST_ORDER);
         Map<UUID, User> authors = userRepository.findAllById(notices.stream().map(Notice::getAuthorId).collect(Collectors.toSet()))
                 .stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
@@ -64,15 +99,23 @@ public class NoticeService {
         return toView(notice, authorName(notice.getAuthorId()));
     }
 
-    /** 보낸 값만 고친다. 빈 제목이나 본문은 거절한다. */
+    /** 보낸 값만 고친다. 빈 제목이나 본문은 거절한다. 일반이나 중요에서 긴급으로 올리면 알린다. */
     @Transactional
-    public NoticeView update(AuthPrincipal principal, UUID noticeId, String title, String body, Boolean pinned, Boolean important) {
-        if (title == null && body == null && pinned == null && important == null) {
+    public NoticeView update(
+            AuthPrincipal principal,
+            UUID noticeId,
+            String title,
+            String body,
+            Boolean pinned,
+            NoticePriority priority
+    ) {
+        if (title == null && body == null && pinned == null && priority == null) {
             throw ApiException.badRequest("바꿀 값이 없습니다.");
         }
         Notice notice = require(noticeId);
         var member = guard.requireActiveMember(notice.getStoreId(), principal.id());
         guard.requireStoreUpdate(member);
+        NoticePriority previous = notice.getPriority();
         if (title != null) {
             String trimmed = title.trim();
             if (trimmed.isBlank()) {
@@ -90,8 +133,11 @@ public class NoticeService {
         if (pinned != null) {
             notice.setPinned(pinned);
         }
-        if (important != null) {
-            notice.setImportant(important);
+        if (priority != null) {
+            notice.setPriority(priority);
+        }
+        if (previous != NoticePriority.URGENT && notice.getPriority() == NoticePriority.URGENT) {
+            notifyUrgent(notice.getStoreId(), principal.id(), notice.getTitle());
         }
         return toView(notice, authorName(notice.getAuthorId()));
     }
@@ -103,6 +149,15 @@ public class NoticeService {
         var member = guard.requireActiveMember(notice.getStoreId(), principal.id());
         guard.requireStoreUpdate(member);
         noticeRepository.delete(notice);
+    }
+
+    private void notifyUrgent(UUID storeId, UUID actorId, String title) {
+        for (StoreMember member : memberRepository.findByStoreIdOrderByCreatedAtAsc(storeId)) {
+            if (member.getStatus() != MemberStatus.ACTIVE) {
+                continue;
+            }
+            notificationService.urgentNotice(storeId, actorId, member.getUserId(), title);
+        }
     }
 
     private Notice require(UUID noticeId) {
@@ -121,6 +176,14 @@ public class NoticeService {
         return user.getName();
     }
 
+    private static int priorityRank(NoticePriority priority) {
+        return switch (priority) {
+            case URGENT -> 0;
+            case IMPORTANT -> 1;
+            case NORMAL -> 2;
+        };
+    }
+
     private static NoticeView toView(Notice notice, String authorName) {
         return new NoticeView(
                 notice.getId(),
@@ -130,7 +193,7 @@ public class NoticeService {
                 notice.getTitle(),
                 notice.getBody(),
                 notice.isPinned(),
-                notice.isImportant(),
+                notice.getPriority(),
                 notice.getCreatedAt(),
                 notice.getUpdatedAt()
         );

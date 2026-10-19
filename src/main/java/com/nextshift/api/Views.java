@@ -7,6 +7,7 @@ import com.nextshift.domain.EscalationPriority;
 import com.nextshift.domain.EscalationStatus;
 import com.nextshift.domain.HandoffStatus;
 import com.nextshift.domain.MemberStatus;
+import com.nextshift.domain.NoticePriority;
 import com.nextshift.domain.NotificationType;
 import com.nextshift.domain.StoreRole;
 import com.nextshift.domain.StoreType;
@@ -180,7 +181,7 @@ public final class Views {
             OffsetDateTime createdAt
     ) {}
 
-    /** 매장 공지. pinned는 목록 위, important는 중요 표시. */
+    /** 매장 공지. pinned는 목록 위, priority는 일반·중요·긴급. */
     public record NoticeView(
             UUID id,
             UUID storeId,
@@ -189,7 +190,7 @@ public final class Views {
             String title,
             String body,
             boolean pinned,
-            boolean important,
+            NoticePriority priority,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt
     ) {}
