@@ -6,11 +6,10 @@ import {
     analyzeHandoff,
     confirmHandoff,
 } from "../../api/handoffs";
-import { getHandoffCards } from "../../api/cards";
-import type { Store, Card } from "@/types/api";
+import { getHandoffCards, updateCard } from "../../api/cards";
+import type { Store, Card, UpdateCardRequest } from "@/types/api";
 import AiResultCard from "@/components/handovers/AiResultCard";
 import Button from "@/components/ui/Button";
-
 
 interface AppContext {
     currentStore: Store | undefined;
@@ -80,6 +79,30 @@ function HandoverCreatePage() {
         }
     }
 
+    const handleUpdateCard = async (
+        cardId: string,
+        data: UpdateCardRequest
+    ) => {
+        try {
+            setError("");
+
+            const updated = await updateCard(
+                cardId,
+                data
+            );
+
+            setCards((current) =>
+                current.map((card) =>
+                    card.id === updated.id
+                    ? updated
+                    : card
+                )
+            );
+        } catch (error) {
+            console.error("카드 수정 실패:", error);
+            setError("수정사항을 반영하지 못했습니다.");
+        }
+    };
 
     if (!currentStore) {
         return <p>등록된 매장이 없습니다.</p>;
@@ -106,6 +129,7 @@ function HandoverCreatePage() {
                         <AiResultCard 
                             key={card.id}
                             card={card}
+                            onSave={handleUpdateCard}
                         />
                     ))}
                     {!confirmed ? (
