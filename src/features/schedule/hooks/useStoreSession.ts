@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { getStores } from '@/api/stores';
 import { getMe } from '@/api/users';
+import { pickStore, useCurrentStoreId } from '@/features/stores/currentStore';
 import type { Store, User } from '@/types/api';
 
 interface StoreSession {
@@ -11,17 +12,18 @@ interface StoreSession {
   error: string | null;
 }
 
-// 로그인 사용자 + 현재 매장 (근무표 화면용 임시)
-// TODO: AuthContext가 생기면 그쪽의 사용자 · 현재 매장으로 교체 (매장 전환 기능 전까지는 첫 번째 매장 사용)
+// 로그인 사용자와 현재 매장. 매장 설정에서 고른 매장을 따른다.
 export const useStoreSession = (): StoreSession => {
   const [session, setSession] = useState<StoreSession>({ user: null, store: null, isLoading: true, error: null });
+  const selectedId = useCurrentStoreId();
 
   useEffect(() => {
     let ignore = false;
     Promise.all([getMe(), getStores()])
       .then(([user, stores]) => {
         if (ignore) return;
-        setSession({ user, store: stores[0] ?? null, isLoading: false, error: stores.length ? null : '소속된 매장이 없어요.' });
+        const store = pickStore(stores);
+        setSession({ user, store, isLoading: false, error: store ? null : '소속된 매장이 없어요.' });
       })
       .catch((e) => {
         if (ignore) return;
@@ -35,7 +37,7 @@ export const useStoreSession = (): StoreSession => {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [selectedId]);
 
   return session;
 };

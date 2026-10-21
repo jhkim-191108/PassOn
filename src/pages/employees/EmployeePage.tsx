@@ -1,6 +1,8 @@
 // 직원관리 화면. 데이터는 useEmployees가 맡고, 이 파일은 목록과 확인 창만 조립한다.
 import { useState } from "react";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import ErrorState from "@/components/ui/ErrorState";
+import Loading from "@/components/ui/Loading";
 import InviteModal from "@/features/employees/components/InviteModal";
 import {
     EmployeeHeader,
@@ -44,7 +46,8 @@ function EmployeesPage() {
     const [rolePending, setRolePending] = useState(false);
 
     if (!store) {
-        return <p className="employees__message">{message || "불러오는 중"}</p>;
+        if (!message) return <Loading text="직원 목록을 불러오는 중입니다..." />;
+        return <ErrorState title="직원 목록을 불러오지 못했습니다." description={message} />;
     }
 
     // 오너 권한을 넘기거나 받는 경우만 확인 창을 연다. 매니저·직원 변경은 바로 반영한다.

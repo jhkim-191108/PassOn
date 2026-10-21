@@ -1,6 +1,8 @@
 // 매장 설정. 데이터는 useStoreSettings가 맡고, 이 파일은 카드만 조립한다.
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import ErrorState from "@/components/ui/ErrorState";
+import Loading from "@/components/ui/Loading";
 import { selectStore } from "@/features/stores/currentStore";
 import { PATHS } from "@/routes/paths";
 import {
@@ -38,11 +40,11 @@ function StoreSettingsPage() {
     } = useStoreSettings();
 
     if (loading) {
-        return <p className="store-settings__status">불러오는 중</p>;
+        return <Loading text="매장 설정을 불러오는 중입니다..." />;
     }
 
     if (!current || !user) {
-        return <p className="store-settings__status">{message || "매장 설정을 불러오지 못했습니다."}</p>;
+        return <ErrorState title="매장 설정을 불러오지 못했습니다." description={message || "잠시 후 다시 시도해 주세요."} />;
     }
 
     return (

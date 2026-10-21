@@ -11,6 +11,7 @@ import StoreSettingsPage from '@/pages/stores/StoreSettingsPage';
 import { PATHS } from '@/routes/paths';
 import HandoverPage from "@/pages/handovers/HandoverPage";
 import HandoverCreatePage from "@/pages/handovers/HandoverCreatePage";
+import { SchedulePage } from "@/pages/schedule/SchedulePage";
 
 export const router = createBrowserRouter([
   // ── 인증 / 매장 진입 (공통 레이아웃 없음) ──────────
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
       { path: 'notices/:noticeId', element: <NoticeDetailPage /> },
       { path: 'handovers', element: <HandoverPage /> },
       { path: 'handovers/new', element: <HandoverCreatePage /> },
+      { path: 'schedule', element: <SchedulePage /> },
       // 아직 페이지가 만들어지지 않은 메뉴
       {
         path: '*',
