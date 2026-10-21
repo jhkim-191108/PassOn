@@ -65,6 +65,69 @@ export interface Notification {
     createdAt: string;
 }
 
+export type HandoffStatus =
+    | "DRAFT"
+    | "ANALYZING"
+    | "ANALYZED"
+    | "FAILED"
+    | "CONFIRMED";
+
+export interface Handoff {
+    id: string;
+    storeId: string;
+    authorId: string;
+    authorName: string;
+    rawText: string;
+    status: HandoffStatus;
+    analyzeError: string | null;
+    analyzedAt: string | null;
+    confirmedAt: string | null;
+    confirmedBy: string | null;
+    createdAt: string;
+    updatedAt: string;
+    read: boolean;
+    cardCount: number;
+    openCardCount: number;
+}
+
+export type CardType =
+    | "STOCK"
+    | "TASK"
+    | "GUEST"
+    | "NOTICE";
+
+export type Urgency =
+    | "NOW"
+    | "TODAY"
+    | "LATER";
+
+export type CardProgress =
+    | "OPEN"
+    | "IN_PROGRESS"
+    | "DONE";
+
+export interface Card {
+    id: string;
+    handoffId: string;
+    type: CardType;
+    title: string;
+    body: string;
+    urgency: Urgency;
+    needsReview: boolean;
+    sourceQuote: string;
+    position: number;
+    completedAt: string | null;
+    completedBy: string | null;
+    authorName: string;
+    escalationStatus: string | null;
+    escalationPriority: string | null;
+    assigneeMemberId: string | null;
+    assigneeName: string | null;
+    acknowledgedAt: string | null;
+    progress: CardProgress;
+    edited: boolean;
+}
+
 export type NoticePriority = "NORMAL" | "IMPORTANT" | "URGENT";
 
 export interface Notice {
@@ -78,4 +141,12 @@ export interface Notice {
     priority: NoticePriority;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface UpdateCardRequest {
+    type: CardType;
+    title: string;
+    body: string;
+    urgency: Urgency;
+    needsReview: boolean;
 }

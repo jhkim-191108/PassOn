@@ -126,7 +126,7 @@ function AppLayout() {
                 
                 <div className="app-body">
                     <main className="app-main">
-                        <Outlet/>
+                        <Outlet context={{ currentStore }}/>
                     </main>
                     {currentStore && (
                         <RightPanel
