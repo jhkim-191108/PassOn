@@ -1,2 +1,4 @@
-   // components/common/Badge.tsx (임시)
-   export const RoleBadge = ({ role }: { role: string }) => <span>{role}</span>;
+import CommonBadge from "@/components/ui/Badge";
+
+export const RoleBadge = ({ role }: { role: string }) => <span>{role}</span>;
+export default CommonBadge;

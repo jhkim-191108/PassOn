@@ -1,16 +1,16 @@
 import { useId, useState, type FormEvent } from 'react';
 
 // TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
-import Button from './common/Button'
+import Button from '@/components/ui/Button';
 
 import '../../../css/authInput.css';
 import '../../../css/StoreJoinForm.css';
 
 const INVITE_CODE_MAX_LENGTH = 8;
 
-/** 초대 링크(.../invite/:token)에서 토큰 추출 */
+/** 초대 링크의 /invite/토큰 또는 /join/코드에서 코드를 뽑는다. */
 export const extractInviteToken = (link: string): string | null => {
-  const match = link.trim().match(/\/invite\/([^/?#\s]+)/);
+  const match = link.trim().match(/\/(?:invite|join)\/([^/?#\s]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 };
 
@@ -116,7 +116,7 @@ export const StoreJoinForm = ({
               setLink(e.target.value);
               setLinkError(null);
             }}
-            placeholder="https://passon.kr/invite/..."
+            placeholder="https://passon.kr/join/코드"
             autoComplete="off"
             spellCheck={false}
             aria-invalid={!!linkError}

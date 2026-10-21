@@ -16,9 +16,9 @@ import { PATHS } from '@/routes/paths';
 import '../../css/DashboardPage.css';
 
 const HIGHLIGHT_TITLE = {
-  owner: '보고 필요',
-  manager: '확인 필요',
-  staff: '내 업무',
+  OWNER: '보고 필요',
+  MANAGER: '확인 필요',
+  STAFF: '내 업무',
 } as const;
 
 export const DashboardPage = () => {
@@ -42,9 +42,7 @@ export const DashboardPage = () => {
   if (isLoading) {
     return (
       <div className="dashboard">
-        <p className="dashboard__status" role="status">
-          대시보드를 불러오는 중…
-        </p>
+        <Loading text="대시보드를 불러오는 중…" />
       </div>
     );
   }
@@ -52,12 +50,7 @@ export const DashboardPage = () => {
   if (error && summary.recent.length === 0 && summary.highlighted.length === 0) {
     return (
       <div className="dashboard">
-        <div className="dashboard__status" role="alert">
-          <p>{error}</p>
-          <Button variant="secondary" size="sm" onClick={reload}>
-            다시 시도
-          </Button>
-        </div>
+        <ErrorState title="대시보드를 불러오지 못했습니다." description={error} onRetry={reload} />
       </div>
     );
   }
@@ -81,7 +74,7 @@ export const DashboardPage = () => {
 
       <HandoffSection
         title={HIGHLIGHT_TITLE[summary.role]}
-        hint={summary.role === 'manager' ? '확인하면 처리중으로 이동' : undefined}
+        hint={summary.role === 'MANAGER' ? '확인하면 처리중으로 이동' : undefined}
         items={summary.highlighted}
         currentUserId={user.id}
         onViewItem={viewItem}

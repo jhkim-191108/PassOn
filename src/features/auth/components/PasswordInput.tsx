@@ -10,12 +10,12 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   onVisibleChange?: (visible: boolean) => void;
 };
 
-export const PasswordInput = ({
+function PasswordInput({
   className = '',
   visible: controlledVisible,
   onVisibleChange,
   ...inputProps
-}: Props) => {
+}: Props) {
   const [innerVisible, setInnerVisible] = useState(false);
   const visible = controlledVisible ?? innerVisible;
 
@@ -52,4 +52,6 @@ export const PasswordInput = ({
       </button>
     </div>
   );
-};
+}
+
+export default PasswordInput;

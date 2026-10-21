@@ -19,6 +19,7 @@ type Step = 'choose' | 'create' | 'created' | 'join';
 /** 회원가입·로그인에서 navigate state로 넘겨주는 값 */
 interface StoreSetupLocationState {
   userName?: string;
+  step?: Step;
 }
 
 const buildInviteLink = (token: string) =>
@@ -28,11 +29,15 @@ export const StoreSetupPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // TODO: 로그인 상태 저장 위치 확정 후 현재 사용자 이름은 그쪽에서 가져오기
-  const userName = (location.state as StoreSetupLocationState | null)?.userName;
+  const setupState = location.state as StoreSetupLocationState | null;
+  const userName = setupState?.userName;
 
  // 변경: 초대 링크(/invite/:token)로 들어왔으면 합류 단계부터 시작
   const { pendingInvite, clearPendingInvite } = usePendingInvite();
-  const [step, setStep] = useState<Step>(pendingInvite ? 'join' : 'choose');
+  const requested = setupState?.step;
+  const [step, setStep] = useState<Step>(
+    requested === 'create' || requested === 'join' ? requested : pendingInvite ? 'join' : 'choose',
+  );
   const [created, setCreated] = useState<CreateStoreResponse | null>(null);
 
   const goToDashboard = useCallback(() => navigate(PATHS.DASHBOARD, { replace: true }), [navigate]);
@@ -122,8 +127,8 @@ export const StoreSetupPage = () => {
       desc: '오너나 매니저에게 받은 초대코드를 입력하세요.',
       body: (
         <StoreJoinForm
-          onSubmitCode={(inviteCode) => joinStore({ inviteCode })}
-          onSubmitLink={(inviteToken) => joinStore({ inviteToken })}   // 변경
+          onSubmitCode={(code) => joinStore({ code })}
+          onSubmitLink={(code) => joinStore({ code })}
           isPending={isPending}
           error={error}
           onChange={clearError}

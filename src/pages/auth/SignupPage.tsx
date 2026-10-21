@@ -5,7 +5,7 @@ import { SignupForm, useSignup, type SignupResponse } from '@/features/auth';
 import { PATHS } from '@/routes/paths';
 import '../../css/SignupPage.css';
 
-export const SignupPage = () => {
+function SignupPage() {
   const navigate = useNavigate();
 
   // 가입 직후 소속 매장이 없으므로 매장 생성/합류로 이동
@@ -40,4 +40,6 @@ export const SignupPage = () => {
       </div>
     </main>
   );
-};
+}
+
+export default SignupPage;

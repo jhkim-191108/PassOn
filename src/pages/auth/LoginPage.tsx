@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import logoSrc from '@/assets/logo.png';
 import {
-  DEMO_USERS,
-  DemoAccountList,
   LoginForm,
   useLogin,
   readPendingInvite,
@@ -15,7 +13,7 @@ import '../../css/LoginPage.css';
 
 const STORE_TYPES = ['카페', '편의점', '스터디카페', '레스토랑'];
 
-export const LoginPage = () => {
+function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,7 +36,7 @@ export const LoginPage = () => {
     [location.state, navigate],
   );
 
-  const { login, loginAsDemo, isPending, error, clearError } = useLogin({
+  const { login, isPending, error, clearError } = useLogin({
     onSuccess: handleSuccess,
   });
 
@@ -92,14 +90,10 @@ export const LoginPage = () => {
               회원가입
             </Link>
           </p>
-
-          <DemoAccountList
-            users={DEMO_USERS}
-            onSelect={(user) => loginAsDemo(user.id)}
-            disabled={isPending}
-          />
         </div>
       </main>
     </div>
   );
-};
+}
+
+export default LoginPage;

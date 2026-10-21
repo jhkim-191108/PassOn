@@ -15,12 +15,12 @@ interface Props {
 }
 
 const currentRole = (user: AppUser) =>
-  user.memberships.find((m) => m.storeId === user.currentStoreId)?.role ?? 'staff';
+  user.memberships.find((m) => m.storeId === user.currentStoreId)?.role ?? 'STAFF';
 
 const ROLE_BADGE: Record<UserRole, { label: string; variant: ComponentProps<typeof Badge>['variant'] }> = {
-  owner: { label: 'Owner', variant: 'primary' },
-  manager: { label: 'Manager', variant: 'success' },
-  staff: { label: 'Staff', variant: 'neutral' },
+  OWNER: { label: 'Owner', variant: 'primary' },
+  MANAGER: { label: 'Manager', variant: 'success' },
+  STAFF: { label: 'Staff', variant: 'neutral' },
 };
 
 export const DemoAccountList = ({ users, onSelect, disabled = false }: Props) => {
@@ -59,7 +59,7 @@ export const DemoAccountList = ({ users, onSelect, disabled = false }: Props) =>
       {open && (
         <div id={panelId} className="demo-accounts__panel">
           <p className="demo-accounts__note">
-            매장 소속(owner · manager · staff)은 매장을 직접 만들거나 초대를 받아 결정돼요.
+            매장 소속(OWNER · MANAGER · STAFF)은 매장을 직접 만들거나 초대를 받아 결정돼요.
           </p>
           <ul className="demo-accounts__list">
             {users.map((user) => (

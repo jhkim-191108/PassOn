@@ -44,6 +44,6 @@ export const StoreSetupChoice = ({ onCreate, onJoin }: Props) => (
       </button>
     </div>
 
-    <p className="setup-choice__note">역할(owner · manager · staff)은 매장별로 정해집니다.</p>
+    <p className="setup-choice__note">역할(OWNER · MANAGER · STAFF)은 매장별로 정해집니다.</p>
   </>
 );
