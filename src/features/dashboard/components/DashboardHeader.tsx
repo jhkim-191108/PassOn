@@ -1,5 +1,5 @@
 // TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
-import Button from '@/features/auth/components/common/Button';
+import Button from '@/components/ui/Button';
 
 import type { UserRole } from '@/features/auth';
 
