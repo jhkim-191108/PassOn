@@ -5,6 +5,45 @@ import { getHandoffCards } from "@/api/cards";
 import type { Handoff, Card, } from "@/types/api";
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
+import Badge from "@/components/ui/Badge";
+
+const cardTypeLabel = {
+    STOCK: "재고",
+    TASK: "할 일",
+    GUEST: "고객",
+    NOTICE: "공지",
+};
+
+const urgencyLabel = {
+    NOW: "긴급",
+    TODAY: "오늘",
+    LATER: "나중",
+};
+
+const progressLabel = {
+    OPEN: "미완료",
+    IN_PROGRESS: "진행 중",
+    DONE: "완료",
+};
+
+const typeBadgeVariant = {
+    STOCK: "warning",
+    TASK: "primary",
+    GUEST: "neutral",
+    NOTICE: "success",
+} as const;
+
+const urgencyBadgeVariant = {
+    NOW: "danger",
+    TODAY: "warning",
+    LATER: "neutral",
+} as const;
+
+const progressBadgeVariant = {
+    OPEN: "danger",
+    IN_PROGRESS: "primary",
+    DONE: "success",
+} as const;
 
 function HandoverDetailPage() {
     const {handoffId} = useParams<{ handoffId: string }>();
@@ -87,13 +126,12 @@ function HandoverDetailPage() {
                 {cards.map((card) => (
                     <article key={card.id}>
                         <div>
-                            <span>{card.type}</span>
-                            <span>{card.urgency}</span>
+                            <Badge variant={typeBadgeVariant[card.type]}>{cardTypeLabel[card.type]}</Badge>
+                            <Badge variant={urgencyBadgeVariant[card.urgency]}>{urgencyLabel[card.urgency]}</Badge>
+                            <Badge variant={progressBadgeVariant[card.progress]}>{progressLabel[card.progress]}</Badge>
                         </div>
                         <h3>{card.title}</h3>
                         <p>{card.body}</p>
-
-                        <span>{card.progress}</span>
                     </article>
                 ))}
             </div>
