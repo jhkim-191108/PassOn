@@ -22,9 +22,10 @@ export const storeApi = {
     },
 
     async joinStore(values: JoinStoreRequest): Promise<JoinStoreResponse> {
+        const code = values.code.trim().toUpperCase();
         const store = await api<Store>("/api/stores/join", {
             method: "POST",
-            body: JSON.stringify(values),
+            body: JSON.stringify({ code, role: "STAFF" }),
         });
         return { storeId: store.id, storeName: store.name };
     },

@@ -1,7 +1,7 @@
 import { generatePath, useNavigate } from 'react-router-dom';
 
-// TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
-import Button from '@/features/auth/components/common/Button';
+import ErrorState from '@/components/ui/ErrorState';
+import Loading from '@/components/ui/Loading';
 
 import {
   DashboardHeader,
@@ -33,9 +33,7 @@ export const DashboardPage = () => {
   if (isLoading) {
     return (
       <div className="dashboard">
-        <p className="dashboard__status" role="status">
-          대시보드를 불러오는 중…
-        </p>
+        <Loading text="대시보드를 불러오는 중…" />
       </div>
     );
   }
@@ -43,12 +41,7 @@ export const DashboardPage = () => {
   if (error && summary.recent.length === 0 && summary.highlighted.length === 0) {
     return (
       <div className="dashboard">
-        <div className="dashboard__status" role="alert">
-          <p>{error}</p>
-          <Button variant="secondary" size="sm" onClick={reload}>
-            다시 시도
-          </Button>
-        </div>
+        <ErrorState title="대시보드를 불러오지 못했습니다." description={error} onRetry={reload} />
       </div>
     );
   }

@@ -1,3 +1,4 @@
+import { clearCurrentStore } from "@/features/stores/currentStore";
 import{ api, clearAccessToken } from "./client"
 
 export async function logout() {
@@ -7,5 +8,6 @@ export async function logout() {
         });
     } finally {
         clearAccessToken();
+        clearCurrentStore();
     }
 }

@@ -1,0 +1,361 @@
+.store-settings {
+    width: 100%;
+}
+
+.store-settings__header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.store-settings__header p {
+    margin: 6px 0 0;
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+
+.store-settings__status {
+    margin: 12px 0 0;
+    color: var(--color-danger);
+    font-size: 14px;
+}
+
+.store-settings__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.store-settings__card,
+.store-settings__danger {
+    padding: 22px;
+    border-radius: 16px;
+}
+
+.store-settings__card {
+    background: #ffffff;
+    border: 1px solid #eceff3;
+}
+
+.store-settings__card h2,
+.store-settings__danger h2 {
+    margin: 0 0 16px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.store-settings__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.store-settings__field:last-child {
+    margin-bottom: 0;
+}
+
+.store-settings__field > span,
+.store-settings__hint,
+.store-settings__account p,
+.store-settings__store p,
+.store-settings__toggles p,
+.store-settings__danger p {
+    margin: 0;
+    color: var(--color-text-sub);
+    font-size: 13px;
+}
+
+.store-settings__field > span {
+    font-weight: 600;
+}
+
+.store-settings__field input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--color-text);
+    font-size: 15px;
+}
+
+.store-settings__code-row,
+.store-settings__link-row,
+.store-settings__identity,
+.store-settings__store,
+.store-settings__toggles li {
+    display: flex;
+    align-items: center;
+}
+
+.store-settings__code-row {
+    gap: 10px;
+}
+
+.store-settings__code {
+    letter-spacing: 0.08em;
+    font-size: 18px;
+}
+
+.store-settings__copy {
+    border: 0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    background: #f3f4f6;
+    color: #3f3f46;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.store-settings__link-row {
+    gap: 8px;
+    min-height: 44px;
+    padding: 4px 6px 4px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-background-soft);
+}
+
+.store-settings__link-row input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-sub);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.store-settings__account {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.store-settings__avatar,
+.store-settings__mark {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.store-settings__avatar {
+    width: 46px;
+    height: 46px;
+    background: #ede9fe;
+    color: #7c3aed;
+    font-size: 16px;
+}
+
+.store-settings__identity {
+    gap: 8px;
+}
+
+.store-settings__identity strong {
+    font-size: 16px;
+}
+
+.store-settings__identity em,
+.store-settings__store em {
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.store-settings__identity em {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.store-settings__account p + p {
+    margin-top: 2px;
+}
+
+.store-settings__stores,
+.store-settings__toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.store-settings__store {
+    padding: 0;
+    border-radius: 12px;
+    background: #f4f6f5;
+}
+
+.store-settings__store-pick {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.store-settings__store--current .store-settings__store-pick {
+    cursor: default;
+}
+
+.store-settings__store--current {
+    background: var(--color-primary-light);
+}
+
+.store-settings__store-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.store-settings__store div {
+    min-width: 0;
+    flex: 1;
+}
+
+.store-settings__store strong,
+.store-settings__toggles strong {
+    display: block;
+    font-size: 14px;
+}
+
+.store-settings__mark {
+    width: 36px;
+    height: 36px;
+    background: #d9f5ea;
+    color: var(--color-primary-dark);
+}
+
+.store-settings__store--current .store-settings__mark {
+    background: var(--color-primary);
+    color: #ffffff;
+}
+
+.store-settings__store em {
+    margin-left: auto;
+    background: #ffffff;
+    color: var(--color-primary-dark);
+}
+
+.store-settings__toggles li {
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.store-settings__switch {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #e5e7eb;
+    cursor: pointer;
+}
+
+.store-settings__switch i {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    transition: transform 0.15s ease;
+}
+
+.store-settings__switch--on {
+    background: var(--color-primary);
+}
+
+.store-settings__switch--on i {
+    transform: translateX(18px);
+}
+
+.store-settings__switch:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.store-settings__card--wide {
+    grid-column: 1 / -1;
+}
+
+.store-settings__danger {
+    grid-column: 1 / -1;
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+}
+
+.store-settings__danger h2,
+.store-settings__danger p,
+.store-settings__close {
+    color: #dc2626;
+}
+
+.store-settings__close {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 8px 14px;
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    background: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.store-settings__close:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 1199px) {
+    .store-settings__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .store-settings__header h1 {
+        font-size: 22px;
+    }
+
+    .store-settings__card,
+    .store-settings__danger {
+        padding: 16px;
+    }
+
+    .store-settings__code-row,
+    .store-settings__identity,
+    .store-settings__store,
+    .store-settings__toggles li {
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .store-settings__account {
+        align-items: flex-start;
+    }
+}

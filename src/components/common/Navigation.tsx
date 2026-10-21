@@ -64,6 +64,12 @@ function Navigation({ userName, notifications = [], onReadNotification, onReadAl
             >
                 기록 조회
             </NavLink>
+            <NavLink to="/app/store" className={({ isActive }) =>
+                    isActive ? "navigation__link navigation__link--active" : "navigation__link"
+                }
+            >
+                매장 설정
+            </NavLink>
         </div>
         <div className="navigation__actions" ref={ref}>
             <div className="navigation__dropdown-wrap">

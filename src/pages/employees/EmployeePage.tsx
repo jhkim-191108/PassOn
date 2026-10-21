@@ -110,7 +110,6 @@ function EmployeesPage() {
             <EmployeeHeader
                 storeName={store.name}
                 count={presentMembers.length}
-                inviteCode={store.inviteCode}
                 canEdit={canEdit}
                 onInvite={openInvite}
             />

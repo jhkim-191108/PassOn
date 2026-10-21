@@ -57,7 +57,9 @@ export interface CreateStoreResponse {
   inviteToken: string;
 }
 
-export type JoinStoreRequest = { inviteCode: string } | { inviteToken: string };
+export interface JoinStoreRequest {
+  code: string;
+}
 
 export interface JoinStoreResponse {
   storeId: string;

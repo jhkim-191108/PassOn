@@ -46,6 +46,14 @@ function Sidebar({ userName, storeName, notifications = [], onReadNotification, 
                         {item.label}
                     </NavLink>
                 ))}
+                <NavLink
+                    to="/app/store"
+                    className={({ isActive }) =>
+                        isActive ? "sidebar__link sidebar__link--active" : "sidebar__link"
+                    }
+                >
+                    매장 설정
+                </NavLink>
             </nav>
             <div className="sidebar__bottom" ref={ref}>
                 <div className="sidebar__dropdown-wrap">

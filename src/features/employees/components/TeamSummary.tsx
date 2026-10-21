@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import type { Member, Team } from "../types";
 import { isActiveMember } from "../utils/memberGroups";
@@ -122,18 +123,17 @@ function TeamSummary({ teams, members, canCreate, onCreate, onDelete }: TeamSumm
                     <article className="employees__team-card employees__team-card--add">
                         {open ? (
                             <form onSubmit={submit}>
-                                <label className="employees__team-add-label" htmlFor="team-name">팀 이름</label>
-                                <input
+                                <Input
                                     id="team-name"
-                                    className="employees__team-add-input"
+                                    label="팀 이름"
                                     value={name}
                                     placeholder="예: 오픈"
+                                    error={error || undefined}
                                     onChange={(event) => {
                                         setName(event.target.value);
                                         setError("");
                                     }}
                                 />
-                                {error && <p className="employees__team-add-error">{error}</p>}
                                 <div className="employees__team-add-actions">
                                     <Button type="button" variant="secondary" size="sm" onClick={() => setOpen(false)}>취소</Button>
                                     <Button type="submit" size="sm" disabled={pending || name.trim() === ""}>

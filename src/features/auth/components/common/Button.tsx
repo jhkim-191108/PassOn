@@ -1,6 +1,2 @@
-   // components/common/Button.tsx (임시)
-   import type { ButtonHTMLAttributes } from 'react';
-   export const Button = ({ variant: _v, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: string }) => (
-     <button {...props} />
-   );
-   export default Button;
+export { default } from "@/components/ui/Button";
+export { default as Button } from "@/components/ui/Button";

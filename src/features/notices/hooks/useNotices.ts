@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ApiError } from "@/api/client";
 import { createNotice, deleteNotice, getNotices, updateNotice, type NoticeInput } from "@/api/notices";
 import { getStores } from "@/api/stores";
+import { pickStore, useCurrentStoreId } from "@/features/stores/currentStore";
 import type { Notice, Store } from "@/types/api";
 
 function errorMessage(error: unknown, fallback: string) {
@@ -16,14 +17,18 @@ export function useNotices() {
     const [message, setMessage] = useState("");
     const [pending, setPending] = useState(false);
     const [loading, setLoading] = useState(true);
+    const selectedId = useCurrentStoreId();
 
     useEffect(() => {
         let cancelled = false;
 
         async function start() {
             try {
+                setLoading(true);
+                setStore(null);
+                setNotices([]);
                 const stores = await getStores();
-                const current = stores[0];
+                const current = pickStore(stores);
                 if (!current) {
                     if (!cancelled) setMessage("매장이 없습니다.");
                     return;
@@ -44,7 +49,7 @@ export function useNotices() {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [selectedId]);
 
     async function run(task: () => Promise<Notice[]>, fallback: string) {
         setMessage("");

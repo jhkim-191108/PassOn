@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api, ApiError } from "@/api/client";
 import type { Store, StoreRole } from "@/types/api";
 import type { Member, Team } from "../types";
+import { pickStore, useCurrentStoreId } from "@/features/stores/currentStore";
 import { groupMembers } from "../utils/memberGroups";
 
 type StoreView = Store & { invitePath?: string | null };
@@ -22,17 +23,20 @@ function errorMessage(error: unknown, fallback: string) {
 export function useEmployees() {
     const [data, setData] = useState<EmployeeData | null>(null);
     const [message, setMessage] = useState("");
+    const selectedId = useCurrentStoreId();
 
     useEffect(() => {
         let cancelled = false;
 
         async function start() {
             try {
+                setData(null);
+                setMessage("");
                 const [stores, me] = await Promise.all([
                     api<StoreView[]>("/api/stores"),
                     api<{ id: string }>("/api/users/me"),
                 ]);
-                const store = stores[0];
+                const store = pickStore(stores);
                 if (!store) {
                     if (!cancelled) setMessage("매장이 없습니다.");
                     return;
@@ -53,7 +57,7 @@ export function useEmployees() {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [selectedId]);
 
     // 팀 인원 수가 여러 명에게 퍼지는 퇴사·팀 생성·팀 삭제 뒤에만 목록을 다시 받는다.
     async function reloadLists(storeId: string) {

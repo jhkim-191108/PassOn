@@ -1,4 +1,6 @@
+import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import NoticeLevel from "@/features/notices/components/NoticeLevel";
 import { noticePriority } from "@/features/notices/noticeLevel";
 import type { Notice } from "@/types/api";
@@ -76,8 +78,8 @@ function NoticeDetailView({
             <h1>{notice.title}</h1>
             <div className="notice-detail__badges">
                 <NoticeLevel priority={level} />
-                <span className="notice-detail__chip">{STATUS_LABEL[status]}</span>
-                <span className="notice-detail__chip">공지</span>
+                <Badge variant="neutral" size="sm" className="notice-detail__chip">{STATUS_LABEL[status]}</Badge>
+                <Badge variant="neutral" size="sm" className="notice-detail__chip">공지</Badge>
             </div>
             <p className="notice-detail__meta">
                 {notice.authorName} 작성 · {formatDetailWhen(notice.createdAt)}
@@ -104,15 +106,15 @@ function NoticeDetailView({
             <article className="notice-detail__panel">
                 <h2>상태 관리</h2>
                 <div className="notice-detail__status">
-                    <button type="button" className={status === "PENDING" ? "is-selected" : undefined} onClick={() => onStatus("PENDING")}>
+                    <Button type="button" variant="secondary" size="sm" className={status === "PENDING" ? "is-selected" : undefined} onClick={() => onStatus("PENDING")}>
                         미처리로 되돌리기
-                    </button>
-                    <button type="button" className={status === "IN_PROGRESS" ? "is-selected" : undefined} onClick={() => onStatus("IN_PROGRESS")}>
+                    </Button>
+                    <Button type="button" variant="secondary" size="sm" className={status === "IN_PROGRESS" ? "is-selected" : undefined} onClick={() => onStatus("IN_PROGRESS")}>
                         확인함 (처리중)
-                    </button>
-                    <button type="button" className={status === "DONE" ? "is-selected" : undefined} onClick={() => onStatus("DONE")}>
+                    </Button>
+                    <Button type="button" variant="secondary" size="sm" className={status === "DONE" ? "is-selected" : undefined} onClick={() => onStatus("DONE")}>
                         처리 완료
-                    </button>
+                    </Button>
                 </div>
             </article>
 
@@ -128,7 +130,7 @@ function NoticeDetailView({
                     </ul>
                 )}
                 <div className="notice-detail__memo-row">
-                    <input
+                    <Input
                         value={memoText}
                         placeholder="진행 상황을 메모하세요..."
                         onChange={(event) => onMemoText(event.target.value)}
@@ -147,12 +149,12 @@ function NoticeDetailView({
 
             {canEdit && (
                 <div className="notice-detail__footer">
-                    <button type="button" onClick={onEdit}>
+                    <Button type="button" variant="secondary" size="sm" onClick={onEdit}>
                         수정
-                    </button>
-                    <button type="button" className="is-danger" onClick={onDelete}>
+                    </Button>
+                    <Button type="button" variant="danger" size="sm" className="is-danger" onClick={onDelete}>
                         삭제
-                    </button>
+                    </Button>
                 </div>
             )}
         </section>

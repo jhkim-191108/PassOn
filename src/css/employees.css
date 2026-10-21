@@ -1,8 +1,5 @@
 .employees {
     width: 100%;
-    max-width: 720px;
-    margin-right: auto;
-    margin-left: auto;
 }
 
 .employees__header {
@@ -18,8 +15,7 @@
     font-size: 28px;
 }
 
-.employees__subtitle,
-.employees__code {
+.employees__subtitle {
     margin: 6px 0 0;
     color: var(--color-text-sub);
     font-size: 14px;
@@ -45,8 +41,8 @@
 
 .employees__team-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
     margin-bottom: 28px;
 }
 
@@ -193,8 +189,8 @@
 }
 
 .employees__panel {
-    padding: 8px 8px 4px;
-    margin-bottom: 16px;
+    padding: 12px 16px 16px;
+    margin-bottom: 20px;
 }
 
 .employees__panel-head {
@@ -231,9 +227,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin: 8px;
-    padding: 14px 16px;
+    gap: 24px;
+    margin: 12px 4px;
+    padding: 16px 8px;
 }
 
 .employees__member-main {
@@ -373,6 +369,16 @@
     gap: 8px;
 }
 
+.invite-modal__link-row .input-field,
+.invite-modal__email-row .input-field {
+    flex: 1;
+    min-width: 0;
+}
+
+.invite-modal__email-row {
+    align-items: flex-end;
+}
+
 .invite-modal__code {
     letter-spacing: 0.14em;
     font-size: 20px;
@@ -424,11 +430,24 @@
     font-size: 12px;
 }
 
+.employees__header .employees__invite {
+    border: 1px solid #86efac;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--color-primary-dark);
+}
+
 @media (max-width: 1199px) {
-    .employees {
-        max-width: none;
-        margin-left: -20px;
-        margin-right: 20px;
+    .employees__team-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .employees__member {
+        flex-wrap: wrap;
+    }
+
+    .employees__member-main {
+        min-width: 0;
     }
 }
 

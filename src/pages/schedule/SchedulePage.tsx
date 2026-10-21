@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-// TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
-import Button from '@/features/auth/components/common/Button';
+import ErrorState from '@/components/ui/ErrorState';
 
 // TODO: 로그인 상태 저장 위치 확정 후 실제 로그인 사용자로 교체 (지금은 대시보드와 같은 ?as= 임시 사용자)
 import { useCurrentUser } from '@/features/dashboard';
@@ -81,12 +80,7 @@ export const SchedulePage = () => {
       <TeamFilter teams={teams} selectedTeamId={teamId} onChange={setTeamId} />
 
       {month.error && (
-        <div className="schedule__error" role="alert">
-          <p>{month.error}</p>
-          <Button variant="secondary" size="sm" onClick={month.reload}>
-            다시 시도
-          </Button>
-        </div>
+        <ErrorState title="근무표를 불러오지 못했습니다." description={month.error} onRetry={month.reload} />
       )}
 
       <MonthCalendar

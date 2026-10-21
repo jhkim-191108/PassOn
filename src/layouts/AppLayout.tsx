@@ -8,6 +8,7 @@ import Loading from "../components/ui/Loading";
 import ErrorState from "../components/ui/ErrorState";
 import { getMe } from "../api/users";
 import { getStores } from "../api/stores";
+import { pickStore, useCurrentStoreId } from "../features/stores/currentStore";
 
 import { getNotifications, readAllNotifications, readNotification } from "../api/notification";
 import type { Notification } from "../types/api";
@@ -25,6 +26,8 @@ function AppLayout() {
     const [error, setError] = useState(false);
     const [notifications, setNotifications] =
         useState<Notification[]>([]);
+    useCurrentStoreId();
+    const currentStore = pickStore(stores);
 
     useEffect(() => {
         const loadApp = async () => {
@@ -40,18 +43,6 @@ function AppLayout() {
 
                 setUser(userData);
                 setStores(storeData);
-
-                if(storeData.length > 0) {
-                    try {
-                        const notificationData = 
-                            await getNotifications(storeData[0].id);
-
-                        setNotifications(notificationData);
-                    } catch (error) {
-                        console.error("알림 조회 실패:", error);
-                        setNotifications([]);
-                    }
-                }
             } catch (error) {
                 console.error(error);
                 setError(true);
@@ -62,6 +53,24 @@ function AppLayout() {
 
         loadApp();
     }, []);
+
+    useEffect(() => {
+        if (!currentStore) return;
+        let cancelled = false;
+
+        getNotifications(currentStore.id)
+            .then((items) => {
+                if (!cancelled) setNotifications(items);
+            })
+            .catch((loadError) => {
+                console.error("알림 조회 실패:", loadError);
+                if (!cancelled) setNotifications([]);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [currentStore?.id]);
 
     async function markRead(notification: Notification) {
         if (notification.read) return;
@@ -76,10 +85,9 @@ function AppLayout() {
     }
 
     async function markAllRead() {
-        const storeId = stores[0]?.id;
-        if (!storeId) return;
+        if (!currentStore) return;
         try {
-            await readAllNotifications(storeId);
+            await readAllNotifications(currentStore.id);
             setNotifications((current) => current.map((item) => ({ ...item, read: true })));
         } catch (error) {
             console.error("알림 전체 읽음 처리 실패:", error);
@@ -97,8 +105,6 @@ function AppLayout() {
                 description="잠시 후 다시 시도해 주세요." />
         );
     }
-
-    const currentStore = stores[0];
 
     return (
         <div className="app-layout">

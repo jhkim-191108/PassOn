@@ -2,9 +2,6 @@
 .notice-detail,
 .notice-write {
     width: 100%;
-    max-width: 720px;
-    margin-right: auto;
-    margin-left: auto;
 }
 
 .notices__header {
@@ -199,9 +196,6 @@
 
 .notice-detail {
     width: 100%;
-    max-width: 720px;
-    margin-right: auto;
-    margin-left: auto;
 }
 
 .notice-detail__back {
@@ -314,7 +308,13 @@
 
 .notice-detail__memo-row {
     display: flex;
+    align-items: center;
     gap: 8px;
+}
+
+.notice-detail__memo-row .input-field {
+    flex: 1;
+    min-width: 0;
 }
 
 .notice-detail__memo-row input {
@@ -345,9 +345,6 @@
 
 .notice-write {
     width: 100%;
-    max-width: 720px;
-    margin-right: auto;
-    margin-left: auto;
 }
 
 .notice-write__header {
@@ -522,16 +519,6 @@
 
 .notice-write__actions .notice-write__submit {
     background: #3ecf9a;
-}
-
-@media (max-width: 1199px) {
-    .notices,
-    .notice-detail,
-    .notice-write {
-        max-width: none;
-        margin-left: -20px;
-        margin-right: 20px;
-    }
 }
 
 @media (max-width: 767px) {

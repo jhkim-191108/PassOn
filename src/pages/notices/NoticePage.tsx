@@ -1,7 +1,8 @@
-// 공지 목록과 작성. 화면 조각은 features/notices/components가 맡고, 여기서는 저장만 연결한다.
-import { useEffect, useState, type FormEvent } from "react";
+// 공지 목록과 작성. 저장 액션은 NoticeWriteForm의 useActionState가 맡는다.
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ApiError } from "@/api/client";
+import ErrorState from "@/components/ui/ErrorState";
+import Loading from "@/components/ui/Loading";
 import NoticeHeader from "@/features/notices/components/NoticeHeader";
 import NoticeList from "@/features/notices/components/NoticeList";
 import NoticeWriteForm, { emptyNoticeForm, type NoticeFormState } from "@/features/notices/components/NoticeWriteForm";
@@ -14,11 +15,10 @@ function NoticePage() {
     const navigate = useNavigate();
     const location = useLocation();
     const editId = (location.state as { editId?: string } | null)?.editId;
-    const { store, notices, message, pending, loading, canEdit, saveNotice } = useNotices();
+    const { store, notices, message, loading, canEdit, saveNotice } = useNotices();
     const [editing, setEditing] = useState<Notice | null>(null);
     const [formOpen, setFormOpen] = useState(false);
     const [form, setForm] = useState<NoticeFormState>(emptyNoticeForm);
-    const [formError, setFormError] = useState("");
 
     useEffect(() => {
         if (!editId) return;
@@ -32,19 +32,18 @@ function NoticePage() {
             pinned: notice.pinned,
             endsOn: "",
         });
-        setFormError("");
         setFormOpen(true);
         navigate("/app/notices", { replace: true, state: null });
     }, [editId, notices, navigate]);
 
     if (!store) {
-        return <p className="notices__message">{loading ? "불러오는 중" : message || "공지를 불러오지 못했습니다."}</p>;
+        if (loading) return <Loading text="공지를 불러오는 중입니다..." />;
+        return <ErrorState title="공지를 불러오지 못했습니다." description={message || "잠시 후 다시 시도해 주세요."} />;
     }
 
     function openCreate() {
         setEditing(null);
         setForm(emptyNoticeForm);
-        setFormError("");
         setFormOpen(true);
     }
 
@@ -52,41 +51,19 @@ function NoticePage() {
         setFormOpen(false);
     }
 
-    async function submit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const title = form.title.trim();
-        const body = form.body.trim();
-        if (!title) {
-            setFormError("공지 제목을 입력해 주세요.");
-            return;
-        }
-        if (!body) {
-            setFormError("공지 내용을 입력해 주세요.");
-            return;
-        }
-        try {
-            const known = new Set(notices.map((notice) => notice.id));
-            const next = await saveNotice(
-                { title, body, pinned: form.pinned, priority: form.priority },
-                editing?.id,
-            );
-            const savedId = editing?.id ?? next?.find((notice) => !known.has(notice.id))?.id;
-            if (savedId) rememberNoticeEnds(savedId, form.endsOn);
-            setFormOpen(false);
-        } catch (error) {
-            setFormError(error instanceof ApiError ? error.message : "공지를 저장하지 못했습니다.");
-        }
-    }
-
     if (formOpen) {
         return (
             <NoticeWriteForm
+                key={editing?.id ?? "new"}
                 editing={editing !== null}
-                form={form}
-                formError={formError}
-                pending={pending}
-                onChange={setForm}
-                onSubmit={(event) => void submit(event)}
+                noticeId={editing?.id ?? ""}
+                initial={form}
+                notices={notices}
+                onSave={saveNotice}
+                onSaved={(savedId, endsOn) => {
+                    if (savedId) rememberNoticeEnds(savedId, endsOn);
+                    setFormOpen(false);
+                }}
                 onClose={closeForm}
             />
         );

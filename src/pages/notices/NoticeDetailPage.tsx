@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import Loading from "@/components/ui/Loading";
 import NoticeDetailView, { type NoticeMemo, type NoticeStatus } from "@/features/notices/components/NoticeDetailView";
 import { useNotices } from "@/features/notices";
 import "../../css/notices.css";
@@ -35,11 +38,12 @@ function NoticeDetailPage() {
     const [deleting, setDeleting] = useState(false);
 
     if (!store) {
-        return <p className="notices__message">{loading ? "불러오는 중" : message || "공지를 불러오지 못했습니다."}</p>;
+        if (loading) return <Loading text="공지를 불러오는 중입니다..." />;
+        return <ErrorState title="공지를 불러오지 못했습니다." description={message || "잠시 후 다시 시도해 주세요."} />;
     }
 
     if (!notice) {
-        return <p className="notices__message">{message || "공지를 찾을 수 없습니다."}</p>;
+        return <EmptyState title="공지를 찾을 수 없습니다." description={message || undefined} />;
     }
 
     function changeStatus(next: NoticeStatus) {

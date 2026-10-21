@@ -29,7 +29,15 @@ export interface Store {
     type: StoreType;
     myRole: StoreRole;
     inviteCode: string | null;
+    invitePath?: string | null;
     createdAt: string;
+}
+
+export interface NotificationSettings {
+    assignment: boolean;
+    urgent: boolean;
+    memo: boolean;
+    completed: boolean;
 }
 
 export interface ApiErrorBody {

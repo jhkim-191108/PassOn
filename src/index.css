@@ -93,6 +93,23 @@ a {
   padding: 0;
 }
 
+@media (min-width: 1200px) {
+  .app-body {
+    width: 100%;
+    max-width: 1440px;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .app-main {
+    flex: 1 1 auto;
+    max-width: 1112px;
+    padding: 24px;
+  }
+}
+
 .sidebar {
   display: none;
 }
@@ -1047,12 +1064,17 @@ a {
 
   .app-body {
     display: block;
-    padding-right: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 24px 20px;
   }
 
   .app-main {
+    width: 100%;
+    max-width: none;
     min-height: 100vh;
-    padding: 28px;
+    padding: 0;
   }
 
   .sidebar__logo img {
@@ -1092,11 +1114,16 @@ a {
 
   .app-body {
     display: block;
-    padding-right: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 16px 16px 0;
   }
 
   .app-main {
+    width: 100%;
+    max-width: none;
     min-height: 100vh;
-    padding: 20px 16px 88px;
+    padding: 0 0 88px;
   }
 }

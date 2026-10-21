@@ -1,6 +1,11 @@
-import type { FormEvent } from "react";
+import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { ApiError } from "@/api/client";
+import type { NoticeInput } from "@/api/notices";
 import Button from "@/components/ui/Button";
-import type { NoticePriority } from "@/types/api";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
+import type { Notice, NoticePriority } from "@/types/api";
 
 export interface NoticeFormState {
     title: string;
@@ -24,17 +29,61 @@ const LEVELS: { value: NoticePriority; label: string }[] = [
     { value: "URGENT", label: "긴급" },
 ];
 
+function readPriority(value: FormDataEntryValue | null): NoticePriority {
+    if (value === "IMPORTANT" || value === "URGENT" || value === "NORMAL") return value;
+    return "NORMAL";
+}
+
 interface NoticeWriteFormProps {
     editing: boolean;
-    form: NoticeFormState;
-    formError: string;
-    pending: boolean;
-    onChange: (form: NoticeFormState) => void;
-    onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+    noticeId: string;
+    initial: NoticeFormState;
+    notices: Notice[];
+    onSave: (input: NoticeInput, noticeId?: string) => Promise<Notice[] | undefined>;
+    onSaved: (savedId: string | undefined, endsOn: string) => void;
     onClose: () => void;
 }
 
-function NoticeWriteForm({ editing, form, formError, pending, onChange, onSubmit, onClose }: NoticeWriteFormProps) {
+function NoticeSubmitButton({ editing }: { editing: boolean }) {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button type="submit" className="notice-write__submit" disabled={pending}>
+            {pending ? "저장 중" : editing ? "수정" : "공지 등록"}
+        </Button>
+    );
+}
+
+function NoticeWriteForm({ editing, noticeId, initial, notices, onSave, onSaved, onClose }: NoticeWriteFormProps) {
+    const [priority, setPriority] = useState(initial.priority);
+    const [pinned, setPinned] = useState(initial.pinned);
+    const [formError, formAction] = useActionState(async (_prev: string, formData: FormData) => {
+        const title = String(formData.get("title") ?? "").trim();
+        const body = String(formData.get("body") ?? "").trim();
+        const endsOn = String(formData.get("endsOn") ?? "");
+        const id = String(formData.get("noticeId") ?? "");
+        if (!title) return "공지 제목을 입력해 주세요.";
+        if (!body) return "공지 내용을 입력해 주세요.";
+
+        try {
+            const known = new Set(notices.map((notice) => notice.id));
+            const next = await onSave(
+                {
+                    title,
+                    body,
+                    pinned: String(formData.get("pinned") ?? "") === "true",
+                    priority: readPriority(formData.get("priority")),
+                },
+                id || undefined,
+            );
+            const savedId = id || next?.find((notice) => !known.has(notice.id))?.id;
+            onSaved(savedId, endsOn);
+            return "";
+        } catch (error) {
+            return error instanceof ApiError ? error.message : "공지를 저장하지 못했습니다.";
+        }
+    }, "");
+
     return (
         <section className="notice-write">
             <header className="notice-write__header">
@@ -47,39 +96,39 @@ function NoticeWriteForm({ editing, form, formError, pending, onChange, onSubmit
                 </div>
             </header>
 
-            <form onSubmit={onSubmit}>
+            <form action={formAction}>
+                <input type="hidden" name="noticeId" value={noticeId} />
+                <input type="hidden" name="priority" value={priority} />
+                <input type="hidden" name="pinned" value={pinned ? "true" : "false"} />
                 <div className="notice-write__card">
-                    <label className="notice-write__field">
-                        <span>제목 <i>*</i></span>
-                        <input
-                            value={form.title}
-                            maxLength={120}
-                            placeholder="공지 제목을 입력하세요"
-                            onChange={(event) => onChange({ ...form, title: event.target.value })}
-                        />
-                    </label>
-                    <label className="notice-write__field">
-                        <span>내용 <i>*</i></span>
-                        <textarea
-                            value={form.body}
-                            maxLength={4000}
-                            placeholder="공지 내용을 입력하세요"
-                            onChange={(event) => onChange({ ...form, body: event.target.value })}
-                        />
-                    </label>
+                    <Input
+                        name="title"
+                        label="제목 *"
+                        defaultValue={initial.title}
+                        maxLength={120}
+                        placeholder="공지 제목을 입력하세요"
+                    />
+                    <Textarea
+                        name="body"
+                        label="내용 *"
+                        defaultValue={initial.body}
+                        maxLength={4000}
+                        placeholder="공지 내용을 입력하세요"
+                    />
 
                     <div className="notice-write__field">
                         <span>중요도</span>
                         <div className="notice-write__levels">
                             {LEVELS.map((level) => (
-                                <button
+                                <Button
                                     key={level.value}
                                     type="button"
-                                    className={form.priority === level.value ? "is-selected" : undefined}
-                                    onClick={() => onChange({ ...form, priority: level.value })}
+                                    variant="secondary"
+                                    className={priority === level.value ? "is-selected" : undefined}
+                                    onClick={() => setPriority(level.value)}
                                 >
                                     {level.label}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -91,23 +140,21 @@ function NoticeWriteForm({ editing, form, formError, pending, onChange, onSubmit
                         </div>
                         <button
                             type="button"
-                            className={form.pinned ? "notice-write__switch is-on" : "notice-write__switch"}
-                            aria-pressed={form.pinned}
-                            onClick={() => onChange({ ...form, pinned: !form.pinned })}
+                            className={pinned ? "notice-write__switch is-on" : "notice-write__switch"}
+                            aria-pressed={pinned}
+                            onClick={() => setPinned((current) => !current)}
                         >
                             <span />
                         </button>
                     </div>
 
-                    <label className="notice-write__field">
-                        <span>공지 종료일 (선택)</span>
-                        <input
-                            type="date"
-                            value={form.endsOn}
-                            onChange={(event) => onChange({ ...form, endsOn: event.target.value })}
-                        />
-                        <small>설정하면 해당 날짜 이후 공지가 자동으로 내려가요.</small>
-                    </label>
+                    <Input
+                        name="endsOn"
+                        type="date"
+                        label="공지 종료일 (선택)"
+                        defaultValue={initial.endsOn}
+                        hint="설정하면 해당 날짜 이후 공지가 자동으로 내려가요."
+                    />
                 </div>
 
                 {formError && <p className="notices__message">{formError}</p>}
@@ -116,9 +163,7 @@ function NoticeWriteForm({ editing, form, formError, pending, onChange, onSubmit
                     <Button type="button" variant="secondary" className="notice-write__cancel" onClick={onClose}>
                         취소
                     </Button>
-                    <Button type="submit" className="notice-write__submit" disabled={pending}>
-                        {pending ? "저장 중" : editing ? "수정" : "공지 등록"}
-                    </Button>
+                    <NoticeSubmitButton editing={editing} />
                 </div>
             </form>
         </section>

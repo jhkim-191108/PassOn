@@ -1,4 +1,5 @@
 import { api, ApiError, setAccessToken } from "@/api/client";
+import { pickStore } from "@/features/stores/currentStore";
 import type { AuthResponse, Store } from "@/types/api";
 import type { AppUser, LoginRequest, LoginResponse, SignupRequest } from "../types";
 
@@ -18,7 +19,7 @@ async function toSession(data: AuthResponse): Promise<LoginResponse> {
         id: data.user.id,
         name: data.user.name,
         email: data.user.email,
-        currentStoreId: stores[0]?.id ?? "",
+        currentStoreId: pickStore(stores)?.id ?? "",
         memberships,
     };
 

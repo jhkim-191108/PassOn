@@ -1,3 +1,4 @@
+import EmptyState from "@/components/ui/EmptyState";
 import NoticeCard from "@/features/notices/components/NoticeCard";
 import type { Notice } from "@/types/api";
 
@@ -11,7 +12,7 @@ function NoticeList({ notices, onOpen }: NoticeListProps) {
     const others = notices.filter((notice) => !notice.pinned);
 
     if (notices.length === 0) {
-        return <p className="notices__empty">등록된 공지가 없습니다.</p>;
+        return <EmptyState title="등록된 공지가 없습니다." />;
     }
 
     return (
