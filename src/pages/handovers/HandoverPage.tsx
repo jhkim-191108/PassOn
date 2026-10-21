@@ -90,6 +90,7 @@ function HandoverPage() {
                         <article
                             key={handoff.id}
                             className="handover-list__item"
+                            onClick={() => navigate(`/app/handovers/${handoff.id}`)}
                         >
                             <div>
                                 <strong>
