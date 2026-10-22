@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHandoff } from "@/api/handoffs";
 import { getHandoffCards } from "@/api/cards";
-import type { Handoff, Card, } from "@/types/api";
+import type { Handoff, Card, Photo, } from "@/types/api";
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import Badge from "@/components/ui/Badge";
+import { getHandoffPhotos, getPhotoFile } from "@/api/photos";
 
 import "../../css/handovers.css";
 
@@ -47,14 +48,21 @@ const progressBadgeVariant = {
     DONE: "success",
 } as const;
 
+type DisplayPhoto = Photo & {
+    url: string;
+};
+
 function HandoverDetailPage() {
     const {handoffId} = useParams<{ handoffId: string }>();
     const [handoff, setHandoff] = useState<Handoff | null>(null);
     const [cards, setCards] = useState<Card[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [photos, setPhotos] = useState<DisplayPhoto[]>([]);
 
     useEffect(() => {
+        let cancelled = false;
+        const objectUrls: string[] = [];
         const loadHandoff = async () => {
             if (!handoffId) {
                 setError("인수인계 정보를 찾을 수 없습니다.");
@@ -66,22 +74,56 @@ function HandoverDetailPage() {
                 setLoading(true);
                 setError("");
 
-                const [handoffData, cardData] = 
+                const [handoffData, cardData, photoData] = 
                     await Promise.all([
                         getHandoff(handoffId),
                         getHandoffCards(handoffId),
+                        getHandoffPhotos(handoffId),
                     ]);
+
+                    const photoFiles = await Promise.all(
+                        photoData.map(async (photo) => {
+                            const blob = await getPhotoFile(
+                                handoffId,
+                                photo.id
+                            );
+
+                            const url = URL.createObjectURL(blob);
+                            objectUrls.push(url);
+
+                            return{
+                                ...photo,
+                                url,
+                            };
+                        })
+                    );
+
+                    if(cancelled) {
+                        objectUrls.forEach((url) => URL.revokeObjectURL(url));
+                        return;
+                    }
 
                     setHandoff(handoffData);
                     setCards(cardData);
+                    setPhotos(photoFiles);
             } catch (error) {
+                if (cancelled) return;
+
                 console.error("인수인계 상세 조회 실패", error);
                 setError("인수인계를 불러오지 못했습니다.");
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         };
         loadHandoff();
+
+        return () => {
+            cancelled = true;
+
+            objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        };
     }, [handoffId]);
 
     if (loading) {
@@ -141,6 +183,25 @@ function HandoverDetailPage() {
                 <h2>원문</h2>
                 <div className="handover-detail__original">{handoff.rawText}</div>
             </section>
+            {photos.length > 0 && (
+                <section className="handover-detail__section">
+                    <h2>첨부 사진</h2>
+                    <div className="handover-detail__photos">
+                        {photos.map((photo) => (
+                            <a
+                                key={photo.id}
+                                className="handover-detail__photo"
+                                href={photo.url}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <img src={photo.url} alt={photo.originalName} />
+                                <span>{photo.originalName}</span>
+                            </a>
+                        ))}
+                    </div>
+                </section>
+            )}
             <section className="handover-detail__section">
                 <h2>정리된 인수인계</h2>
                 <div className="handover-detail__cards">

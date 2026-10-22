@@ -253,44 +253,6 @@
     font-size: 13px;
 }
 
-
-/* =========================
-    Responsive
-========================= */
-
-@media (max-width: 767px) {
-    .handover-page__header {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .handover-page__header .button {
-        width: 100%;
-    }
-
-    .handover-form {
-        padding: 18px;
-    }
-
-    .handover-form > .button {
-        width: 100%;
-    }
-
-    .handover-list__item {
-        padding: 16px;
-    }
-
-    .handover-list__item > div:first-child {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .handover-list__item > div:last-child {
-        flex-wrap: wrap;
-    }
-}
-
 /* =========================
     Handover Detail
 ========================= */
@@ -394,7 +356,95 @@
     white-space: pre-wrap;
 }
 
+/* =========================
+    Handover Photos
+========================= */
+
+.handover-detail__photos {
+    display: grid;
+    grid-template-columns:
+        repeat(
+        auto-fill,
+        minmax(180px, 1fr)
+        );
+    gap: 12px;
+}
+
+.handover-detail__photo {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e7e5e4;
+    border-radius: 14px;
+    background: #ffffff;
+    transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.handover-detail__photo:hover {
+    border-color: #d6d3d1;
+    box-shadow:
+        0 4px 6px -1px rgb(0 0 0 / 0.08),
+        0 2px 4px -2px rgb(0 0 0 / 0.08);
+    transform: translateY(-1px);
+}
+
+.handover-detail__photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--color-background-soft);
+}
+
+.handover-detail__photo span {
+    overflow: hidden;
+    padding: 10px 12px;
+    color: var(--color-text-sub);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================
+    Responsive
+========================= */
+
 @media (max-width: 767px) {
+    .handover-page__header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .handover-page__header .button {
+        width: 100%;
+    }
+
+    .handover-form {
+        padding: 18px;
+    }
+
+    .handover-form > .button {
+        width: 100%;
+    }
+
+    .handover-list__item {
+        padding: 16px;
+    }
+
+    .handover-list__item > div:first-child {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .handover-list__meta {
+        flex-wrap: wrap;
+    }
+
     .handover-detail__info {
         align-items: flex-start;
         flex-direction: column;
@@ -404,5 +454,16 @@
     .handover-detail__original,
     .handover-detail__card {
         padding: 16px;
+    }
+
+    .handover-detail__photos {
+        grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .handover-detail__photos {
+        grid-template-columns: 1fr;
     }
 }

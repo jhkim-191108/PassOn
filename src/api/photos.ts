@@ -1,5 +1,6 @@
-import { api } from "./client";
+import { api, apiBlob } from "./client";
 import type { Photo } from "@/types/api";
+
 
 export function uploadPhoto(
     handoffId: string,
@@ -15,5 +16,22 @@ export function uploadPhoto(
             method: "POST",
             body: formData,
         }
+    );
+}
+
+export function getHandoffPhotos(
+    handoffId: string
+) {
+    return api<Photo[]>(
+        `/api/handoffs/${handoffId}/photos`
+    );
+}
+
+export function getPhotoFile(
+    handoffId: string,
+    photoId: string
+) {
+    return apiBlob(
+        `/api/handoffs/${handoffId}/photos/${photoId}`
     );
 }
