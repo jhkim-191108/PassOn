@@ -29,6 +29,7 @@ const LINKS = [
     { to: "/app/employees", label: "직원 관리" },
     { to: "/app/schedule", label: "근무표" },
     { to: "/app/history", label: "기록 조회" },
+    { to: "/app/delegate", label: "관리자 위임" },
     { to: "/app/store", label: "매장 설정" },
 ];
 

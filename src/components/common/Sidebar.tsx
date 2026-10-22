@@ -52,6 +52,14 @@ function Sidebar({ userName, storeName, notifications = [], onReadNotification, 
                     </NavLink>
                 ))}
                 <NavLink
+                    to="/app/delegate"
+                    className={({ isActive }) =>
+                        isActive ? "sidebar__link sidebar__link--active" : "sidebar__link"
+                    }
+                >
+                    관리자 위임
+                </NavLink>
+                <NavLink
                     to="/app/store"
                     className={({ isActive }) =>
                         isActive ? "sidebar__link sidebar__link--active" : "sidebar__link"
