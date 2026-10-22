@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import AppLayout from '@/layouts/AppLayout';
 import DashboardPage from '@/pages/DashboardPage';
+import ProfilePage from '@/pages/profile/ProfilePage';
 import EmployeesPage from '@/pages/employees/EmployeePage';
 import NoticePage from '@/pages/notices/NoticePage';
 import NoticeDetailPage from '@/pages/notices/NoticeDetailPage';
@@ -79,6 +80,7 @@ export const router = createBrowserRouter([
       { path: 'handovers/new', element: <HandoverCreatePage /> },
       { path: 'handovers/:handoffId', element: <HandoverDetailPage /> },
       { path: 'schedule', element: <SchedulePage /> },
+      { path: 'profile', element: <ProfilePage /> },
       // 아직 페이지가 만들어지지 않은 메뉴
       {
         path: '*',

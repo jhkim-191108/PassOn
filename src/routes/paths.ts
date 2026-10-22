@@ -9,4 +9,5 @@ export const PATHS = {
   STORE_SETTINGS: '/app/store',
   HANDOFF_NEW: '/app/handoffs/new',      // 추가
   HANDOFF_DETAIL: '/app/handoffs/:id',   // 추가
+  PROFILE: '/app/profile',
 } as const;

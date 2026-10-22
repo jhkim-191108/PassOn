@@ -1,0 +1,65 @@
+/* 마이페이지 본문 영역 (AppLayout 안에 들어감, 가운데 정렬 좁은 폭) */
+.profile {
+  max-width: 672px;
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+  box-sizing: border-box;
+  color: #1c1917;              /* stone-900 */
+}
+
+.profile__form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile__message {
+  margin: -8px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.profile__message--success {
+  color: #059669;              /* emerald-600 */
+}
+
+.profile__message--error {
+  color: #dc2626;              /* red-600 */
+}
+
+.profile__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile__save.button {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 12px;
+  font-size: 1rem;
+}
+
+.profile__logout {
+  width: 100%;
+  min-height: 50px;
+  background: #ffffff;
+  border: 1px solid #fecaca;   /* red-200 */
+  border-radius: 12px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #dc2626;              /* red-600 */
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+.profile__logout:hover {
+  background: #fef2f2;         /* red-50 */
+}
+
+@media (min-width: 768px) {
+  .profile {
+    padding: 32px 32px 48px;
+  }
+}
