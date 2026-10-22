@@ -24,6 +24,7 @@ const ACTION_LABEL: Record<RecordAction, string> = {
     DELETED: "삭제",
 };
 
+// 서울 기준 날짜
 function seoulDate(date = new Date()) {
     const parts = new Intl.DateTimeFormat("en-US", {
         timeZone: "Asia/Seoul",
@@ -49,6 +50,7 @@ function iso(year: number, month: number, day: number) {
     return `${y}-${m}-${d}`;
 }
 
+// 오늘, 이번 주, 이번 달
 function rangeOf(key: RangeKey) {
     if (key === "all") return {};
     const today = seoulDate();
@@ -75,7 +77,9 @@ function formatAt(value: string) {
     }).format(date);
 }
 
+// 같은 인수인계끼리 묶기
 function groupRecords(records: RecordEntry[], includeDeleted: boolean) {
+    // 삭제된 기록은 체크가 꺼져 있으면 빼기
     const visible = includeDeleted ? records : records.filter((record) => record.action !== "DELETED");
     const groups = new Map<string, RecordEntry[]>();
     for (const record of visible) {
@@ -93,6 +97,7 @@ function groupRecords(records: RecordEntry[], includeDeleted: boolean) {
         .sort((left, right) => right.latest.localeCompare(left.latest));
 }
 
+// 기록 조회
 function RecordsPage() {
     const { currentStore } = useAppSession();
     const storeId = currentStore?.id;
@@ -105,11 +110,13 @@ function RecordsPage() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
+        // 검색은 입력이 끝난 뒤에
         const timer = window.setTimeout(() => setQuery(keyword.trim()), 300);
         return () => window.clearTimeout(timer);
     }, [keyword]);
 
     useEffect(() => {
+        // 매장, 검색어, 기간이 바뀌면 다시 불러오기
         if (!storeId) {
             setRecords([]);
             setLoading(false);

@@ -6,7 +6,7 @@ import BottomNavigation from "../components/common/BottomNavigation";
 import RightPanel from "../components/common/RightPanel";
 import Loading from "../components/ui/Loading";
 import ErrorState from "../components/ui/ErrorState";
-import { getMe } from "../api/users";
+import { getMe, loadMyPhoto } from "../api/users";
 import { getStores } from "../api/stores";
 import { loadStorePanel, loadTodayShifts, openStoreSocket } from "../api/live";
 import { pickStore, selectStore, useCurrentStoreId } from "../features/stores/currentStore";
@@ -25,6 +25,10 @@ function AppLayout() {
     const [openCards, setOpenCards] = useState<Card[]>([]);
     const [todayShifts, setTodayShifts] = useState<ShiftResponse[]>([]);
     const [liveLoading, setLiveLoading] = useState(false);
+    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+    const photoUrlRef = useRef<string | null>(null);
+    const photoEpoch = useRef(0);
+    const photoOwner = useRef<string | null>(null);
     const selectedId = useCurrentStoreId();
     const currentStore = stores.find((store) => store.id === selectedId) ?? pickStore(stores);
     const cardEpoch = useRef(0);
@@ -148,6 +152,62 @@ function AppLayout() {
         setUser(next);
     }, []);
 
+    // 프로필 사진 바꾸기
+    const replacePhoto = useCallback((next: string | null) => {
+        photoEpoch.current += 1;
+        if (photoUrlRef.current && photoUrlRef.current !== next) {
+            URL.revokeObjectURL(photoUrlRef.current);
+        }
+        photoUrlRef.current = next;
+        setPhotoUrl(next);
+    }, []);
+
+    // 프로필 사진 불러오기
+    useEffect(() => {
+        if (!user?.id) return;
+
+        if (photoOwner.current !== user.id) {
+            photoOwner.current = user.id;
+            if (photoUrlRef.current) replacePhoto(null);
+        }
+
+        // 사진이 없으면 다시 받지 않음
+        if (user.photo === false) {
+            if (photoUrlRef.current) replacePhoto(null);
+            return;
+        }
+
+        // 방금 올린 사진이면 다시 받지 않음
+        if (photoUrlRef.current) return;
+
+        const epoch = photoEpoch.current;
+        let cancelled = false;
+
+        async function loadPhoto() {
+            try {
+                const blob = await loadMyPhoto();
+                if (cancelled || epoch !== photoEpoch.current) return;
+                const next = blob ? URL.createObjectURL(blob) : null;
+                if (photoUrlRef.current && photoUrlRef.current !== next) {
+                    URL.revokeObjectURL(photoUrlRef.current);
+                }
+                photoUrlRef.current = next;
+                setPhotoUrl(next);
+            } catch {
+                if (!cancelled && epoch === photoEpoch.current) {
+                    if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current);
+                    photoUrlRef.current = null;
+                    setPhotoUrl(null);
+                }
+            }
+        }
+
+        void loadPhoto();
+        return () => {
+            cancelled = true;
+        };
+    }, [user?.id, user?.photo, replacePhoto]);
+
     const replaceStore = useCallback((store: Store) => {
         setStores((list) => list.map((item) => (item.id === store.id ? store : item)));
     }, []);
@@ -210,13 +270,15 @@ function AppLayout() {
             openCards,
             todayShifts,
             liveLoading,
+            photoUrl,
             replaceUser,
+            replacePhoto,
             replaceStore,
             replaceStores,
             setOpenCards,
             reloadTodayShifts,
         }),
-        [user, stores, currentStore, openCards, todayShifts, liveLoading, replaceUser, replaceStore, replaceStores, reloadTodayShifts],
+        [user, stores, currentStore, openCards, todayShifts, liveLoading, photoUrl, replaceUser, replacePhoto, replaceStore, replaceStores, reloadTodayShifts],
     );
 
     if (loading) {
@@ -232,6 +294,7 @@ function AppLayout() {
             <div className="app-layout">
                 <Sidebar
                     userName={user.name}
+                    photoUrl={photoUrl}
                     userEmail={user.email}
                     role={currentStore?.myRole}
                     storeId={currentStore?.id}
@@ -246,6 +309,7 @@ function AppLayout() {
                 <div className="app-content">
                     <Navigation
                         userName={user.name}
+                        photoUrl={photoUrl}
                         role={currentStore?.myRole}
                         storeId={currentStore?.id}
                         storeName={currentStore?.name}
@@ -271,6 +335,7 @@ function AppLayout() {
                     </div>
                     <BottomNavigation
                         userName={user.name}
+                        photoUrl={photoUrl}
                         role={currentStore?.myRole}
                         storeId={currentStore?.id}
                         storeName={currentStore?.name}

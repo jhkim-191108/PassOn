@@ -9,7 +9,9 @@ export interface AppSession {
     openCards: Card[];
     todayShifts: ShiftResponse[];
     liveLoading: boolean;
+    photoUrl: string | null;
     replaceUser: (user: User) => void;
+    replacePhoto: (url: string | null) => void;
     replaceStore: (store: Store) => void;
     replaceStores: (stores: Store[]) => void;
     setOpenCards: Dispatch<SetStateAction<Card[]>>;

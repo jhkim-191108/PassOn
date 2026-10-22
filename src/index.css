@@ -305,6 +305,7 @@ a {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
   border-radius: 50%;
   color: #7008e7;
   background: #ede9fe;
@@ -806,12 +807,21 @@ a {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
   border-radius: 50%;
   color: #7008e7;
   background: #ede9fe;
   font-size: 10px;
   font-weight: 700;
   line-height: 15px;
+}
+
+.navigation__avatar img,
+.sidebar__avatar img,
+.bottom-nav__sheet-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .navigation__user {
@@ -1415,6 +1425,7 @@ a {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
   border-radius: 50%;
   background: #ede9fe;
   color: #7008e7;

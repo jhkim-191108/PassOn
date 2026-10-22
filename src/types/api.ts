@@ -174,6 +174,7 @@ export interface UpdateCardRequest {
 
 export type RecordAction = "CREATED" | "UPDATED" | "COMPLETED" | "DELETED";
 
+// 기록 한 건
 export interface RecordEntry{
     action: RecordAction;
     id: string;
@@ -185,6 +186,7 @@ export interface RecordEntry{
     at: string;
 }
 
+// 인수인계 사진
 export interface Photo {
     id: string;
     handoffId: string;

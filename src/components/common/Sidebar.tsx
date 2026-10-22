@@ -23,6 +23,7 @@ import { PATHS } from "../../routes/paths";
 
 interface SidebarProps {
     userName: string;
+    photoUrl?: string | null;
     userEmail?: string;
     role?: StoreRole;
     storeId?: string;
@@ -49,6 +50,7 @@ const MANAGE_LINKS = [
 
 function Sidebar({
     userName,
+    photoUrl,
     userEmail,
     role,
     storeId,
@@ -182,7 +184,9 @@ function Sidebar({
 
                 <div className="sidebar__dropdown-wrap">
                     <button type="button" className="sidebar__profile" onClick={() => toggle("profile")}>
-                        <span className="sidebar__avatar">{userName.charAt(0)}</span>
+                        <span className="sidebar__avatar">
+                            {photoUrl ? <img src={photoUrl} alt="" /> : userName.charAt(0)}
+                        </span>
                         <span className="sidebar__profile-text">
                             <strong>{userName}</strong>
                             {userEmail && <span>{userEmail}</span>}

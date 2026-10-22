@@ -17,6 +17,7 @@ import { PATHS } from "../../routes/paths";
 
 interface NavigationProps {
     userName: string;
+    photoUrl?: string | null;
     role?: StoreRole;
     storeId?: string;
     storeName?: string;
@@ -40,6 +41,7 @@ const LINKS = [
 
 function Navigation({
     userName,
+    photoUrl,
     role,
     storeId,
     storeName,
@@ -171,7 +173,9 @@ function Navigation({
                         className="navigation__profile"
                         onClick={() => toggle("profile")}
                     >
-                        <span className="navigation__avatar">{userName.charAt(0)}</span>
+                        <span className="navigation__avatar">
+                            {photoUrl ? <img src={photoUrl} alt="" /> : userName.charAt(0)}
+                        </span>
                         <span className="navigation__user">
                             <strong>{userName}</strong>
                             {role && <span>{role.toLowerCase()}</span>}

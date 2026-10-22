@@ -2,9 +2,11 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "@/api/client";
 import { logout } from "@/api/auth";
-import { changePassword, loadMyPhoto, updateMe, uploadMyPhoto } from "@/api/users";
+import { changePassword, updateMe, uploadMyPhoto } from "@/api/users";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import Modal from "@/components/ui/Modal";
 import { selectStore } from "@/features/stores/currentStore";
 import { ROLE_BADGE } from "@/features/stores/labels";
 import { useAppSession } from "@/layouts/appSession";
@@ -15,20 +17,21 @@ import "@/css/mypage.css";
 
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const PHOTO_LIMIT = 5 * 1024 * 1024;
+// 비밀번호: 8자 이상, 대문자, 소문자, 특수문자
 const PASSWORD_RULE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9\s])\S{8,72}$/;
 
+// 내 정보. 사진, 이름, 비밀번호, 소속 매장
 function MyPage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, stores, currentStore, replaceUser } = useAppSession();
+    const { user, stores, currentStore, photoUrl, replaceUser, replacePhoto } = useAppSession();
     const fileRef = useRef<HTMLInputElement>(null);
     const [name, setName] = useState(user.name);
     const [currentPassword, setCurrentPassword] = useState("");
     const [nextPassword, setNextPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
     const [message, setMessage] = useState("");
-    const [saved, setSaved] = useState(false);
+    const [savedOpen, setSavedOpen] = useState(false);
     const [pending, setPending] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [logoutConfirm, setLogoutConfirm] = useState(false);
@@ -38,39 +41,7 @@ function MyPage() {
         setName(user.name);
     }, [user.name]);
 
-    useEffect(() => {
-        if (user.photo === false) {
-            setPhotoUrl((current) => {
-                if (current) URL.revokeObjectURL(current);
-                return null;
-            });
-            return;
-        }
-
-        let cancelled = false;
-        let created: string | null = null;
-
-        async function load() {
-            try {
-                const blob = await loadMyPhoto();
-                if (cancelled || !blob) return;
-                created = URL.createObjectURL(blob);
-                setPhotoUrl((current) => {
-                    if (current && current !== created) URL.revokeObjectURL(current);
-                    return created;
-                });
-            } catch {
-                if (!cancelled) setPhotoUrl(null);
-            }
-        }
-
-        void load();
-        return () => {
-            cancelled = true;
-            if (created) URL.revokeObjectURL(created);
-        };
-    }, [user.id, user.photo]);
-
+    // 주소로 바로 들어오면 대시보드로, 아니면 이전 화면으로
     function goBack() {
         if (location.key === "default") {
             navigate(PATHS.DASHBOARD);
@@ -83,30 +54,24 @@ function MyPage() {
         fileRef.current?.click();
     }
 
+    // 프로필 사진 변경. 고른 사진을 바로 반영
     async function changePhoto(file: File | undefined) {
         if (!file || uploading) return;
         if (!PHOTO_TYPES.includes(file.type)) {
-            setSaved(false);
             setMessage("jpeg, png, webp, gif 이미지만 올릴 수 있습니다.");
             return;
         }
         if (file.size > PHOTO_LIMIT) {
-            setSaved(false);
             setMessage("사진은 5MB 이하만 올릴 수 있습니다.");
             return;
         }
 
         setUploading(true);
-        setSaved(false);
         setMessage("");
         try {
             const updated = await uploadMyPhoto(file);
-            const preview = URL.createObjectURL(file);
-            setPhotoUrl((current) => {
-                if (current) URL.revokeObjectURL(current);
-                return preview;
-            });
-            replaceUser(updated);
+            replacePhoto(URL.createObjectURL(file));
+            replaceUser({ ...updated, photo: true });
         } catch (error) {
             setMessage(error instanceof ApiError ? error.message : "사진을 바꾸지 못했습니다.");
         } finally {
@@ -115,6 +80,7 @@ function MyPage() {
         }
     }
 
+    // 이름, 비밀번호 저장
     async function save(event: FormEvent) {
         event.preventDefault();
         if (pending) return;
@@ -122,40 +88,33 @@ function MyPage() {
         const nextName = name.trim();
         const passwordTouched = currentPassword.length > 0 || nextPassword.length > 0 || confirmPassword.length > 0;
         if (!nextName) {
-            setSaved(false);
             setMessage("이름을 입력해 주세요.");
             return;
         }
         if (nextName.length > 40) {
-            setSaved(false);
             setMessage("이름은 40자까지 입력할 수 있습니다.");
             return;
         }
         if (passwordTouched) {
             if (!currentPassword || !nextPassword || !confirmPassword) {
-                setSaved(false);
                 setMessage("비밀번호를 모두 입력해 주세요.");
                 return;
             }
             if (nextPassword !== confirmPassword) {
-                setSaved(false);
                 setMessage("새 비밀번호가 서로 다릅니다.");
                 return;
             }
             if (!PASSWORD_RULE.test(nextPassword)) {
-                setSaved(false);
                 setMessage("비밀번호는 8자 이상이며 영문 대문자, 소문자, 특수문자를 포함해야 합니다.");
                 return;
             }
         }
         if (nextName === user.name && !passwordTouched) {
-            setSaved(false);
-            setMessage("");
+            setMessage("바뀐 내용이 없어요.");
             return;
         }
 
         setPending(true);
-        setSaved(false);
         setMessage("");
         try {
             if (nextName !== user.name) {
@@ -167,8 +126,8 @@ function MyPage() {
                 setNextPassword("");
                 setConfirmPassword("");
             }
-            setSaved(true);
-            setMessage("저장했습니다.");
+            setMessage("");
+            setSavedOpen(true);
         } catch (error) {
             setMessage(error instanceof ApiError ? error.message : "저장하지 못했습니다.");
         } finally {
@@ -280,7 +239,7 @@ function MyPage() {
                     />
                 </section>
 
-                {message && <p className={saved ? "mypage__status mypage__status--saved" : "mypage__status"}>{message}</p>}
+                {message && <p className="mypage__status">{message}</p>}
 
                 <button type="submit" className="mypage__save" disabled={pending}>
                     {pending ? "저장 중..." : "저장하기"}
@@ -290,6 +249,15 @@ function MyPage() {
             <button type="button" className="mypage__logout" onClick={() => setLogoutConfirm(true)}>
                 로그아웃
             </button>
+
+            <Modal open={savedOpen} title="저장했습니다" onClose={() => setSavedOpen(false)}>
+                <p className="confirm-dialog__description">변경한 내용이 저장되었습니다.</p>
+                <div className="confirm-dialog__actions">
+                    <Button type="button" variant="primary" onClick={() => setSavedOpen(false)}>
+                        확인
+                    </Button>
+                </div>
+            </Modal>
 
             <ConfirmDialog
                 open={logoutConfirm}

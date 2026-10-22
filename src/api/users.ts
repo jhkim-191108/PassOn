@@ -1,4 +1,4 @@
-import { API_URL, api, getAccessToken } from "./client";
+import { ApiError, api, apiBlob } from "./client";
 import type { NotificationSettings, User } from "../types/api";
 
 export function getMe() {
@@ -23,6 +23,7 @@ export function updateNotificationSettings(settings: Partial<NotificationSetting
     });
 }
 
+// 비밀번호 변경
 export async function changePassword(currentPassword: string, newPassword: string) {
     await api<void>("/api/users/me/password", {
         method: "PATCH",
@@ -30,6 +31,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
     });
 }
 
+// 프로필 사진 업로드
 export async function uploadMyPhoto(file: File) {
     const body = new FormData();
     body.append("file", file);
@@ -39,12 +41,12 @@ export async function uploadMyPhoto(file: File) {
     });
 }
 
+// 내 프로필 사진. 사진이 없으면 null
 export async function loadMyPhoto() {
-    const token = getAccessToken();
-    const response = await fetch(`${API_URL}/api/users/me/photo`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        credentials: "include",
-    });
-    if (response.status === 404 || !response.ok) return null;
-    return response.blob();
+    try {
+        return await apiBlob("/api/users/me/photo", { cache: "no-store" });
+    } catch (error) {
+        if (error instanceof ApiError && error.status === 404) return null;
+        throw error;
+    }
 }

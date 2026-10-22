@@ -19,6 +19,7 @@ import type { Notification, Store, StoreRole } from "../../types/api";
 
 interface BottomNavigationProps {
     userName?: string;
+    photoUrl?: string | null;
     role?: StoreRole;
     storeId?: string;
     storeName?: string;
@@ -45,6 +46,7 @@ const MORE_LINKS = [
 
 function BottomNavigation({
     userName = "",
+    photoUrl,
     role,
     storeId,
     storeName,
@@ -90,7 +92,9 @@ function BottomNavigation({
                     <div className="bottom-nav__sheet-panel" onClick={(event) => event.stopPropagation()}>
                         <div className="bottom-nav__sheet-handle" />
                         <div className="bottom-nav__sheet-user">
-                            <span className="bottom-nav__sheet-avatar">{userName.charAt(0)}</span>
+                            <span className="bottom-nav__sheet-avatar">
+                                {photoUrl ? <img src={photoUrl} alt="" /> : userName.charAt(0)}
+                            </span>
                             <span className="bottom-nav__sheet-id">
                                 <strong>{userName}</strong>
                                 <button type="button" className="bottom-nav__sheet-meta" onClick={() => setStoreOpen((current) => !current)}>

@@ -187,7 +187,7 @@ async function performApi<T>(
   return (await response.json()) as T;
 }
 
-export async function apiBlob(
+async function performApiBlob(
   path: string,
   options: ApiOptions = {}
 ): Promise<Blob> {
@@ -235,4 +235,25 @@ export async function apiBlob(
   }
 
   return response.blob();
+}
+
+// 파일 응답. 프로필 사진, 인수인계 사진
+export async function apiBlob(
+  path: string,
+  options: ApiOptions = {}
+): Promise<Blob> {
+  const { share = true, ...request } = options;
+  const method = (request.method ?? "GET").toUpperCase();
+  if (share && method === "GET") {
+    const key = `blob ${method} ${path}`;
+    const existing = inflightGets.get(key);
+    if (existing) return existing as Promise<Blob>;
+    const promise = performApiBlob(path, request);
+    inflightGets.set(key, promise);
+    void promise.finally(() => {
+      if (inflightGets.get(key) === promise) inflightGets.delete(key);
+    });
+    return promise;
+  }
+  return performApiBlob(path, request);
 }

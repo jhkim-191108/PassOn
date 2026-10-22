@@ -1,4 +1,5 @@
 import { ROLE_BADGE } from "@/features/stores/labels";
+import { useAppSession } from "@/layouts/appSession";
 import type { Store, User } from "@/types/api";
 
 interface AccountCardProps {
@@ -7,11 +8,15 @@ interface AccountCardProps {
 }
 
 function AccountCard({ user, store }: AccountCardProps) {
+    // 내 계정. 사진, 이름, 역할, 이메일, 매장
+    const { photoUrl } = useAppSession();
     return (
         <article className="store-settings__card" style={{ order: 2 }}>
             <h2>내 계정</h2>
             <div className="store-settings__account">
-                <span className="store-settings__avatar">{user.name.charAt(0)}</span>
+                <span className="store-settings__avatar">
+                    {photoUrl ? <img src={photoUrl} alt="" /> : user.name.charAt(0)}
+                </span>
                 <div>
                     <div className="store-settings__identity">
                         <strong>{user.name}</strong>
