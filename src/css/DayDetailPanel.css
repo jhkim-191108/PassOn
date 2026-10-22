@@ -69,22 +69,6 @@
   margin-bottom: 12px;
 }
 
-.day-detail__time {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  color: #a8a29e;              /* stone-400 */
-}
-
-.day-detail__live {
-  padding: 2px 8px;
-  background: #10b981;         /* emerald-500 */
-  border-radius: 9999px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1rem;
-  color: #ffffff;
-}
-
 .day-detail__people {
   display: flex;
   flex-wrap: wrap;
@@ -149,4 +133,101 @@
   font-size: 0.75rem;
   line-height: 1rem;
   color: #a8a29e;              /* stone-400 */
+}
+
+.day-detail__error {
+  margin: 0;
+  padding: 10px 20px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.day-detail__none {
+  margin: 0;
+  color: #a8a29e;
+  font-size: 0.8125rem;
+}
+
+.day-detail__remove {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: #a8a29e;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.day-detail__remove:hover {
+  color: #dc2626;
+}
+
+.day-detail__remove:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.day-detail__assign {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.day-detail__assign .select-field {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+}
+
+.day-detail__add {
+  height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #009966;
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.day-detail__add:hover {
+  background: #008b62;
+}
+
+.day-detail__add:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.day-detail--modal {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  max-height: min(70vh, 640px);
+  overflow: auto;
+}
+
+.day-detail--modal .day-detail__today {
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.day-detail--modal .day-detail__error {
+  margin: 0 0 12px;
+  padding: 0;
+  background: transparent;
+}
+
+.day-detail--modal .day-detail__shift {
+  padding: 14px 0;
+}
+
+.day-detail--modal .day-detail__shift:first-child {
+  padding-top: 0;
 }

@@ -119,11 +119,6 @@
   border-radius: 12px;
 }
 
-/* 현재 근무 중인 시간대 강조 */
-.today-shifts__row--live {
-  background: #ecfdf5;         /* emerald-50 */
-}
-
 .today-shifts__people {
   display: flex;
   flex: 1;
@@ -152,28 +147,6 @@
   font-size: 0.75rem;
   line-height: 1rem;
   color: #a8a29e;              /* stone-400 */
-}
-
-.today-shifts__live {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  background: #10b981;         /* emerald-500 */
-  border-radius: 9999px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1rem;
-  color: #ffffff;
-}
-
-.today-shifts__live::before {
-  content: '';
-  width: 5px;
-  height: 5px;
-  background: #ffffff;
-  border-radius: 50%;
 }
 
 @media (min-width: 640px) {

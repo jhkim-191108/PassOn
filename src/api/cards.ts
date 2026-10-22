@@ -7,6 +7,14 @@ export function getHandoffCards(handoffId: string) {
     );
 }
 
+export function getOpenCards(storeId: string) {
+    return api<Card[]>(`/api/stores/${storeId}/open-cards`);
+}
+
+export function getCard(cardId: string) {
+    return api<Card>(`/api/cards/${cardId}`);
+}
+
 export function updateCard(
     cardId: string,
     data: UpdateCardRequest

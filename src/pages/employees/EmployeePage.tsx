@@ -59,7 +59,14 @@ function EmployeesPage() {
             setRoleDraft({ member, role });
             return;
         }
-        void applyRole(member, role);
+        async function apply() {
+            try {
+                await applyRole(member, role);
+            } catch {
+                // 실패 문구는 message로 남긴다.
+            }
+        }
+        void apply();
     }
 
     async function confirmLeave() {

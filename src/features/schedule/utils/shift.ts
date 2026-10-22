@@ -20,11 +20,26 @@ export const SLOT_TO_SHIFT: Record<WorkSlot, ShiftType> = {
   CLOSE: '마감',
 };
 
+type ScheduleShift = '오전' | '오후' | '마감';
+
+/** 화면 시간대 → 서버 값 */
+export const SHIFT_TO_SLOT: Record<ScheduleShift, WorkSlot> = {
+  오전: 'MORNING',
+  오후: 'AFTERNOON',
+  마감: 'CLOSE',
+};
+
 /** 시간대별 근무 시간 — 서버에는 시각이 없어서 화면에서 고정값으로 사용 (Figma 기준) */
 const SLOT_TIME: Record<WorkSlot, Pick<ShiftSlot, 'startTime' | 'endTime'>> = {
   MORNING: { startTime: '08:00', endTime: '14:00' },
   AFTERNOON: { startTime: '14:00', endTime: '20:00' },
   CLOSE: { startTime: '20:00', endTime: '23:00' },
+};
+
+export const SHIFT_TIME: Record<ScheduleShift, Pick<ShiftSlot, 'startTime' | 'endTime'>> = {
+  오전: SLOT_TIME.MORNING,
+  오후: SLOT_TIME.AFTERNOON,
+  마감: SLOT_TIME.CLOSE,
 };
 
 /**
@@ -37,16 +52,24 @@ export const groupShifts = (shifts: ShiftResponse[], members: Member[]): ShiftSl
 
   for (const shift of shifts) {
     const key = `${shift.workDate}_${shift.slot}`;
+    const userId = userIdByMember.get(shift.memberId) ?? shift.memberId;
     const group = groups.get(key) ?? {
       id: key,
       date: shift.workDate,
       shiftType: SLOT_TO_SHIFT[shift.slot],
       staffIds: [],
       staffNames: [],
+      people: [],
       ...SLOT_TIME[shift.slot],
     };
-    group.staffIds.push(userIdByMember.get(shift.memberId) ?? shift.memberId);
+    group.staffIds.push(userId);
     group.staffNames.push(shift.memberName);
+    group.people?.push({
+      shiftId: shift.id,
+      memberId: shift.memberId,
+      userId,
+      name: shift.memberName,
+    });
     groups.set(key, group);
   }
 
@@ -103,7 +126,12 @@ export const filterSlotsByStaff = (slots: ShiftSlot[], allowedIds: Set<string> |
   return slots
     .map((slot) => {
       const keep = slot.staffIds.map((id, i) => [id, slot.staffNames[i]] as const).filter(([id]) => allowedIds.has(id));
-      return { ...slot, staffIds: keep.map(([id]) => id), staffNames: keep.map(([, name]) => name) };
+      return {
+        ...slot,
+        staffIds: keep.map(([id]) => id),
+        staffNames: keep.map(([, name]) => name),
+        people: slot.people?.filter((person) => allowedIds.has(person.userId)),
+      };
     })
     .filter((slot) => slot.staffIds.length > 0);
 };

@@ -8,22 +8,41 @@ import { toStaffMember } from '../utils/shift';
 // 직원 · 근무조 목록 (역할 배지 · 근무조 표시 · 근무조 필터용)
 export const useStaffDirectory = (storeId: string) => {
   const [directory, setDirectory] = useState<StaffDirectory>({ staff: [], teams: [] });
+  const [members, setMembers] = useState<Member[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!storeId) return; // 매장 정보를 받기 전에는 요청하지 않음
+    if (!storeId) {
+      setDirectory({ staff: [], teams: [] });
+      setMembers([]);
+      setError(null);
+      return;
+    }
     let ignore = false;
-    Promise.all([api<Member[]>(`/api/stores/${storeId}/members`), api<Team[]>(`/api/stores/${storeId}/teams`)])
-      .then(([members, teams]) => {
+
+    async function load() {
+      try {
+        setError(null);
+        const [memberRows, teamRows] = await Promise.all([
+          api<Member[]>(`/api/stores/${storeId}/members`),
+          api<Team[]>(`/api/stores/${storeId}/teams`),
+        ]);
         if (ignore) return;
+        setMembers(memberRows.filter((member) => member.status === 'ACTIVE'));
         setDirectory({
-          staff: members.map(toStaffMember),
+          staff: memberRows.map(toStaffMember),
           // 서버 팀에는 색 · 생성일이 없음 (근무표 화면에서도 쓰지 않음)
-          teams: teams.map((team) => ({ id: team.id, storeId, name: team.name, color: '', createdAt: '' })),
+          teams: teamRows.map((team) => ({ id: team.id, storeId, name: team.name, color: '', createdAt: '' })),
         });
-      })
-      .catch(() => {
-        // 직원 정보가 없어도 근무표는 보여줄 수 있으므로 조용히 무시 (역할·근무조만 빠짐)
-      });
+      } catch (loadError: unknown) {
+        if (ignore) return;
+        setMembers([]);
+        setDirectory({ staff: [], teams: [] });
+        setError(loadError instanceof Error ? loadError.message : '직원 목록을 불러오지 못했습니다.');
+      }
+    }
+
+    void load();
     return () => {
       ignore = true;
     };
@@ -34,5 +53,5 @@ export const useStaffDirectory = (storeId: string) => {
     [directory.staff],
   );
 
-  return { staff: directory.staff, teams: directory.teams, staffById };
+  return { staff: directory.staff, teams: directory.teams, staffById, members, error };
 };

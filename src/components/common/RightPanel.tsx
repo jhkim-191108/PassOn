@@ -1,31 +1,13 @@
-import { useEffect, useState } from "react";
-import { api } from "@/api/client";
 import { formatRelativeTime } from "@/features/dashboard/utils/time";
-import type { Notification, NotificationType } from "@/types/api";
+import type { ShiftResponse } from "@/features/schedule/types";
+import type { Card, Notification, NotificationType } from "@/types/api";
 import "../../css/rightPanel.css";
 
-interface CardItem {
-    id: string;
-    handoffId: string;
-    type: "STOCK" | "TASK" | "GUEST" | "NOTICE";
-    title: string;
-    urgency: "NOW" | "TODAY" | "LATER";
-    needsReview: boolean;
-    assigneeName: string | null;
-    progress: "OPEN" | "IN_PROGRESS" | "DONE";
-    createdAt: string;
-}
-
-interface ShiftItem {
-    id: string;
-    memberName: string;
-    slot: "MORNING" | "AFTERNOON" | "CLOSE";
-}
-
 interface RightPanelProps {
-    storeId: string;
     userName: string;
     notifications: Notification[];
+    cards: Card[];
+    shifts: ShiftResponse[];
 }
 
 const TYPE_LABEL = {
@@ -55,53 +37,14 @@ const TIPS = [
     "메모로 추가 정보를 남길 수 있어요",
 ];
 
-function today() {
-    const date = new Date();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${date.getFullYear()}-${month}-${day}`;
-}
-
-function chipOf(card: CardItem) {
+function chipOf(card: Card) {
     if (card.urgency === "NOW") return { label: "긴급", tone: "urgent" };
     if (card.type === "STOCK") return { label: TYPE_LABEL.STOCK, tone: "stock" };
     if (card.type === "NOTICE") return { label: TYPE_LABEL.NOTICE, tone: "notice" };
     return { label: TYPE_LABEL[card.type], tone: "task" };
 }
 
-function RightPanel({ storeId, userName, notifications }: RightPanelProps) {
-    const [cards, setCards] = useState<CardItem[]>([]);
-    const [shifts, setShifts] = useState<ShiftItem[]>([]);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        async function load() {
-            const day = today();
-            try {
-                const [cardData, shiftData] = await Promise.all([
-                    api<CardItem[]>(`/api/stores/${storeId}/open-cards`),
-                    api<ShiftItem[]>(`/api/stores/${storeId}/shifts?from=${day}&to=${day}`),
-                ]);
-                if (!cancelled) {
-                    setCards(cardData);
-                    setShifts(shiftData);
-                }
-            } catch (error) {
-                console.error("오른쪽 패널을 불러오지 못했습니다.", error);
-                if (!cancelled) {
-                    setCards([]);
-                    setShifts([]);
-                }
-            }
-        }
-
-        load();
-        return () => {
-            cancelled = true;
-        };
-    }, [storeId]);
-
+function RightPanel({ userName, notifications, cards, shifts }: RightPanelProps) {
     const open = cards.filter((card) => card.progress !== "DONE");
     const urgent = open.filter((card) => card.urgency === "NOW");
     const mine = open.filter((card) => card.assigneeName === userName);

@@ -37,8 +37,8 @@ function NoticeDetailPage() {
     const [memoText, setMemoText] = useState("");
     const [deleting, setDeleting] = useState(false);
 
+    if (loading) return <Loading text="공지를 불러오는 중입니다..." />;
     if (!store) {
-        if (loading) return <Loading text="공지를 불러오는 중입니다..." />;
         return <ErrorState title="공지를 불러오지 못했습니다." description={message || "잠시 후 다시 시도해 주세요."} />;
     }
 

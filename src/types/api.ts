@@ -126,6 +126,26 @@ export interface Card {
     acknowledgedAt: string | null;
     progress: CardProgress;
     edited: boolean;
+    createdAt: string;
+}
+
+export type EscalationPriority = "IMPORTANT" | "URGENT";
+
+export type EscalationStatus = "PENDING" | "RESOLVED";
+
+export interface Escalation {
+    id: string;
+    storeId: string;
+    cardId: string;
+    title: string;
+    body: string;
+    authorName: string;
+    requestedBy: string;
+    requestedByName: string;
+    priority: EscalationPriority;
+    status: EscalationStatus;
+    createdAt: string;
+    resolvedAt: string | null;
 }
 
 export type NoticePriority = "NORMAL" | "IMPORTANT" | "URGENT";

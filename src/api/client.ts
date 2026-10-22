@@ -3,7 +3,7 @@ import type {
   AuthResponse,
 } from "../types/api";
 
-const API_URL =
+export const API_URL =
   import.meta.env.VITE_API_URL ??
   "https://nextshift-1065882590623.asia-northeast3.run.app";
 
@@ -14,10 +14,16 @@ let accessToken: string | null = sessionStorage.getItem(TOKEN_KEY);
 let refreshPromise: Promise<string | null> | null =
   null;
 
+const inflightGets = new Map<string, Promise<unknown>>();
+
 export function setAccessToken(token: string | null) {
   accessToken = token;
   if (token) sessionStorage.setItem(TOKEN_KEY, token);
   else sessionStorage.removeItem(TOKEN_KEY);
+}
+
+export function getAccessToken() {
+  return accessToken;
 }
 
 export function clearAccessToken() {
@@ -55,40 +61,63 @@ async function getError(
 
 async function refreshAccessToken() {
   if (!refreshPromise) {
-    refreshPromise = fetch(
-      `${API_URL}/api/auth/refresh`,
-      {
-        method: "POST",
-        credentials: "include",
-      }
-    )
-      .then(async (response) => {
-        if (!response.ok) {
-          setAccessToken(null);
-          return null;
-        }
-
-        const data =
-          (await response.json()) as AuthResponse;
-
-        setAccessToken(data.accessToken);
-
-        return data.accessToken;
-      })
-      .finally(() => {
-        refreshPromise = null;
-      });
+    refreshPromise = loadRefreshToken().finally(() => {
+      refreshPromise = null;
+    });
   }
 
   return refreshPromise;
 }
 
+async function loadRefreshToken() {
+  try {
+    const response = await fetch(`${API_URL}/api/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      setAccessToken(null);
+      return null;
+    }
+    const data = (await response.json()) as AuthResponse;
+    if (!data.accessToken) {
+      setAccessToken(null);
+      return null;
+    }
+    setAccessToken(data.accessToken);
+    return data.accessToken;
+  } catch {
+    return null;
+  }
+}
+
 interface ApiOptions extends RequestInit {
   auth?: boolean;
   retry?: boolean;
+  share?: boolean;
 }
 
 export async function api<T>(
+  path: string,
+  options: ApiOptions = {}
+): Promise<T> {
+  const { share = true, ...request } = options;
+  const method = (request.method ?? "GET").toUpperCase();
+  if (share && method === "GET") {
+    const key = `${method} ${path}`;
+    const existing = inflightGets.get(key);
+    if (existing) return existing as Promise<T>;
+    const promise = performApi<T>(path, request);
+    inflightGets.set(key, promise);
+    void promise.finally(() => {
+      if (inflightGets.get(key) === promise) inflightGets.delete(key);
+    });
+    return promise;
+  }
+  return performApi<T>(path, request);
+}
+
+async function performApi<T>(
   path: string,
   options: ApiOptions = {}
 ): Promise<T> {
@@ -140,6 +169,7 @@ export async function api<T>(
       return api<T>(path, {
         ...options,
         retry: false,
+        share: false,
       });
     }
   }
@@ -154,5 +184,5 @@ export async function api<T>(
     return undefined as T;
   }
 
-  return response.json() as Promise<T>;
+  return (await response.json()) as T;
 }

@@ -4,6 +4,16 @@ import type { ShiftType, UserRole } from '@/features/auth';
 
 export type { ShiftType };
 
+/** 시간대에 들어간 직원 한 명. shiftId로 그 칸을 지운다. */
+export interface ShiftPerson {
+  shiftId: string;
+  /** 매장 멤버 id */
+  memberId: string;
+  /** 로그인 사용자 id */
+  userId: string;
+  name: string;
+}
+
 /** 하루의 한 근무 시간대 (예: 10/12 오전 08:00~14:00, 근무자 2명) */
 export interface ShiftSlot {
   id: string;
@@ -12,6 +22,8 @@ export interface ShiftSlot {
   shiftType: ShiftType;
   staffIds: string[];
   staffNames: string[];
+  /** 서버에서 온 근무만 있다. 목업 데이터에는 없을 수 있다. */
+  people?: ShiftPerson[];
   startTime: string;
   endTime: string;
 }

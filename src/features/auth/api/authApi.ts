@@ -27,12 +27,13 @@ async function toSession(data: AuthResponse): Promise<LoginResponse> {
 }
 
 export const authApi = {
-    login(values: LoginRequest) {
-        return api<AuthResponse>("/api/auth/login", {
+    async login(values: LoginRequest) {
+        const data = await api<AuthResponse>("/api/auth/login", {
             method: "POST",
             auth: false,
             body: JSON.stringify(values),
-        }).then(toSession);
+        });
+        return toSession(data);
     },
 
     async emailAvailable(email: string) {
@@ -49,12 +50,13 @@ export const authApi = {
         }
     },
 
-    signup(values: SignupRequest) {
-        return api<AuthResponse>("/api/auth/signup", {
+    async signup(values: SignupRequest) {
+        const data = await api<AuthResponse>("/api/auth/signup", {
             method: "POST",
             auth: false,
             body: JSON.stringify(values),
-        }).then(toSession);
+        });
+        return toSession(data);
     },
 
     loginAsDemo(): Promise<LoginResponse> {

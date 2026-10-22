@@ -1,48 +1,36 @@
-// 매장 설정 데이터. 화면은 components가 그리고, 저장과 삭제는 여기서 한다.
+// 매장 설정 데이터. 사용자와 매장 목록은 레이아웃이 갖고, 여기서는 알림 설정과 저장만 한다.
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
 import { ApiError } from "@/api/client";
-import { deleteStore, getStores, updateStore } from "@/api/stores";
-import { getMe, getNotificationSettings, updateMe, updateNotificationSettings } from "@/api/users";
-import { PATHS } from "@/routes/paths";
-import type { NotificationSettings, Store, User } from "@/types/api";
-import { pickStore, useCurrentStoreId } from "@/features/stores/currentStore";
+import { deleteStore, updateStore } from "@/api/stores";
+import { getNotificationSettings, updateMe, updateNotificationSettings } from "@/api/users";
+import type { NotificationSettings } from "@/types/api";
+import { clearCurrentStore, selectStore } from "@/features/stores/currentStore";
+import { useAppSession } from "@/layouts/appSession";
 
 function errorText(error: unknown, fallback: string) {
     return error instanceof ApiError && error.message ? error.message : fallback;
 }
 
 export function useStoreSettings() {
-    const navigate = useNavigate();
-    const [stores, setStores] = useState<Store[]>([]);
-    const [user, setUser] = useState<User | null>(null);
-    const [accountName, setAccountName] = useState("");
-    const [storeName, setStoreName] = useState("");
+    const { user, stores, currentStore, replaceUser, replaceStore, replaceStores } = useAppSession();
+    const current = currentStore;
+    const [accountName, setAccountName] = useState(user.name);
+    const [storeName, setStoreName] = useState(current?.name ?? "");
     const [settings, setSettings] = useState<NotificationSettings | null>(null);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
     const [pending, setPending] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const busy = useRef(false);
+    const isOwner = current?.myRole === "OWNER";
 
     useEffect(() => {
         let cancelled = false;
 
         async function start() {
             try {
-                const [storeList, me, notificationSettings] = await Promise.all([
-                    getStores(),
-                    getMe(),
-                    getNotificationSettings(),
-                ]);
-                if (cancelled) return;
-                const chosen = pickStore(storeList);
-                setStores(storeList);
-                setUser(me);
-                setAccountName(me.name);
-                setStoreName(chosen?.name ?? "");
-                setSettings(notificationSettings);
-                if (storeList.length === 0) setMessage("매장이 없습니다.");
+                const notificationSettings = await getNotificationSettings();
+                if (!cancelled) setSettings(notificationSettings);
             } catch (error: unknown) {
                 if (!cancelled) setMessage(errorText(error, "매장 설정을 불러오지 못했습니다."));
             } finally {
@@ -50,19 +38,19 @@ export function useStoreSettings() {
             }
         }
 
-        start();
+        void start();
         return () => {
             cancelled = true;
         };
     }, []);
 
-    const selectedId = useCurrentStoreId();
-    const current = stores.find((store) => store.id === selectedId) ?? stores[0] ?? null;
-    const isOwner = current?.myRole === "OWNER";
+    useEffect(() => {
+        setAccountName(user.name);
+    }, [user.name]);
 
     useEffect(() => {
         if (current) setStoreName(current.name);
-    }, [current]);
+    }, [current?.id, current?.name]);
 
     async function saveStoreName(event?: FormEvent<HTMLFormElement>) {
         event?.preventDefault();
@@ -79,7 +67,7 @@ export function useStoreSettings() {
         setMessage("");
         try {
             const updated = await updateStore(current.id, nextName);
-            setStores((list) => list.map((item) => (item.id === updated.id ? updated : item)));
+            replaceStore(updated);
             setStoreName(updated.name);
         } catch (error: unknown) {
             setMessage(errorText(error, "매장 이름을 저장하지 못했습니다."));
@@ -91,7 +79,7 @@ export function useStoreSettings() {
 
     async function saveAccountName(event?: FormEvent<HTMLFormElement>) {
         event?.preventDefault();
-        if (!user || busy.current) return;
+        if (busy.current) return;
         const nextName = accountName.trim();
         if (!nextName) {
             setAccountName(user.name);
@@ -104,7 +92,7 @@ export function useStoreSettings() {
         setMessage("");
         try {
             const updated = await updateMe(nextName);
-            setUser(updated);
+            replaceUser(updated);
             setAccountName(updated.name);
         } catch (error: unknown) {
             setMessage(errorText(error, "이름을 저장하지 못했습니다."));
@@ -135,15 +123,29 @@ export function useStoreSettings() {
     }
 
     async function confirmDelete() {
-        if (!current) return;
+        if (!current || !isOwner || busy.current) return;
+        busy.current = true;
         setPending(true);
         setMessage("");
         try {
             await deleteStore(current.id);
-            navigate(PATHS.STORE_SETUP);
+            const rest = stores.filter((store) => store.id !== current.id);
+            replaceStores(rest);
+            setDeleteOpen(false);
+            const next = rest[0];
+            if (next) {
+                selectStore(next.id);
+                setStoreName(next.name);
+            } else {
+                clearCurrentStore();
+                setStoreName("");
+                setMessage("매장을 폐쇄했습니다.");
+            }
         } catch (error: unknown) {
             setDeleteOpen(false);
             setMessage(errorText(error, "매장을 폐쇄하지 못했습니다."));
+        } finally {
+            busy.current = false;
             setPending(false);
         }
     }
@@ -159,7 +161,7 @@ export function useStoreSettings() {
         setStoreName,
         settings,
         loading,
-        message,
+        message: message || (current ? "" : "매장이 없습니다."),
         pending,
         deleteOpen,
         setDeleteOpen,

@@ -1,5 +1,5 @@
 import type { ShiftSlot } from '../types';
-import { SHIFT_TONE, SHIFTS, isOngoing } from '../utils/shift';
+import { SHIFT_TONE, SHIFTS } from '../utils/shift';
 import { StaffInitial } from './StaffInitial';
 import '../../../css/ScheduleCommon.css';
 import '../../../css/TodayShiftCards.css';
@@ -9,12 +9,10 @@ interface Props {
   slots: ShiftSlot[];
   userId: string;
   isLoading?: boolean;
-  /** 현재 시각 (테스트용으로 주입 가능) */
-  now?: Date;
 }
 
 // "오늘 내 근무" + "오늘 근무 현황(현재 근무자 포함)"
-export const TodayShiftCards = ({ slots, userId, isLoading = false, now = new Date() }: Props) => {
+export const TodayShiftCards = ({ slots, userId, isLoading = false }: Props) => {
   const mySlots = slots.filter((s) => s.staffIds.includes(userId));
   const isWorking = mySlots.length > 0;
 
@@ -29,7 +27,6 @@ export const TodayShiftCards = ({ slots, userId, isLoading = false, now = new Da
               <div key={slot.id} className={`today-shifts__my-slot shift-tone--${SHIFT_TONE[slot.shiftType]}`}>
                 <p className="today-shifts__my-shift">
                   {slot.shiftType}
-                  {isOngoing(slot, now) && <span className="today-shifts__live">근무 중</span>}
                 </p>
                 <p className="today-shifts__my-time">
                   {slot.startTime} ~ {slot.endTime}
@@ -53,9 +50,8 @@ export const TodayShiftCards = ({ slots, userId, isLoading = false, now = new Da
         <ul className="today-shifts__rows">
           {SHIFTS.map((shift) => {
             const slot = slots.find((s) => s.shiftType === shift);
-            const live = slot ? isOngoing(slot, now) : false;
             return (
-              <li key={shift} className={`today-shifts__row${live ? ' today-shifts__row--live' : ''}`}>
+              <li key={shift} className="today-shifts__row">
                 <span className={`shift-badge shift-tone--${SHIFT_TONE[shift]}`}>{shift}</span>
                 <div className="today-shifts__people">
                   {slot && slot.staffNames.length > 0 ? (
@@ -72,7 +68,6 @@ export const TodayShiftCards = ({ slots, userId, isLoading = false, now = new Da
                     <p className="today-shifts__empty">배정 없음</p>
                   )}
                 </div>
-                {live && <span className="today-shifts__live">근무 중</span>}
               </li>
             );
           })}
