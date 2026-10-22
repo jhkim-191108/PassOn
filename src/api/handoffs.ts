@@ -1,5 +1,9 @@
 import { api } from "./client";
-import type { Handoff } from "../types/api"; 
+import type { Handoff } from "../types/api";
+
+export function getHandoffs(storeId: string) {
+    return api<Handoff[]>(`/api/handoffs?storeId=${storeId}`);
+}
 
 export function createHandoff(
     storeId: string,

@@ -2,7 +2,7 @@ import type { ComponentProps, MouseEvent } from 'react';
 
 // TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
 import { Avatar } from '@/features/auth/components/common/Avatar';
-import Badge from '@/features/auth/components/common/Badge';
+import Badge from '@/components/ui/Badge';
 
 import type { HandoffItem, HandoffStatus, HandoffTask, Priority, QuickAction } from '../types';
 import { formatRelativeTime } from '../utils/time';

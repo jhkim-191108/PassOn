@@ -10,11 +10,9 @@ export { UrgentBanner } from './components/UrgentBanner';
 export { useDashboard } from './hooks/useDashboard';
 export { useCurrentUser } from './hooks/useCurrentUser';
 
-// api
-export { dashboardApi } from './api/dashboardApi';
-
 // utils
 export { buildDashboardSummary, getCurrentRole, type DashboardSummary } from './utils/summary';
+export { buildMemberMaps, cardToHandoff, noticeToHandoff } from './utils/card';
 export { formatRelativeTime, getGreeting, formatDateLabel, getCurrentShiftLabel } from './utils/time';
 
 // types
@@ -23,7 +21,11 @@ export type {
   HandoffItem,
   HandoffStatus,
   HandoffTask,
+  CardProgress,
+  CardResponse,
   Memo,
+  NoticeResponse,
+  Urgency,
   Photo,
   Priority,
   QuickAction,

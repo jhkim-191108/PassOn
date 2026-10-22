@@ -1,7 +1,6 @@
 import { generatePath, useNavigate } from 'react-router-dom';
 
-import ErrorState from '@/components/ui/ErrorState';
-import Loading from '@/components/ui/Loading';
+import Button from '@/components/ui/Button';
 
 import {
   DashboardHeader,
@@ -24,11 +23,21 @@ const HIGHLIGHT_TITLE = {
 
 export const DashboardPage = () => {
   const navigate = useNavigate();
-  const user = useCurrentUser();
+  const { user, isLoading: isUserLoading, error: userError } = useCurrentUser();
   const { summary, isLoading, error, reload, runQuickAction, pendingIds } = useDashboard(user);
 
   const viewItem = (id: string) => navigate(generatePath(PATHS.HANDOFF_DETAIL, { id }));
   const newHandoff = () => navigate(PATHS.HANDOFF_NEW);
+
+    if (userError || !user) {
+    return (
+      <div className="dashboard">
+        <p className="dashboard__status" role={userError ? 'alert' : 'status'}>
+          {userError ?? (isUserLoading ? '대시보드를 불러오는 중…' : '로그인 정보를 찾을 수 없어요.')}
+        </p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
