@@ -1,0 +1,504 @@
+.employees {
+    width: 100%;
+}
+
+.employees__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.employees__title {
+    margin: 0;
+    font-size: 28px;
+}
+
+.employees__subtitle {
+    margin: 6px 0 0;
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+
+.employees__teams h2,
+.employees__panel h2 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.employees__teams-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.employees__teams-head h2 {
+    margin: 0;
+}
+
+.employees__team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.employees__team-card,
+.employees__panel,
+.employees__member {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.employees__team-card {
+    padding: 16px;
+}
+
+.employees__team-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.employees__team-count {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* 팀 카드 아래는 이름 나열이 아니라 이니셜과 이름을 한 줄로 둔다. */
+.employees__team-people {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.employees__team-people li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.employees__team-avatar {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.employees__team-avatar--yellow { color: #b45309; background: #fef3c7; }
+.employees__team-avatar--purple { color: #6d28d9; background: #ede9fe; }
+.employees__team-avatar--green { color: #047857; background: #d1fae5; }
+.employees__team-avatar--blue { color: #1d4ed8; background: #dbeafe; }
+.employees__team-avatar--pink { color: #be185d; background: #fce7f3; }
+
+/* 팀 카드의 삭제. 확인 창은 공통 ConfirmDialog를 쓴다. */
+.employees__team-delete {
+    margin-top: 12px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #dc2626;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.employees__team-empty,
+.employees__member p {
+    margin: 14px 0 0;
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.employees__team-name {
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.employees__team-name--pink { color: #be185d; background: #fce7f3; }
+.employees__team-name--orange { color: #c2410c; background: #ffedd5; }
+.employees__team-name--blue { color: #1d4ed8; background: #dbeafe; }
+.employees__team-name--purple { color: #7e22ce; background: #f3e8ff; }
+.employees__team-name--green { color: #047857; background: #d1fae5; }
+.employees__team-name--gray { color: #4b5563; background: #f3f4f6; }
+
+.employees__team-card--add {
+    display: flex;
+    align-items: center;
+    border-style: dashed;
+}
+
+.employees__team-add {
+    width: 100%;
+    min-height: 72px;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary-dark);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.employees__team-card--add form {
+    width: 100%;
+}
+
+.employees__team-add-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-text-sub);
+    font-size: 12px;
+}
+
+.employees__team-add-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.employees__team-add-error {
+    margin: 8px 0 0;
+    color: #dc2626;
+    font-size: 12px;
+}
+
+.employees__team-card--add .employees__team-add-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.employees__panel {
+    padding: 12px 16px 16px;
+    margin-bottom: 20px;
+}
+
+.employees__panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 12px 4px;
+}
+
+.employees__panel-head span,
+.employees__left-label {
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+/* 퇴사 0명일 때 목록 자리 */
+.employees__left-empty {
+    margin: 4px 12px 16px;
+    padding: 28px 16px;
+    border-radius: 12px;
+    background: #f7f8f8;
+    color: #9ca3af;
+    text-align: center;
+    font-size: 14px;
+}
+
+.employees__members {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.employees__member {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 12px 4px;
+    padding: 16px 8px;
+}
+
+.employees__member-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 220px;
+}
+
+.employees__member-name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.employees__member .employees__team-badge {
+    color: #1d4ed8;
+    background: #dbeafe;
+}
+
+.employees__avatar {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-weight: 700;
+}
+
+.employees__avatar--left {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.employees__member .employees__left-badge {
+    color: #6b7280;
+    background: #f3f4f6;
+}
+
+.employees__left-date {
+    margin-left: auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f7f8f8;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.employees__member-controls {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.employees__member-controls .select-field {
+    min-width: 120px;
+}
+
+.employees__member-controls .button {
+    white-space: nowrap;
+}
+
+.employees__message {
+    color: var(--color-text-sub);
+}
+
+.invite-modal__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(17, 24, 39, 0.28);
+    /* 초대 창 뒤 화면 블러. 공통 모달(.modal-backdrop)과 같은 정도 */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.invite-modal {
+    width: 100%;
+    max-width: 400px;
+    padding: 22px 22px 20px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.16);
+}
+
+.invite-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.invite-modal__header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.invite-modal__close {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.invite-modal__field + .invite-modal__field {
+    margin-top: 16px;
+}
+
+.invite-modal__label {
+    display: block;
+    margin-bottom: 8px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.invite-modal__code-row,
+.invite-modal__link-row,
+.invite-modal__email-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.invite-modal__link-row .input-field,
+.invite-modal__email-row .input-field {
+    flex: 1;
+    min-width: 0;
+}
+
+.invite-modal__email-row {
+    align-items: flex-end;
+}
+
+.invite-modal__code {
+    letter-spacing: 0.14em;
+    font-size: 20px;
+}
+
+.invite-modal__copy {
+    border: 0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.invite-modal__link,
+.invite-modal__email {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f9fafb;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.invite-modal__email {
+    background: #ffffff;
+    color: #111827;
+}
+
+.invite-modal__send {
+    height: 40px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.invite-modal__notice {
+    margin: 12px 0 0;
+    color: var(--color-danger, #dc2626);
+    font-size: 12px;
+}
+
+.employees__header .employees__invite {
+    border: 1px solid #86efac;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--color-primary-dark);
+}
+
+@media (max-width: 1199px) {
+    .employees__team-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .employees__member {
+        flex-wrap: wrap;
+    }
+
+    .employees__member-main {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .employees__header,
+    .employees__teams-head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .employees__title {
+        font-size: 22px;
+    }
+
+    .employees__team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .employees__member {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .employees__member-main {
+        min-width: 0;
+    }
+
+    .employees__member-controls {
+        margin-left: 0;
+        flex-wrap: wrap;
+    }
+
+    .employees__member-controls .select-field,
+    .employees__member-controls .button {
+        flex: 1 1 100%;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .employees__left-date {
+        margin-left: 0;
+    }
+
+    .invite-modal__code-row,
+    .invite-modal__link-row,
+    .invite-modal__email-row {
+        flex-wrap: wrap;
+    }
+
+    .invite-modal__copy,
+    .invite-modal__send {
+        margin-left: auto;
+    }
+}
