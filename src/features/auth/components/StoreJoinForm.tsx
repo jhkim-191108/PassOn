@@ -1,3 +1,4 @@
+import iconInfo from '@/assets/Icon-info.png';
 import { useId, useState, type FormEvent } from 'react';
 
 // TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
@@ -135,9 +136,7 @@ export const StoreJoinForm = ({
       </form>
 
       <div className="store-join__info">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <img src={iconInfo} alt="" width={14} height={14} />
         <p>합류 후 역할(매니저/직원)은 매장 오너가 직원 관리 페이지에서 지정해요.</p>
       </div>
     </div>

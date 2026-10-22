@@ -1,4 +1,5 @@
 // TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
+import iconPlus from '@/assets/Icon-plus.png';
 import Button from '@/components/ui/Button';
 
 import type { UserRole } from '@/features/auth';
@@ -36,9 +37,7 @@ export const DashboardHeader = ({ userName, role, summary, onNewHandoff }: Props
     </div>
     <Button variant="primary" onClick={onNewHandoff}>
       <span className="dashboard-header__write">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
+        <img src={iconPlus} alt="" width={14} height={14} />
         작성
       </span>
     </Button>

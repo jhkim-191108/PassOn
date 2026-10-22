@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import logoSrc from '@/assets/logo.png';
+import logoSrc from '@/assets/icon-logo.png';
+import iconBack from '@/assets/Icon-back.png';
 import {
   LoginForm,
   useLogin,
@@ -68,9 +69,7 @@ function LoginPage() {
           <img src={logoSrc} alt="PassOn" className="login__mobile-logo" />
 
           <Link to={PATHS.LANDING} className="login__back">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
+            <img src={iconBack} alt="" width={14} height={14} />
             돌아가기
           </Link>
 

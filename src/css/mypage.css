@@ -33,6 +33,11 @@
   cursor: pointer;
 }
 
+.mypage__back img {
+  width: 18px;
+  height: 18px;
+}
+
 .mypage__back:hover {
   background: #f5f5f4;
 }
@@ -94,6 +99,11 @@
   box-shadow: 0 4px 3px rgba(0, 0, 0, 0.1);
   color: #ffffff;
   cursor: pointer;
+}
+
+.mypage__camera img {
+  width: 14px;
+  height: 14px;
 }
 
 .mypage__profile > p,

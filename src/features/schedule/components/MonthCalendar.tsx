@@ -1,3 +1,4 @@
+import iconBack from '@/assets/Icon-back.png';
 import type { ShiftSlot } from '../types';
 import { WEEKDAYS, formatLongDate, getMonthCells, type YearMonth } from '../utils/calendar';
 import { SHIFT_TONE, SHIFTS } from '../utils/shift';
@@ -39,17 +40,13 @@ export const MonthCalendar = ({
       {/* ── 월 이동 ──────────────────────────────────── */}
       <div className="month-calendar__nav">
         <button type="button" className="month-calendar__nav-btn" onClick={onPrevMonth} aria-label="이전 달">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
+          <img src={iconBack} alt="" width={16} height={16} />
         </button>
         <p className="month-calendar__title" aria-live="polite">
           {yearMonth.year}년 {yearMonth.month}월
         </p>
         <button type="button" className="month-calendar__nav-btn" onClick={onNextMonth} aria-label="다음 달">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+          <img src={iconBack} alt="" width={16} height={16} style={{ transform: "rotate(180deg)" }} />
         </button>
       </div>
 

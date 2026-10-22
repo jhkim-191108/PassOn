@@ -1,6 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import passOnLogo from "../../assets/passon-logo.png";
+import passOnLogo from "../../assets/icon-logo.png";
 import iconBell from "../../assets/Icon-bell.png";
+import iconChevron from "../../assets/Icon-chevron.png";
+import iconCheck from "../../assets/Icon-check.png";
+import iconPlus from "../../assets/Icon-plus.png";
+import iconMypage from "../../assets/Icon-mypage.png";
+import iconLogout from "../../assets/Icon-logout.png";
 import { useState } from "react";
 import { logout } from "../../api/auth";
 import type { Notification, Store, StoreRole } from "../../types/api";
@@ -81,9 +86,7 @@ function Navigation({
                     >
                         <span className="navigation__store-mark">{initial}</span>
                         <span className="navigation__store-name">{storeName}</span>
-                        <svg className="navigation__chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-                            <path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                        </svg>
+                        <img className="navigation__chevron" src={iconChevron} alt="" width={10} height={10} />
                     </button>
                     {open === "store" && (
                         <div className="navigation__dropdown navigation__dropdown--store" role="menu">
@@ -111,9 +114,7 @@ function Navigation({
                                                 <span>{TYPE_LABEL[store.type]} · {ROLE_BADGE[store.myRole]}</span>
                                             </span>
                                             {current && (
-                                                <svg className="store-menu__check" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                                                    <path d="M3 7.2 L5.8 10 L11 4.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
+                                                <img className="store-menu__check" src={iconCheck} alt="" width={14} height={14} />
                                             )}
                                         </button>
                                     );
@@ -160,9 +161,7 @@ function Navigation({
                 )}
             </div>
             <NavLink to="/app/handovers/new" className="navigation__write">
-                <svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">
-                    <path d="M5.5 1 V10 M1 5.5 H10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                </svg>
+                <img src={iconPlus} alt="" width={11} height={11} />
                 <span>인수인계 작성</span>
             </NavLink>
             <div className="navigation__account">
@@ -177,9 +176,7 @@ function Navigation({
                             <strong>{userName}</strong>
                             {role && <span>{role.toLowerCase()}</span>}
                         </span>
-                        <svg className="navigation__chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                            <path d="M2.5 4.5 L6 8 L9.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                        </svg>
+                        <img className="navigation__chevron" src={iconChevron} alt="" width={12} height={12} />
                     </button>
                     {open === "profile" && (
                         <div className="navigation__dropdown profile-dropdown">
@@ -191,7 +188,8 @@ function Navigation({
                                     navigate(PATHS.MYPAGE);
                                 }}
                             >
-                                내 정보
+                                <img className="profile-dropdown__icon" src={iconMypage} alt="" width={16} height={16} />
+                                마이페이지
                             </button>
                             <div className="profile-dropdown__divider"></div>
                             <button
@@ -202,6 +200,7 @@ function Navigation({
                                     setLogoutConfirm(true);
                                 }}
                             >
+                                <img className="profile-dropdown__icon" src={iconLogout} alt="" width={16} height={16} />
                                 로그아웃
                             </button>
                         </div>

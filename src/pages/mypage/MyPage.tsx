@@ -9,6 +9,8 @@ import { selectStore } from "@/features/stores/currentStore";
 import { ROLE_BADGE } from "@/features/stores/labels";
 import { useAppSession } from "@/layouts/appSession";
 import { PATHS } from "@/routes/paths";
+import iconBack from "@/assets/Icon-back.png";
+import iconCamera from "@/assets/Icon-camera.png";
 import "@/css/mypage.css";
 
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -190,9 +192,7 @@ function MyPage() {
         <section className="mypage">
             <header className="mypage__header">
                 <button type="button" className="mypage__back" onClick={goBack} aria-label="뒤로">
-                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                        <path d="M11.5 3.5 L6 9 L11.5 14.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <img src={iconBack} alt="" width={18} height={18} />
                 </button>
                 <h1>마이페이지</h1>
             </header>
@@ -203,10 +203,7 @@ function MyPage() {
                         {photoUrl ? <img src={photoUrl} alt="" /> : <span>{initial}</span>}
                     </button>
                     <button type="button" className="mypage__camera" onClick={openPhotoPicker} disabled={uploading} aria-label="프로필 사진 변경">
-                        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                            <path d="M2.2 4.2h1.4l.7-1.2h5l.7 1.2h1.6c.6 0 1 .4 1 1v5.4c0 .6-.4 1-1 1H2.2c-.6 0-1-.4-1-1V5.2c0-.6.4-1 1-1Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                            <circle cx="7" cy="7.4" r="1.8" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                        </svg>
+                        <img src={iconCamera} alt="" width={14} height={14} />
                     </button>
                 </div>
                 <p>프로필 사진을 클릭해서 변경하세요</p>

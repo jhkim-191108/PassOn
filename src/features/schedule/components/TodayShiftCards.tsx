@@ -1,3 +1,4 @@
+import iconCalendar from '@/assets/Icon-calendar.png';
 import type { ShiftSlot } from '../types';
 import { SHIFT_TONE, SHIFTS } from '../utils/shift';
 import { StaffInitial } from './StaffInitial';
@@ -36,9 +37,7 @@ export const TodayShiftCards = ({ slots, userId, isLoading = false }: Props) => 
           </div>
         ) : (
           <div className="today-shifts__off">
-            <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+            <img src={iconCalendar} alt="" width={28} height={28} />
             <p>{isLoading ? '불러오는 중…' : '오늘 근무 없음'}</p>
           </div>
         )}

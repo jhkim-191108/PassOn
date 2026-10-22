@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/ui/Button';
 
-import logoSrc from '@/assets/logo.png';
+import logoSrc from '@/assets/icon-logo.png';
 import { PATHS } from '@/routes/paths';
 import '../../css/LandingPage.css';
 
@@ -62,16 +62,6 @@ function LandingPage() {
           <div className="landing__divider" aria-hidden="true">
             <span className="landing__divider-line" />
             <span className="landing__divider-chip">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
               AI 분류
             </span>
             <span className="landing__divider-line" />

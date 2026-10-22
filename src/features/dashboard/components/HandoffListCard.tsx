@@ -1,3 +1,7 @@
+import iconAlert from '@/assets/Icon-alert.png';
+import iconCheck from '@/assets/Icon-check.png';
+import iconClipboard from '@/assets/Icon-clipboard.png';
+import iconInfo from '@/assets/Icon-info.png';
 import type { ComponentProps, MouseEvent } from 'react';
 
 // TODO: 공통 컴포넌트 위치(components/common) 확정 후 경로 교체
@@ -69,17 +73,11 @@ const TaskRows = ({ tasks }: { tasks: HandoffTask[] }) => {
 const PriorityIcon = ({ priority }: { priority: Priority }) => (
   <span className="handoff-card__icon" aria-hidden="true">
     {priority === 'urgent' ? (
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
+      <img src={iconAlert} alt="" width={20} height={20} />
     ) : priority === 'important' ? (
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+      <img src={iconInfo} alt="" width={20} height={20} />
     ) : (
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
+      <img src={iconClipboard} alt="" width={16} height={16} />
     )}
   </span>
 );
@@ -153,9 +151,7 @@ export const HandoffListCard = ({ item, currentUserId, onClick, onQuickAction, i
                 {item.photos.length > 0 && <span>📸{item.photos.length}</span>}
                 {item.memos.length > 0 && <span>💬{item.memos.length}</span>}
                 {item.requiresOwnerReport && (
-                  <svg className="handoff-card__owner-icon" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-label="오너 보고 필요">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
+                  <Badge variant="primary" size="sm">Owner</Badge>
                 )}
                 <span>{time}</span>
                 <span className="handoff-card__author">
@@ -246,9 +242,7 @@ export const HandoffListCard = ({ item, currentUserId, onClick, onQuickAction, i
 
         {isDone && (
           <span className="handoff-card__done-mark" aria-label="완료됨">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
+            <img src={iconCheck} alt="완료됨" width={16} height={16} />
           </span>
         )}
       </div>

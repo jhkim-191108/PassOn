@@ -1,3 +1,5 @@
+import iconBuilding from '@/assets/Icon-building.png';
+import iconKey from '@/assets/Icon-key.png';
 import '../../../css/StoreSetupChoice.css';
 
 interface Props {
@@ -11,9 +13,7 @@ export const StoreSetupChoice = ({ onCreate, onJoin }: Props) => (
     <div className="setup-choice">
       <button type="button" className="setup-choice__card setup-choice__card--create" onClick={onCreate}>
         <span className="setup-choice__icon" aria-hidden="true">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-          </svg>
+          <img src={iconBuilding} alt="" width={20} height={20} />
         </span>
         <span className="setup-choice__body">
           <span className="setup-choice__title-row">
@@ -28,9 +28,7 @@ export const StoreSetupChoice = ({ onCreate, onJoin }: Props) => (
 
       <button type="button" className="setup-choice__card setup-choice__card--join" onClick={onJoin}>
         <span className="setup-choice__icon" aria-hidden="true">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-          </svg>
+          <img src={iconKey} alt="" width={20} height={20} />
         </span>
         <span className="setup-choice__body">
           <span className="setup-choice__title-row">

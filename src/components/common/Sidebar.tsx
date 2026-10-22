@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import passOnLogo from "../../assets/passon-logo.png";
+import passOnLogo from "../../assets/icon-logo.png";
 import iconHome from "../../assets/Icon-home.png";
 import iconHandover from "../../assets/Icon-handover.png";
 import iconNotice from "../../assets/Icon-notice.png";
@@ -9,6 +9,9 @@ import iconHistory from "../../assets/Icon-history.png";
 import iconDelegate from "../../assets/Icon-delegate.png";
 import iconStore from "../../assets/Icon-store.png";
 import iconBell from "../../assets/Icon-bell.png";
+import iconChevron from "../../assets/Icon-chevron.png";
+import iconMypage from "../../assets/Icon-mypage.png";
+import iconLogout from "../../assets/Icon-logout.png";
 import { useState } from "react";
 import { logout } from "../../api/auth";
 import ConfirmDialog from "../ui/ConfirmDialog";
@@ -81,9 +84,7 @@ function Sidebar({
                         <strong>{storeName || "매장 없음"}</strong>
                         {role && <span>{ROLE_BADGE[role]}</span>}
                     </span>
-                    <svg className="sidebar__chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                        <path d="M2.5 4.5 L6 8 L9.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                    </svg>
+                    <img className="sidebar__chevron" src={iconChevron} alt="" width={12} height={12} />
                 </button>
                 {open === "store" && (
                     <div className="sidebar__dropdown sidebar__dropdown--store" role="menu">
@@ -186,9 +187,7 @@ function Sidebar({
                             <strong>{userName}</strong>
                             {userEmail && <span>{userEmail}</span>}
                         </span>
-                        <svg className="sidebar__chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                            <path d="M2.5 4.5 L6 8 L9.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                        </svg>
+                        <img className="sidebar__chevron" src={iconChevron} alt="" width={12} height={12} />
                     </button>
                     {open === "profile" && (
                         <div className="sidebar__dropdown profile-dropdown">
@@ -200,7 +199,8 @@ function Sidebar({
                                     navigate(PATHS.MYPAGE);
                                 }}
                             >
-                                내 정보
+                                <img className="profile-dropdown__icon" src={iconMypage} alt="" width={16} height={16} />
+                                마이페이지
                             </button>
                             <div className="profile-dropdown__divider" />
                             <button
@@ -211,6 +211,7 @@ function Sidebar({
                                     setLogoutConfirm(true);
                                 }}
                             >
+                                <img className="profile-dropdown__icon" src={iconLogout} alt="" width={16} height={16} />
                                 로그아웃
                             </button>
                         </div>

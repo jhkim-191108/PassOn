@@ -1,3 +1,6 @@
+import iconBack from '@/assets/Icon-back.png';
+import iconChevron from '@/assets/Icon-chevron.png';
+import iconMonitor from '@/assets/Icon-monitor.png';
 import { useId, useState } from 'react';
 import type { ComponentProps } from 'react'; 
 
@@ -37,23 +40,16 @@ export const DemoAccountList = ({ users, onSelect, disabled = false }: Props) =>
         aria-controls={panelId}
       >
         <span className="demo-accounts__toggle-label">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
+          <img src={iconMonitor} alt="" width={14} height={14} />
           데모 계정으로 체험하기
         </span>
-        <svg
-          width="14"
-          height="14"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-          aria-hidden="true"
+        <img
+          src={iconChevron}
+          alt=""
+          width={14}
+          height={14}
           className={`demo-accounts__chevron${open ? ' demo-accounts__chevron--open' : ''}`}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
+        />
       </button>
 
       {open && (
@@ -80,18 +76,7 @@ export const DemoAccountList = ({ users, onSelect, disabled = false }: Props) =>
                     </span>
                     <span className="demo-accounts__email">{user.email}</span>
                   </span>
-                  <svg
-                    width="13"
-                    height="13"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                    className="demo-accounts__arrow"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
+                  <img className="demo-accounts__arrow" src={iconBack} alt="" width={13} height={13} style={{ transform: "rotate(180deg)" }} />
                 </button>
               </li>
             ))}

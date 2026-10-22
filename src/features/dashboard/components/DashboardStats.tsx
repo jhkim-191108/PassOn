@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
 
+import iconAlert from '@/assets/Icon-alert.png';
+import iconCheck from '@/assets/Icon-check.png';
+import iconClock from '@/assets/Icon-clock.png';
+import iconUser from '@/assets/Icon-user.png';
 import type { HandoffItem } from '../types';
 import type { DashboardSummary } from '../utils/summary';
 import { formatRelativeTime } from '../utils/time';
@@ -16,17 +20,15 @@ interface StatDef {
   icon: ReactNode;
 }
 
-const Icon = ({ d }: { d: string }) => (
-  <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" d={d} />
-  </svg>
+const Icon = ({ src }: { src: string }) => (
+  <img src={src} alt="" width={12} height={12} />
 );
 
 const ICONS = {
-  clock: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-  alert: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
-  user: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-  check: 'M5 13l4 4L19 7',
+  clock: iconClock,
+  alert: iconAlert,
+  user: iconUser,
+  check: iconCheck,
 };
 
 interface Props {
@@ -38,12 +40,12 @@ export const DashboardStats = ({ summary, onViewItem }: Props) => {
   const isStaff = summary.role === 'STAFF';
 
   const stats: StatDef[] = [
-    { key: 'pending', label: '미처리', tone: 'pending', items: summary.pending, emptyLabel: '처리 대기 없음', icon: <Icon d={ICONS.clock} /> },
-    { key: 'urgent', label: '긴급', tone: 'urgent', items: summary.urgent, emptyLabel: '긴급 항목 없음', icon: <Icon d={ICONS.alert} /> },
-    { key: 'mine', label: '내 담당', tone: 'mine', items: summary.mine, emptyLabel: '배정된 업무 없음', icon: <Icon d={ICONS.user} /> },
+    { key: 'pending', label: '미처리', tone: 'pending', items: summary.pending, emptyLabel: '처리 대기 없음', icon: <Icon src={ICONS.clock} /> },
+    { key: 'urgent', label: '긴급', tone: 'urgent', items: summary.urgent, emptyLabel: '긴급 항목 없음', icon: <Icon src={ICONS.alert} /> },
+    { key: 'mine', label: '내 담당', tone: 'mine', items: summary.mine, emptyLabel: '배정된 업무 없음', icon: <Icon src={ICONS.user} /> },
     isStaff
-      ? { key: 'done', label: '완료', tone: 'done', items: summary.complete, emptyLabel: '완료된 항목 없음', icon: <Icon d={ICONS.check} /> }
-      : { key: 'review', label: '확인 필요', tone: 'review', items: summary.needsReview, emptyLabel: '모두 확인됨', icon: <Icon d={ICONS.check} /> },
+      ? { key: 'done', label: '완료', tone: 'done', items: summary.complete, emptyLabel: '완료된 항목 없음', icon: <Icon src={ICONS.check} /> }
+      : { key: 'review', label: '확인 필요', tone: 'review', items: summary.needsReview, emptyLabel: '모두 확인됨', icon: <Icon src={ICONS.check} /> },
   ];
 
   // 모바일·태블릿: 직원에게는 4번째 카드(완료)를 보여주지 않음 (Figma 기준)
