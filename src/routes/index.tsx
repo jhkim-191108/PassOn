@@ -15,6 +15,7 @@ import { SchedulePage } from "@/pages/schedule/SchedulePage";
 import HandoverDetailPage from "@/pages/handovers/HandoverDetailPage";
 import DelegatePage from "@/pages/delegations/DelegatePage";
 import MyPage from "@/pages/mypage/MyPage";
+import RecordsPage from "@/pages/records/RecordsPage";
 
 export const router = createBrowserRouter([
   // ── 인증 / 매장 진입 (공통 레이아웃 없음) ──────────
@@ -83,6 +84,7 @@ export const router = createBrowserRouter([
       { path: 'schedule', element: <SchedulePage /> },
       { path: 'delegate', element: <DelegatePage /> },
       { path: 'mypage', element: <MyPage /> },
+      { path: 'history', element: <RecordsPage /> },
       // 아직 페이지가 만들어지지 않은 메뉴
       {
         path: '*',

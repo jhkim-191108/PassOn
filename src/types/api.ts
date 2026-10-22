@@ -171,3 +171,16 @@ export interface UpdateCardRequest {
     urgency: Urgency;
     needsReview: boolean;
 }
+
+export type RecordAction = "CREATED" | "UPDATED" | "COMPLETED" | "DELETED";
+
+export interface RecordEntry{
+    action: RecordAction;
+    id: string;
+    storeId: string;
+    handoffId: string | null;
+    cardId: string | null;
+    title: string;
+    actorName: string;
+    at: string;
+}
