@@ -49,7 +49,7 @@ function PhotoUpload({
 
     return (
         <div className="photo-upload">
-            <div>
+            <div className="photo-upload__header">
                 <h3>사진 첨부</h3>
 
                 <Badge
@@ -64,6 +64,7 @@ function PhotoUpload({
 
             <Input 
                 type="file"
+                accept="image/*"
                 label="인수인계 사진"
                 multiple
                 onChange={handleChange}

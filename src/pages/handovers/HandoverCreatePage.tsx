@@ -12,6 +12,8 @@ import AiResultCard from "@/components/handovers/AiResultCard";
 import Button from "@/components/ui/Button";
 import { uploadPhoto } from "@/api/photos";
 
+import "../../css/handovers.css";
+
 interface AppContext {
     currentStore: Store | undefined;
 }
@@ -123,7 +125,7 @@ function HandoverCreatePage() {
 
     return (
         <section className="handover-create">
-            <div>
+            <div className="handover-create__header">
                 <h1>인수인계 작성</h1>
                 <p>{currentStore.name}</p>
             </div>

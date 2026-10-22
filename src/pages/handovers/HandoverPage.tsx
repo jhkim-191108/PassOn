@@ -7,6 +7,8 @@ import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import EmptyState from "@/components/ui/EmptyState";
 
+import "../../css/handovers.css";
+
 interface AppContext {
     currentStore: Store | undefined;
 }

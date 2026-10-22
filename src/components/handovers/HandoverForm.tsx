@@ -27,7 +27,7 @@ function HandoverForm({
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="handover-form" onSubmit={handleSubmit}>
             <Textarea
                 label="인수인계 내용"
                 value={rawText}

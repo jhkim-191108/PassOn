@@ -7,6 +7,8 @@ import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import Badge from "@/components/ui/Badge";
 
+import "../../css/handovers.css";
+
 const cardTypeLabel = {
     STOCK: "재고",
     TASK: "할 일",
