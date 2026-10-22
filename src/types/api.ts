@@ -184,3 +184,14 @@ export interface RecordEntry{
     actorName: string;
     at: string;
 }
+
+export interface Photo {
+    id: string;
+    handoffId: string;
+    originalName: string;
+    contentType: string;
+    sizeBytes: number;
+    position: number;
+    path: string;
+    createdAt: string;
+}

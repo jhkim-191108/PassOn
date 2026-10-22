@@ -1,14 +1,19 @@
 import { useState } from "react";
 import Button from "../ui/Button";
 import Textarea from "../ui/Textarea";
+import PhotoUpload from "./PhotoUpload";
 
 interface HandoverFormProps {
     loading?: boolean;
+    photos: File[];
+    onPhotosChange: (files: File[]) => void;
     onSubmit: (rawText: string) => void;
 }
 
 function HandoverForm({
     loading = false,
+    photos,
+    onPhotosChange,
     onSubmit,
 }: HandoverFormProps) {
     const [rawText, setRawText] = useState("");
@@ -22,12 +27,17 @@ function HandoverForm({
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="handover-form" onSubmit={handleSubmit}>
             <Textarea
                 label="인수인계 내용"
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 placeholder="말하듯 편하게 작성해주세요. AI가 업무별로 정리해드려요!"
+            />
+
+            <PhotoUpload
+                files={photos}
+                onChange={onPhotosChange}
             />
             <Button
                 type="submit"

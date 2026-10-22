@@ -186,3 +186,53 @@ async function performApi<T>(
 
   return (await response.json()) as T;
 }
+
+export async function apiBlob(
+  path: string,
+  options: ApiOptions = {}
+): Promise<Blob> {
+  const {
+    auth = true,
+    retry = true,
+    headers,
+    ...requestOptions
+  } = options;
+  delete requestOptions.share;
+
+  const requestHeaders = new Headers(headers);
+
+  if (auth && accessToken) {
+    requestHeaders.set(
+      "Authorization",
+      `Bearer ${accessToken}`
+    );
+  }
+
+  const response = await fetch(
+    `${API_URL}${path}`,
+    {
+      ...requestOptions,
+      headers: requestHeaders,
+      credentials: "include",
+    }
+  );
+
+  if (response.status === 401 && auth && retry) {
+    const newToken = await refreshAccessToken();
+
+    if (newToken) {
+      return apiBlob(path, {
+        ...options,
+        retry: false,
+      });
+    }
+  }
+
+  if (!response.ok) {
+    throw new ApiError(
+      await getError(response)
+    );
+  }
+
+  return response.blob();
+}

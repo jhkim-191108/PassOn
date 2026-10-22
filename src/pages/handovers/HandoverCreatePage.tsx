@@ -10,6 +10,9 @@ import { getHandoffCards, updateCard } from "../../api/cards";
 import type { Store, Card, UpdateCardRequest } from "@/types/api";
 import AiResultCard from "@/components/handovers/AiResultCard";
 import Button from "@/components/ui/Button";
+import { uploadPhoto } from "@/api/photos";
+
+import "../../css/handovers.css";
 
 interface AppContext {
     currentStore: Store | undefined;
@@ -25,6 +28,7 @@ function HandoverCreatePage() {
     const [handoffId, setHandoffId] = useState<string | null>(null);
     const [confirming, setConfirming] = useState(false);
     const [confirmed,setConfirmed] = useState(false);
+    const [photos, setPhotos] = useState<File[]>([]);
 
 
     const handleSubmit = async (rawText: string) => {
@@ -42,6 +46,16 @@ function HandoverCreatePage() {
             );
             setHandoffId(handoff.id);
             console.log("원문 저장 완료:", handoff);
+
+            // 1.5 사진 있으면 업로드
+            if (photos.length > 0) {
+                await Promise.all(
+                    photos.map((file) =>
+                    uploadPhoto(handoff.id, file)
+                    )
+                );
+                console.log("사진 업로드 완료");
+            }
             // 2. AI가 분석
             await analyzeHandoff(handoff.id);
             console.log("AI 분석 완료");
@@ -54,7 +68,7 @@ function HandoverCreatePage() {
             // 에러처리
         } catch (error) {
             console.error(error);
-            setError("인수인계 분석에 실패했습니다.");
+            setError("인수인계 처리에 실패했습니다.");
         } finally {
             setLoading(false);
         }
@@ -111,13 +125,15 @@ function HandoverCreatePage() {
 
     return (
         <section className="handover-create">
-            <div>
+            <div className="handover-create__header">
                 <h1>인수인계 작성</h1>
                 <p>{currentStore.name}</p>
             </div>
 
             <HandoverForm 
                 loading={loading}
+                photos={photos}
+                onPhotosChange={setPhotos}
                 onSubmit={handleSubmit}
             />
 

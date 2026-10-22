@@ -6,6 +6,9 @@ import type { Handoff, Store } from "@/types/api";
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import EmptyState from "@/components/ui/EmptyState";
+import Badge from "@/components/ui/Badge";
+
+import "../../css/handovers.css";
 
 interface AppContext {
     currentStore: Store | undefined;
@@ -111,16 +114,16 @@ function HandoverPage() {
 
                             <p>{handoff.rawText}</p>
 
-                            <div>
-                                <span>
+                            <div className="handover-list__meta">
+                                <Badge variant="neutral" size="sm">
                                     카드 {handoff.cardCount}개
-                                </span>
-                                <span>
+                                </Badge>
+                                <Badge variant={handoff.openCardCount > 0 ? "danger" : "success"} size="sm">
                                     미완료 {handoff.openCardCount}개
-                                </span>
-                                <span>
-                                    {handoff.status}
-                                </span>
+                                </Badge>
+                                <Badge variant={handoff.status === "CONFIRMED" ? "success" : "warning"} size="sm">
+                                    {handoff.status === "CONFIRMED" ? "등록 완료" : handoff.status}
+                                </Badge>
                             </div>
                         </article>
                     ))}
