@@ -183,7 +183,16 @@ function Navigation({
                     </button>
                     {open === "profile" && (
                         <div className="navigation__dropdown profile-dropdown">
-                            <button type="button" className="profile-dropdown__item">내 정보</button>
+                            <button
+                                type="button"
+                                className="profile-dropdown__item"
+                                onClick={() => {
+                                    close();
+                                    navigate(PATHS.MYPAGE);
+                                }}
+                            >
+                                내 정보
+                            </button>
                             <div className="profile-dropdown__divider"></div>
                             <button
                                 type="button"

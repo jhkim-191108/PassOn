@@ -97,7 +97,16 @@ function BottomNavigation({
                                     {storeLine || "매장 없음"}
                                 </button>
                             </span>
-                            <button type="button" className="bottom-nav__mypage">마이페이지</button>
+                            <button
+                                type="button"
+                                className="bottom-nav__mypage"
+                                onClick={() => {
+                                    setPanel(null);
+                                    navigate(PATHS.MYPAGE);
+                                }}
+                            >
+                                마이페이지
+                            </button>
                             <button
                                 type="button"
                                 className="bottom-nav__logout"

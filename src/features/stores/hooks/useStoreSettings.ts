@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ApiError } from "@/api/client";
 import { deleteStore, updateStore } from "@/api/stores";
-import { getNotificationSettings, updateMe, updateNotificationSettings } from "@/api/users";
+import { getNotificationSettings, updateNotificationSettings } from "@/api/users";
 import type { NotificationSettings } from "@/types/api";
 import { clearCurrentStore, selectStore } from "@/features/stores/currentStore";
 import { useAppSession } from "@/layouts/appSession";
@@ -12,9 +12,8 @@ function errorText(error: unknown, fallback: string) {
 }
 
 export function useStoreSettings() {
-    const { user, stores, currentStore, replaceUser, replaceStore, replaceStores } = useAppSession();
+    const { user, stores, currentStore, replaceStore, replaceStores } = useAppSession();
     const current = currentStore;
-    const [accountName, setAccountName] = useState(user.name);
     const [storeName, setStoreName] = useState(current?.name ?? "");
     const [settings, setSettings] = useState<NotificationSettings | null>(null);
     const [loading, setLoading] = useState(true);
@@ -45,10 +44,6 @@ export function useStoreSettings() {
     }, []);
 
     useEffect(() => {
-        setAccountName(user.name);
-    }, [user.name]);
-
-    useEffect(() => {
         if (current) setStoreName(current.name);
     }, [current?.id, current?.name]);
 
@@ -71,31 +66,6 @@ export function useStoreSettings() {
             setStoreName(updated.name);
         } catch (error: unknown) {
             setMessage(errorText(error, "매장 이름을 저장하지 못했습니다."));
-        } finally {
-            busy.current = false;
-            setPending(false);
-        }
-    }
-
-    async function saveAccountName(event?: FormEvent<HTMLFormElement>) {
-        event?.preventDefault();
-        if (busy.current) return;
-        const nextName = accountName.trim();
-        if (!nextName) {
-            setAccountName(user.name);
-            setMessage("이름을 입력해 주세요.");
-            return;
-        }
-        if (nextName === user.name) return;
-        busy.current = true;
-        setPending(true);
-        setMessage("");
-        try {
-            const updated = await updateMe(nextName);
-            replaceUser(updated);
-            setAccountName(updated.name);
-        } catch (error: unknown) {
-            setMessage(errorText(error, "이름을 저장하지 못했습니다."));
         } finally {
             busy.current = false;
             setPending(false);
@@ -155,8 +125,6 @@ export function useStoreSettings() {
         stores,
         user,
         isOwner,
-        accountName,
-        setAccountName,
         storeName,
         setStoreName,
         settings,
@@ -166,7 +134,6 @@ export function useStoreSettings() {
         deleteOpen,
         setDeleteOpen,
         saveStoreName,
-        saveAccountName,
         toggleSetting,
         confirmDelete,
     };

@@ -192,7 +192,14 @@ function Sidebar({
                     </button>
                     {open === "profile" && (
                         <div className="sidebar__dropdown profile-dropdown">
-                            <button type="button" className="profile-dropdown__item">
+                            <button
+                                type="button"
+                                className="profile-dropdown__item"
+                                onClick={() => {
+                                    close();
+                                    navigate(PATHS.MYPAGE);
+                                }}
+                            >
                                 내 정보
                             </button>
                             <div className="profile-dropdown__divider" />

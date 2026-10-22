@@ -23,8 +23,6 @@ function StoreSettingsPage() {
         stores,
         user,
         isOwner,
-        accountName,
-        setAccountName,
         storeName,
         setStoreName,
         settings,
@@ -34,7 +32,6 @@ function StoreSettingsPage() {
         deleteOpen,
         setDeleteOpen,
         saveStoreName,
-        saveAccountName,
         toggleSetting,
         confirmDelete,
     } = useStoreSettings();
@@ -61,13 +58,7 @@ function StoreSettingsPage() {
                         onSave={saveStoreName}
                     />
                 )}
-                <AccountCard
-                    user={user}
-                    store={current}
-                    accountName={accountName}
-                    onAccountName={setAccountName}
-                    onSave={saveAccountName}
-                />
+                <AccountCard user={user} store={current} />
                 <MyStores
                     stores={stores}
                     currentId={current.id}

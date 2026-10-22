@@ -2,6 +2,7 @@ export interface User {
     id: string;
     email: string;
     name: string;
+    photo?: boolean;
 }
 
 export interface AuthResponse {
