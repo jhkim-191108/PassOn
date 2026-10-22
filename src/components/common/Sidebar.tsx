@@ -1,11 +1,14 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import passOnLogo from "../../assets/passon-logo.png";
+import iconBell from "../../assets/Icon-bell.png";
 import { navItems } from "./navItems";
 import { useState } from "react";
+import { logout } from "../../api/auth";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import type { Notification } from "../../types/api";
 import useDropdown from "../hooks/useDropdown";
 import NotificationDropdown from "./NotificationDropdown";
+import { PATHS } from "../../routes/paths";
 
 interface SidebarProps {
     userName: string;
@@ -16,8 +19,10 @@ interface SidebarProps {
 }
 
 function Sidebar({ userName, storeName, notifications = [], onReadNotification, onReadAllNotifications }: SidebarProps) {
+    const navigate = useNavigate();
     const unreadCount = notifications.filter((notification) => !notification.read).length;
     const [logoutConfirm, setLogoutConfirm] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
 
     const {open, ref, toggle, close, } = useDropdown();
 
@@ -58,7 +63,8 @@ function Sidebar({ userName, storeName, notifications = [], onReadNotification, 
             <div className="sidebar__bottom" ref={ref}>
                 <div className="sidebar__dropdown-wrap">
                     <button type="button" className="sidebar__action" onClick={() => toggle("noti")}>
-                        🔔알림
+                        <img className="sidebar__bell" src={iconBell} alt="" width={20} height={20} />
+                        알림
                         {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
                     </button>
                     {open === "noti" && (
@@ -108,13 +114,24 @@ function Sidebar({ userName, storeName, notifications = [], onReadNotification, 
                 open={logoutConfirm}
                 title="로그아웃"
                 description="로그아웃 하시겠습니까?"
-                confirmText="로그아웃"
+                confirmText={loggingOut ? "로그아웃 중..." : "로그아웃"}
                 variant="danger"
                 cancelText="취소"
-                onClose={() => setLogoutConfirm(false)}
-                onConfirm={() => {
-                    console.log("로그아웃");
-                    setLogoutConfirm(false);
+                onClose={() => {
+                    if (!loggingOut) setLogoutConfirm(false);
+                }}
+                onConfirm={async () => {
+                    if (loggingOut) return;
+                    setLoggingOut(true);
+                    try {
+                        await logout();
+                    } catch {
+                        // 서버 응답이 없어도 로컬 로그인 정보는 logout()에서 지워진다.
+                    } finally {
+                        setLoggingOut(false);
+                        setLogoutConfirm(false);
+                        navigate(PATHS.LOGIN, { replace: true });
+                    }
                 }}
             />
         </aside>

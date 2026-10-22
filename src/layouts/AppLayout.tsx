@@ -8,7 +8,7 @@ import Loading from "../components/ui/Loading";
 import ErrorState from "../components/ui/ErrorState";
 import { getMe } from "../api/users";
 import { getStores } from "../api/stores";
-import { pickStore, useCurrentStoreId } from "../features/stores/currentStore";
+import { pickStore, selectStore, useCurrentStoreId } from "../features/stores/currentStore";
 
 import { getNotifications, readAllNotifications, readNotification } from "../api/notification";
 import type { Notification } from "../types/api";
@@ -119,6 +119,11 @@ function AppLayout() {
             <div className="app-content">
                 <Navigation
                     userName={user.name}
+                    role={currentStore?.myRole}
+                    storeId={currentStore?.id}
+                    storeName={currentStore?.name}
+                    stores={stores}
+                    onSelectStore={selectStore}
                     notifications={notifications}
                     onReadNotification={markRead}
                     onReadAllNotifications={markAllRead}

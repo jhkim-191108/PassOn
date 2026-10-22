@@ -1,10 +1,10 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
-type DropdownName = "noti" | "profile";
+type DropdownName = "noti" | "profile" | "store";
 
-function useDropdown() {
+function useDropdown<T extends HTMLElement = HTMLDivElement>() {
     const [open, setOpen] = useState<DropdownName | null>(null);
-    const ref = useRef<HTMLDivElement>(null);
+    const ref = useRef<T>(null);
     const handleOutside = useEffectEvent(
         (e: MouseEvent) => {
             if (
