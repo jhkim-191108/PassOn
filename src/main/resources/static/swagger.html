@@ -57,6 +57,7 @@
         <li>그 다음 API는 위 토큰으로 호출됩니다. 화면 코드에서는 헤더에 <code>Authorization: Bearer 토큰</code>을 넣습니다.</li>
         <li>경로의 <code>{storeId}</code> 같은 칸에는 앞에서 받은 id를 그대로 붙여 넣습니다. 내 매장 id는 <code>GET /api/stores</code> 응답에 있습니다. 예시 글자를 그대로 보내면 실패합니다.</li>
         <li>토큰은 15분 뒤 만료됩니다. 만료되면 <code>POST /api/auth/refresh</code>를 <code>credentials: "include"</code>로 호출해 새 토큰을 받습니다.</li>
+        <li>새 알림은 웹소켓으로도 옵니다. 주소는 <code>wss://서버/ws?token=액세스토큰&amp;storeId=매장id</code> 입니다. 연결되면 <code>{"type":"ready"}</code>가 옵니다. 알림은 <code>{"type":"notification","notification":NotificationView}</code>, 주요 인수인계와 오늘의 현황은 <code>{"type":"cards","cards":CardView[]}</code>, 오늘 근무는 <code>{"type":"shifts","shifts":ShiftView[]}</code> 입니다. 토큰이 만료되면 새 토큰으로 다시 연결합니다.</li>
         <li>API 주소를 브라우저 주소창에 붙여 넣으면 GET으로 열려서 401이 납니다. 화면에서는 fetch나 axios로 메서드를 지정해 호출합니다.</li>
         <li>사진 올리기는 FormData에 필드 이름 <code>file</code>로 넣습니다. Content-Type은 코드에서 직접 넣지 않습니다. 사진 보기는 <code>img</code>의 src에 API 주소를 넣으면 토큰이 전달되지 않습니다. fetch로 받은 뒤 blob 주소로 보여 줍니다.</li>
         <li>실패하면 응답의 <code>message</code>를 그대로 화면에 보여 주면 됩니다. 비밀번호는 8자 이상이고 영문 대문자, 소문자, 특수문자가 모두 있어야 합니다.</li>
@@ -90,33 +91,8 @@ const photo = await fetch(base + "/api/users/me/photo", {
 img.src = URL.createObjectURL(await photo.blob());</pre>
     </section>
     <div id="list"></div>
-    <h2>응답 모델</h2>
-    <div id="models"></div>
   </main>
   <script>
-    const models = {
-      AuthView: "accessToken, tokenType, expiresIn(초), user{id,email,name}",
-      UserView: "id, email, name, photo(프로필 사진이 있으면 true)",
-      StoreView: "id, name, type, myRole, inviteCode(STAFF는 null), invitePath(STAFF는 null, 예: /join/MORNING7), createdAt",
-      MemberView: "id, storeId, userId, name, email, role, status, teamId, teamName, createdAt, leftAt, workSlots, fullTime",
-      TeamView: "id, storeId, name, memberCount, createdAt",
-      ShiftView: "id, storeId, memberId, memberName, workDate, slot, createdAt",
-      OnDutyView: "workDate, slot(새벽이면 null), shifts[]",
-      HandoffView: "id, storeId, authorId, authorName, rawText, status, analyzeError, analyzedAt, confirmedAt, confirmedBy, createdAt, updatedAt, read, cardCount, openCardCount",
-      CardView: "id, handoffId, type, title, body, urgency, needsReview, sourceQuote, position, completedAt, completedBy, authorName, escalationStatus, escalationPriority, assigneeMemberId, assigneeName, acknowledgedAt, progress, edited",
-      CardRevisionView: "id, cardId, field, beforeValue, afterValue, editorId, editorName, createdAt",
-      MemoView: "id, cardId, authorId, authorName, body, createdAt",
-      PhotoView: "id, handoffId, originalName, contentType, sizeBytes, position, path, createdAt",
-      NoticeView: "id, storeId, authorId, authorName, title, body, pinned, priority(NORMAL 일반|IMPORTANT 중요|URGENT 긴급), createdAt, updatedAt",
-      NotificationView: "id, storeId, type, handoffId, cardId, title, body, read, createdAt",
-      NotificationSettingsView: "assignment, urgent, memo, completed",
-      EscalationView: "id, storeId, cardId, title, body, authorName, requestedBy, requestedByName, priority, status, createdAt, resolvedAt",
-      TrashItemView: "kind, id, storeId, handoffId, title, deletedBy, deletedByName, deletedAt, restoreUntil, kept",
-      KeepView: "kind, id, kept, keptAt",
-      PurgeView: "handoffs, cards",
-      RecordView: "action(CREATED 작성|UPDATED 수정|COMPLETED 처리|DELETED 삭제), id, storeId, handoffId, cardId, title, actorName, at"
-    };
-    const enums = "StoreType CAFE|CONVENIENCE|STUDY_CAFE|RESTAURANT|OTHER · StoreRole OWNER|MANAGER|STAFF · MemberStatus ACTIVE|SUSPENDED|LEFT · WorkSlot MORNING|AFTERNOON|CLOSE · HandoffStatus DRAFT|ANALYZING|ANALYZED|FAILED|CONFIRMED · CardType STOCK|TASK|GUEST|NOTICE · Urgency NOW|TODAY|LATER · CardProgress OPEN|IN_PROGRESS|DONE · NoticePriority NORMAL|IMPORTANT|URGENT · EscalationPriority IMPORTANT|URGENT · EscalationStatus PENDING|RESOLVED · NotificationType ASSIGNMENT|URGENT|MEMO|COMPLETED · TrashKind HANDOFF|CARD · CardRevisionField TYPE|TITLE|BODY|URGENCY|NEEDS_REVIEW";
     const ops = [
       ["인증", "POST", "/api/auth/signup", false, 201, "회원가입. 성공하면 accessToken이 위 칸에 들어갑니다.", {email:"mina@example.com", password:"Test1234!", name:"김민지"}, "AuthView"],
       ["인증", "POST", "/api/auth/login", false, 200, "로그인. 성공하면 accessToken이 위 칸에 들어갑니다.", {email:"mina@example.com", password:"Test1234!"}, "AuthView"],
@@ -252,8 +228,6 @@ img.src = URL.createObjectURL(await photo.blob());</pre>
         </div>`;
       list.appendChild(details);
     });
-
-    document.getElementById("models").innerHTML = `<div class="note"><p>${enums}</p><pre>${Object.entries(models).map(([name, fields]) => name + "\\n  " + fields).join("\\n\\n")}</pre></div>`;
 
     list.onclick = async (event) => {
       const button = event.target.closest(".send");

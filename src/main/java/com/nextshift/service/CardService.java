@@ -55,6 +55,7 @@ public class CardService {
     private final StoreMemberRepository memberRepository;
     private final StoreGuard guard;
     private final NotificationService notificationService;
+    private final StoreLive live;
 
     public CardService(
             CardRepository cardRepository,
@@ -65,7 +66,8 @@ public class CardService {
             UserRepository userRepository,
             StoreMemberRepository memberRepository,
             StoreGuard guard,
-            NotificationService notificationService
+            NotificationService notificationService,
+            StoreLive live
     ) {
         this.cardRepository = cardRepository;
         this.revisionRepository = revisionRepository;
@@ -76,6 +78,7 @@ public class CardService {
         this.memberRepository = memberRepository;
         this.guard = guard;
         this.notificationService = notificationService;
+        this.live = live;
     }
 
     /** 그 인수인계 매장의 멤버에게 삭제되지 않은 카드를 순서대로 돌려준다. */
@@ -91,6 +94,12 @@ public class CardService {
     @Transactional(readOnly = true)
     public List<CardView> openCards(AuthPrincipal principal, UUID storeId) {
         guard.requireActiveMember(storeId, principal.id());
+        return openCards(storeId);
+    }
+
+    /** 권한 확인 없이 미완료 카드를 돌려준다. 실시간 전송에서 쓴다. */
+    @Transactional(readOnly = true)
+    public List<CardView> openCards(UUID storeId) {
         List<Card> cards = cardRepository.findOpenByStoreId(storeId);
         Map<UUID, Handoff> handoffs = new HashMap<>();
         for (Card card : cards) {
@@ -215,6 +224,7 @@ public class CardService {
         if (urgency == Urgency.NOW && beforeUrgency != Urgency.NOW) {
             notifyUrgent(loaded.handoff(), card, principal.id());
         }
+        live.cards(loaded.handoff().getStoreId());
         return toView(card, loaded.handoff());
     }
 
@@ -224,6 +234,7 @@ public class CardService {
         Loaded loaded = authoredCard(principal, cardId);
         loaded.card().setDeletedAt(OffsetDateTime.now(ZoneOffset.UTC));
         loaded.card().setDeletedBy(principal.id());
+        live.cards(loaded.handoff().getStoreId());
     }
 
     /** 2주 안의 삭제 카드를 다시 목록으로 되돌린다. */
@@ -245,6 +256,7 @@ public class CardService {
         guard.requireAuthored(actor, handoff.getAuthorId());
         card.setDeletedAt(null);
         card.setDeletedBy(null);
+        live.cards(handoff.getStoreId());
         return toView(card, handoff);
     }
 
@@ -257,6 +269,7 @@ public class CardService {
         Card card = loaded.card();
         if (memberId == null) {
             card.setAssigneeMemberId(null);
+            live.cards(loaded.handoff().getStoreId());
             return toView(card, loaded.handoff());
         }
         StoreMember assignee = memberRepository.findById(memberId)
@@ -276,6 +289,7 @@ public class CardService {
                 card.getId(),
                 card.getTitle()
         );
+        live.cards(loaded.handoff().getStoreId());
         return toView(card, loaded.handoff());
     }
 
@@ -290,6 +304,7 @@ public class CardService {
         if (card.getAcknowledgedAt() == null) {
             card.setAcknowledgedAt(OffsetDateTime.now(ZoneOffset.UTC));
             card.setAcknowledgedBy(principal.id());
+            live.cards(loaded.handoff().getStoreId());
         }
         return toView(card, loaded.handoff());
     }
@@ -312,6 +327,7 @@ public class CardService {
         }
         card.setAcknowledgedAt(null);
         card.setAcknowledgedBy(null);
+        live.cards(loaded.handoff().getStoreId());
         return toView(card, loaded.handoff());
     }
 
@@ -331,6 +347,7 @@ public class CardService {
                     card.getId(),
                     card.getTitle()
             );
+            live.cards(loaded.handoff().getStoreId());
         }
         return toView(card, loaded.handoff());
     }
@@ -343,6 +360,7 @@ public class CardService {
         guard.requireAuthored(actor, loaded.handoff().getAuthorId());
         loaded.card().setCompletedAt(null);
         loaded.card().setCompletedBy(null);
+        live.cards(loaded.handoff().getStoreId());
         return toView(loaded.card(), loaded.handoff());
     }
 

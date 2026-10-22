@@ -31,19 +31,22 @@ public class EscalationService {
     private final HandoffRepository handoffRepository;
     private final UserRepository userRepository;
     private final StoreGuard guard;
+    private final StoreLive live;
 
     public EscalationService(
             EscalationRepository escalationRepository,
             CardRepository cardRepository,
             HandoffRepository handoffRepository,
             UserRepository userRepository,
-            StoreGuard guard
+            StoreGuard guard,
+            StoreLive live
     ) {
         this.escalationRepository = escalationRepository;
         this.cardRepository = cardRepository;
         this.handoffRepository = handoffRepository;
         this.userRepository = userRepository;
         this.guard = guard;
+        this.live = live;
     }
 
     /** 매니저만 올린다. 오너는 자기 목록에서 처리한다. */
@@ -99,6 +102,7 @@ public class EscalationService {
         if (loaded.card().getCompletedAt() == null) {
             loaded.card().setCompletedAt(escalation.getResolvedAt());
             loaded.card().setCompletedBy(principal.id());
+            live.cards(loaded.handoff().getStoreId());
         }
         return toView(escalation, loaded.card(), loaded.handoff());
     }

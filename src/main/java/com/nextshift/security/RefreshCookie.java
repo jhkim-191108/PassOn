@@ -19,12 +19,12 @@ public class RefreshCookie {
         this.maxAge = Duration.ofDays(properties.jwt().refreshDays());
     }
 
-    public void write(HttpServletResponse response, String token) {
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie(token, maxAge).toString());
+    public void write(HttpServletRequest request, HttpServletResponse response, String token) {
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie(token, maxAge, request).toString());
     }
 
-    public void clear(HttpServletResponse response) {
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie("", Duration.ZERO).toString());
+    public void clear(HttpServletRequest request, HttpServletResponse response) {
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie("", Duration.ZERO, request).toString());
     }
 
     public String read(HttpServletRequest request) {
@@ -40,13 +40,33 @@ public class RefreshCookie {
         return null;
     }
 
-    private static ResponseCookie cookie(String token, Duration age) {
-        return ResponseCookie.from(NAME, token)
+    /**
+     * HTTPS에서는 화면과 API 주소가 달라도 갱신 요청에 쿠키가 실린다.
+     * 로컬 http API는 같은 사이트 요청만 받으므로 Lax로 둔다.
+     */
+    private static ResponseCookie cookie(String token, Duration age, HttpServletRequest request) {
+        boolean https = https(request);
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(NAME, token)
                 .httpOnly(true)
-                .secure(false) // 로컬 http 개발용. 배포 시에는 true로 바꿔야 한다.
+                .secure(https)
                 .path("/api/auth")
                 .maxAge(age)
-                .sameSite("Lax")
-                .build();
+                .sameSite(https ? "None" : "Lax");
+        if (https) {
+            builder.partitioned(true);
+        }
+        return builder.build();
+    }
+
+    /** Cloud Run은 TLS를 앞에서 끊어서 앱에는 http로 들어온다. */
+    private static boolean https(HttpServletRequest request) {
+        if (request.isSecure()) {
+            return true;
+        }
+        String proto = request.getHeader("X-Forwarded-Proto");
+        if (proto == null || proto.isBlank()) {
+            return false;
+        }
+        return "https".equalsIgnoreCase(proto.split(",")[0].trim());
     }
 }
