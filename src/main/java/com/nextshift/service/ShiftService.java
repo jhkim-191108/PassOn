@@ -35,17 +35,20 @@ public class ShiftService {
     private final StoreMemberRepository memberRepository;
     private final UserRepository userRepository;
     private final StoreGuard guard;
+    private final StoreLive live;
 
     public ShiftService(
             ShiftRepository shiftRepository,
             StoreMemberRepository memberRepository,
             UserRepository userRepository,
-            StoreGuard guard
+            StoreGuard guard,
+            StoreLive live
     ) {
         this.shiftRepository = shiftRepository;
         this.memberRepository = memberRepository;
         this.userRepository = userRepository;
         this.guard = guard;
+        this.live = live;
     }
 
     /** 기간 안의 근무표를 날짜, 시간대 순으로 돌려준다. */
@@ -85,6 +88,19 @@ public class ShiftService {
         return new OnDutyView(today, slot, views);
     }
 
+    /** 서울 오늘 날짜의 근무를 시간대 순으로 돌려준다. 실시간 전송에서 쓴다. */
+    @Transactional(readOnly = true)
+    public List<ShiftView> today(UUID storeId) {
+        LocalDate today = LocalDate.now(SEOUL);
+        List<Shift> shifts = shiftRepository.findByStoreIdAndWorkDateBetween(storeId, today, today);
+        Map<UUID, StoreMember> members = membersOf(shifts);
+        Map<UUID, User> users = usersOf(members.values().stream().map(StoreMember::getUserId).distinct().toList());
+        return shifts.stream()
+                .sorted(Comparator.comparingInt(shift -> shift.getSlot().ordinal()))
+                .map(shift -> toView(shift, members.get(shift.getMemberId()), users))
+                .toList();
+    }
+
     /** 재직 중인 직원을 그 날짜와 시간대에 넣는다. */
     @Transactional
     public ShiftView create(AuthPrincipal principal, UUID storeId, UUID memberId, LocalDate workDate, WorkSlot slot) {
@@ -105,6 +121,7 @@ public class ShiftService {
         shift.setWorkDate(workDate);
         shift.setSlot(slot);
         shiftRepository.save(shift);
+        live.shifts(storeId);
         User user = userRepository.findById(member.getUserId()).orElse(null);
         return toView(shift, memberName(user));
     }
@@ -120,6 +137,7 @@ public class ShiftService {
             throw ApiException.notFound("근무를 찾을 수 없습니다.");
         }
         shiftRepository.delete(shift);
+        live.shifts(storeId);
     }
 
     /** 06시부터 오전, 14시부터 오후, 18시부터 마감. 새벽에는 시간대가 없다. */

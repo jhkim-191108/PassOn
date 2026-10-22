@@ -9,6 +9,7 @@ import com.nextshift.domain.User;
 import com.nextshift.repo.NotificationRepository;
 import com.nextshift.repo.UserRepository;
 import com.nextshift.security.StoreGuard;
+import com.nextshift.web.NotificationSocket;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.LinkedHashSet;
@@ -17,6 +18,8 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /** 알림을 만들고 조회·읽음 처리한다. 켜기가 꺼져 있거나 본인 행동이면 만들지 않는다. */
 @Service
@@ -24,15 +27,18 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final StoreGuard guard;
+    private final NotificationSocket sockets;
 
     public NotificationService(
             NotificationRepository notificationRepository,
             UserRepository userRepository,
-            StoreGuard guard
+            StoreGuard guard,
+            NotificationSocket sockets
     ) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
         this.guard = guard;
+        this.sockets = sockets;
     }
 
     /** 담당자에게 배정 알림을 만든다. */
@@ -148,6 +154,24 @@ public class NotificationService {
         notification.setTitle(trim(title, 120));
         notification.setBody(trim(body, 300));
         notificationRepository.save(notification);
+        publish(notification);
+    }
+
+    /** 저장이 확정된 뒤에만 보낸다. 롤백된 알림이 화면에 먼저 뜨지 않게 한다. */
+    private void publish(Notification notification) {
+        NotificationView view = toView(notification);
+        UUID recipientId = notification.getRecipientId();
+        UUID storeId = notification.getStoreId();
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    sockets.send(recipientId, storeId, view);
+                }
+            });
+            return;
+        }
+        sockets.send(recipientId, storeId, view);
     }
 
     private static boolean enabled(User user, NotificationType type) {

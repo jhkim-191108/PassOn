@@ -58,6 +58,7 @@ public class HandoffService {
     private final EntityManager entityManager;
     private final NotificationService notificationService;
     private final TransactionTemplate transactionTemplate;
+    private final StoreLive live;
 
     public HandoffService(
             HandoffRepository handoffRepository,
@@ -72,7 +73,8 @@ public class HandoffService {
             AppProperties properties,
             EntityManager entityManager,
             NotificationService notificationService,
-            PlatformTransactionManager transactionManager
+            PlatformTransactionManager transactionManager,
+            StoreLive live
     ) {
         this.handoffRepository = handoffRepository;
         this.cardRepository = cardRepository;
@@ -87,6 +89,7 @@ public class HandoffService {
         this.entityManager = entityManager;
         this.notificationService = notificationService;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.live = live;
     }
 
     /** 원문만 저장하고 DRAFT로 둔다. 분석은 따로 호출한다. */
@@ -133,6 +136,7 @@ public class HandoffService {
             handoff.setStatus(HandoffStatus.DRAFT);
             handoff.setAnalyzedAt(null);
             handoff.setAnalyzeError(null);
+            live.cards(handoff.getStoreId());
         }
         return one(principal, handoff);
     }
@@ -146,6 +150,7 @@ public class HandoffService {
         requireOpen(handoff, "삭제");
         handoff.setDeletedAt(OffsetDateTime.now(ZoneOffset.UTC));
         handoff.setDeletedBy(principal.id());
+        live.cards(handoff.getStoreId());
     }
 
     /** 2주 안의 삭제 인수인계를 다시 목록으로 되돌린다. */
@@ -163,6 +168,7 @@ public class HandoffService {
         guard.requireAuthored(actor, handoff.getAuthorId());
         handoff.setDeletedAt(null);
         handoff.setDeletedBy(null);
+        live.cards(handoff.getStoreId());
         return one(principal, handoff);
     }
 
@@ -266,6 +272,7 @@ public class HandoffService {
         handoff.setAnalyzedAt(OffsetDateTime.now(ZoneOffset.UTC));
         handoff.setAnalyzeError(null);
         entityManager.flush();
+        live.cards(handoff.getStoreId());
         return one(principal, handoff);
     }
 

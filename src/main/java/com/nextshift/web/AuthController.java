@@ -29,20 +29,28 @@ public class AuthController {
     /** 가입하고 액세스 토큰과 리프레시 쿠키를 준다. */
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthView signup(@Valid @RequestBody SignupRequest request, HttpServletResponse response) {
-        return write(authService.signup(request.email(), request.password(), request.name()), response);
+    public AuthView signup(
+            @Valid @RequestBody SignupRequest request,
+            HttpServletRequest httpRequest,
+            HttpServletResponse response
+    ) {
+        return write(authService.signup(request.email(), request.password(), request.name()), httpRequest, response);
     }
 
     /** 로그인하고 토큰을 다시 발급한다. */
     @PostMapping("/login")
-    public AuthView login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
-        return write(authService.login(request.email(), request.password()), response);
+    public AuthView login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest,
+            HttpServletResponse response
+    ) {
+        return write(authService.login(request.email(), request.password()), httpRequest, response);
     }
 
     /** 쿠키의 리프레시 토큰으로 새 액세스 토큰을 받는다. */
     @PostMapping("/refresh")
     public AuthView refresh(HttpServletRequest request, HttpServletResponse response) {
-        return write(authService.refresh(refreshCookie.read(request)), response);
+        return write(authService.refresh(refreshCookie.read(request)), request, response);
     }
 
     /** 리프레시 토큰을 폐기하고 쿠키를 지운다. */
@@ -50,7 +58,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         authService.logout(refreshCookie.read(request));
-        refreshCookie.clear(response);
+        refreshCookie.clear(request, response);
     }
 
     /** 가입 전 이메일 중복을 확인한다. 이미 있으면 409다. */
@@ -61,8 +69,8 @@ public class AuthController {
     }
 
     /** 액세스 토큰은 JSON으로, 리프레시 토큰은 쿠키로 나눈다. */
-    private AuthView write(Issued issued, HttpServletResponse response) {
-        refreshCookie.write(response, issued.refreshToken());
+    private AuthView write(Issued issued, HttpServletRequest request, HttpServletResponse response) {
+        refreshCookie.write(request, response, issued.refreshToken());
         return issued.auth();
     }
 }
