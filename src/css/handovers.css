@@ -86,12 +86,11 @@
     -webkit-box-orient: vertical;
 }
 
-.handover-list__item > div:last-child {
+.handover-list__meta {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
-    color: var(--color-text-muted);
-    font-size: 12px;
 }
 
 
@@ -289,5 +288,121 @@
 
     .handover-list__item > div:last-child {
         flex-wrap: wrap;
+    }
+}
+
+/* =========================
+    Handover Detail
+========================= */
+
+.handover-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.handover-detail__header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.handover-detail__header h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--color-text-sub);
+}
+
+.handover-detail__info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+
+.handover-detail__info strong {
+    color: var(--color-text);
+    font-size: 1rem;
+}
+
+.handover-detail__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-sub);
+    font-size: 13px;
+}
+
+.handover-detail__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.handover-detail__section h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.handover-detail__original {
+    padding: 18px 20px;
+    border: 1px solid #e7e5e4;
+    border-radius: 16px;
+    background: #ffffff;
+    color: var(--color-text-sub);
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+.handover-detail__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.handover-detail__card {
+    padding: 18px 20px;
+    border: 1px solid #e7e5e4;
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.handover-detail__badges {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.handover-detail__card h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.handover-detail__card p {
+    margin: 0;
+    color: var(--color-text-sub);
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+@media (max-width: 767px) {
+    .handover-detail__info {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .handover-detail__original,
+    .handover-detail__card {
+        padding: 16px;
     }
 }

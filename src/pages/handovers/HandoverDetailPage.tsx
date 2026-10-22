@@ -101,42 +101,62 @@ function HandoverDetailPage() {
 
     return (
         <section className="handover-detail">
-            <h1>인수인계 상세</h1>
+                <header className="handover-detail__header">
+                <h1>인수인계 상세</h1>
 
-            <div>
-                <strong>{handoff.authorName}</strong>
+                <div className="handover-detail__info">
+                    <strong>작성자: {handoff.authorName}</strong>
 
-                <span>
-                    {new Date(
-                        handoff.createdAt
-                    ).toLocaleString("ko-KR", {
-                        year: "numeric",
-                        month: "numeric",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}
-                </span>
+                    <span>
+                        {new Date(
+                            handoff.createdAt
+                        ).toLocaleString("ko-KR", {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })}
+                    </span>
+                </div>
+            </header>
+            <div className="handover-detail__status">
+                <span>상태 </span>
+
+                <Badge
+                    variant={handoff.status === "CONFIRMED" ? "success" : handoff.status === "FAILED" ? "danger" : "warning"}
+                    size="sm"
+                >{handoff.status === "CONFIRMED" 
+                    ? "등록 완료"
+                    : handoff.status === "ANALYZED"
+                    ? "분석 완료"
+                    : handoff.status === "ANALYZING"
+                    ? "분석 중"
+                    : handoff.status === "FAILED"
+                    ? "분석 실패"
+                    : "작성 중"}
+                </Badge>
             </div>
-            <p>상태: {handoff.status}</p>
-            <div>
+            <section className="handover-detail__section">
                 <h2>원문</h2>
-                <p>{handoff.rawText}</p>
-            </div>
-            <div>
+                <div className="handover-detail__original">{handoff.rawText}</div>
+            </section>
+            <section className="handover-detail__section">
                 <h2>정리된 인수인계</h2>
-                {cards.map((card) => (
-                    <article key={card.id}>
-                        <div>
-                            <Badge variant={typeBadgeVariant[card.type]}>{cardTypeLabel[card.type]}</Badge>
-                            <Badge variant={urgencyBadgeVariant[card.urgency]}>{urgencyLabel[card.urgency]}</Badge>
-                            <Badge variant={progressBadgeVariant[card.progress]}>{progressLabel[card.progress]}</Badge>
-                        </div>
-                        <h3>{card.title}</h3>
-                        <p>{card.body}</p>
-                    </article>
-                ))}
-            </div>
+                <div className="handover-detail__cards">
+                    {cards.map((card) => (
+                        <article key={card.id} className="handover-detail__card">
+                            <div className="handover-detail__badges">
+                                <Badge variant={typeBadgeVariant[card.type]}>{cardTypeLabel[card.type]}</Badge>
+                                <Badge variant={urgencyBadgeVariant[card.urgency]}>{urgencyLabel[card.urgency]}</Badge>
+                                <Badge variant={progressBadgeVariant[card.progress]}>{progressLabel[card.progress]}</Badge>
+                            </div>
+                            <h3>{card.title}</h3>
+                            <p>{card.body}</p>
+                        </article>
+                    ))}
+                </div>
+            </section>
         </section>
     )
 }
