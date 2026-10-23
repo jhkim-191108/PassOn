@@ -32,11 +32,7 @@
   gap: 8px;
 }
 
-<<<<<<< HEAD
 .signup-form__email-row .input-field {
-=======
-.signup-form__email-row .auth-input {
->>>>>>> origin/develop
   flex: 1;
   min-width: 0;
 }
