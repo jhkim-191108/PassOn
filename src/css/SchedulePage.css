@@ -1,0 +1,41 @@
+/* Figma SchedulePage 바깥 여백 기준 (AppLayout 안에 들어가는 본문 영역) */
+.schedule {
+  max-width: 896px;
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+  box-sizing: border-box;
+  color: #1c1917;              /* stone-900 */
+}
+
+.schedule__error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: #fef2f2;         /* red-50 */
+  border: 1px solid #fecaca;   /* red-200 */
+  border-radius: 12px;
+}
+
+.schedule__error p {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #dc2626;              /* red-600 */
+}
+
+@media (min-width: 1024px) {
+  .schedule {
+    padding: 32px 32px 40px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .schedule {
+    max-width: none;
+    margin: 0;
+    padding: 24px 24px 32px;
+  }
+}

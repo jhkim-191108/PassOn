@@ -1,10 +1,9 @@
 import { useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import logoSrc from '@/assets/logo.png';
+import logoSrc from '@/assets/icon-logo.png';
+import iconBack from '@/assets/Icon-back.png';
 import {
-  DEMO_USERS,
-  DemoAccountList,
   LoginForm,
   useLogin,
   readPendingInvite,
@@ -15,7 +14,7 @@ import '../../css/LoginPage.css';
 
 const STORE_TYPES = ['카페', '편의점', '스터디카페', '레스토랑'];
 
-export const LoginPage = () => {
+function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,7 +37,7 @@ export const LoginPage = () => {
     [location.state, navigate],
   );
 
-  const { login, loginAsDemo, isPending, error, clearError } = useLogin({
+  const { login, isPending, error, clearError } = useLogin({
     onSuccess: handleSuccess,
   });
 
@@ -70,9 +69,7 @@ export const LoginPage = () => {
           <img src={logoSrc} alt="PassOn" className="login__mobile-logo" />
 
           <Link to={PATHS.LANDING} className="login__back">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
+            <img src={iconBack} alt="" width={14} height={14} />
             돌아가기
           </Link>
 
@@ -92,14 +89,10 @@ export const LoginPage = () => {
               회원가입
             </Link>
           </p>
-
-          <DemoAccountList
-            users={DEMO_USERS}
-            onSelect={(user) => loginAsDemo(user.id)}
-            disabled={isPending}
-          />
         </div>
       </main>
     </div>
   );
-};
+}
+
+export default LoginPage;

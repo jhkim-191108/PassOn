@@ -1,0 +1,52 @@
+/* 근무표 공통: 시간대별 색상 · 시간대 배지 · 이니셜 원 */
+
+/* ── 시간대 색상 (Figma: 오전 sky / 오후 amber / 마감 violet / 풀타임 emerald / 홀 rose / 주방 orange) ── */
+.shift-tone--morning   { --shift-dot: #38bdf8; --shift-50: #f0f9ff; --shift-100: #e0f2fe; --shift-200: #bae6fd; --shift-700: #0369a1; }
+.shift-tone--afternoon { --shift-dot: #fbbf24; --shift-50: #fffbeb; --shift-100: #fef3c7; --shift-200: #fde68a; --shift-700: #b45309; }
+.shift-tone--closing   { --shift-dot: #a78bfa; --shift-50: #f5f3ff; --shift-100: #ede9fe; --shift-200: #ddd6fe; --shift-700: #6d28d9; }
+.shift-tone--fulltime  { --shift-dot: #34d399; --shift-50: #ecfdf5; --shift-100: #d1fae5; --shift-200: #a7f3d0; --shift-700: #047857; }
+.shift-tone--hall      { --shift-dot: #fb7185; --shift-50: #fff1f2; --shift-100: #ffe4e6; --shift-200: #fecdd3; --shift-700: #be123c; }
+.shift-tone--kitchen   { --shift-dot: #fb923c; --shift-50: #fff7ed; --shift-100: #ffedd5; --shift-200: #fed7aa; --shift-700: #c2410c; }
+
+.shift-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 4px 10px;
+  background: var(--shift-100);
+  border: 1px solid var(--shift-200);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  color: var(--shift-700);
+}
+
+.shift-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--shift-dot);
+  border-radius: 50%;
+}
+
+/* ── 이니셜 원 (나 = 초록) ─────────────────────────── */
+.staff-initial {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  background: #f5f5f4;         /* stone-100 */
+  color: #57534e;              /* stone-600 */
+}
+
+.staff-initial--xs { width: 16px; height: 16px; font-size: 8px; }
+.staff-initial--sm { width: 20px; height: 20px; font-size: 10px; }
+.staff-initial--md { width: 24px; height: 24px; font-size: 0.75rem; }
+
+.staff-initial--me {
+  background: #10b981;         /* emerald-500 */
+  color: #ffffff;
+}

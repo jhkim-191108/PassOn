@@ -1,7 +1,10 @@
 import { useId, useState, type FormEvent } from 'react';
 
 import Button from '@/components/ui/Button';
+<<<<<<< HEAD
 import Input from '@/components/ui/Input';
+=======
+>>>>>>> origin/develop
 import { ApiError } from '@/api/client';
 
 import { authApi } from '../api/authApi';
@@ -131,7 +134,11 @@ function SignupForm({ onSubmit, isPending = false, error, onChange }: Props) {
             이메일
           </label>
           <div className="signup-form__email-row">
+<<<<<<< HEAD
             <Input
+=======
+            <input
+>>>>>>> origin/develop
               id={ids.email}
               type="email"
               className={`auth-input${visibleIssue?.field === 'email' ? ' auth-input--error' : ''}`}
@@ -188,7 +195,11 @@ function SignupForm({ onSubmit, isPending = false, error, onChange }: Props) {
           <label htmlFor={ids.confirm} className="signup-form__label">
             비밀번호 확인
           </label>
+<<<<<<< HEAD
           <Input
+=======
+          <input
+>>>>>>> origin/develop
             id={ids.confirm}
             type={showPassword ? 'text' : 'password'}
             className={`auth-input${confirmStarted && !confirmMatches ? ' auth-input--error' : ''}`}

@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import iconBack from '@/assets/Icon-back.png';
 import { SignupForm, useSignup, type SignupResponse } from '@/features/auth';
 import { PATHS } from '@/routes/paths';
 import '../../css/SignupPage.css';
 
-export const SignupPage = () => {
+function SignupPage() {
   const navigate = useNavigate();
 
   // 가입 직후 소속 매장이 없으므로 매장 생성/합류로 이동
@@ -23,9 +24,7 @@ export const SignupPage = () => {
     <main className="signup">
       <div className="signup__container">
         <Link to={PATHS.LOGIN} className="signup__back">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
+          <img src={iconBack} alt="" width={14} height={14} />
           로그인으로
         </Link>
 
@@ -40,4 +39,6 @@ export const SignupPage = () => {
       </div>
     </main>
   );
-};
+}
+
+export default SignupPage;

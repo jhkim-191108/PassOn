@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
-// TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
-import Button from '../../features/auth/components/common/Button';
+import Button from '@/components/ui/Button';
 
-import logoSrc from '@/assets/logo.png';
+import logoSrc from '@/assets/icon-logo.png';
 import { PATHS } from '@/routes/paths';
 import '../../css/LandingPage.css';
 
@@ -15,7 +14,7 @@ const EXAMPLE_CARDS: { type: ExampleCardType; label: string; title: string }[] =
   { type: 'notice', label: '공지', title: '우유는 내일 아침 입고' },
 ];
 
-export const LandingPage = () => {
+function LandingPage() {
   const navigate = useNavigate();
 
   return (
@@ -41,12 +40,8 @@ export const LandingPage = () => {
             짧은 메모를 남기면 AI가 다음 근무자가 바로 확인할 수 있는 카드로 정리해드려요.
           </p>
           <div className="landing__actions">
-            <Button variant="primary" onClick={() => navigate(PATHS.SIGNUP)}>
+            <Button variant="primary" className="landing__start" onClick={() => navigate(PATHS.LOGIN)}>
               시작하기
-            </Button>
-            {/* 데모 계정 선택은 로그인 페이지에서 처리 */}
-            <Button variant="secondary" onClick={() => navigate(PATHS.LOGIN)}>
-              데모 체험
             </Button>
           </div>
           <p className="landing__caption">카페 · 편의점 · 스터디카페</p>
@@ -67,16 +62,6 @@ export const LandingPage = () => {
           <div className="landing__divider" aria-hidden="true">
             <span className="landing__divider-line" />
             <span className="landing__divider-chip">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
               AI 분류
             </span>
             <span className="landing__divider-line" />
@@ -100,4 +85,6 @@ export const LandingPage = () => {
       </footer>
     </div>
   );
-};
+}
+
+export default LandingPage;
