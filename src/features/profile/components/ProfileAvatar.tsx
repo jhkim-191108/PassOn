@@ -9,7 +9,6 @@ interface Props {
 }
 
 // 프로필 사진 (원을 누르면 사진 선택 → 바로 업로드)
-// TODO: 등록된 사진(GET /api/users/me/photo)은 토큰이 필요해서 <img src>로 못 불러옴
 //       client.ts에 토큰 꺼내는 함수나 blob 응답 옵션이 생기면 처음 화면에도 사진 표시
 export const ProfileAvatar = ({ name, onUpload }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
