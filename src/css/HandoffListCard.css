@@ -1,0 +1,421 @@
+/* Figma HandoffListCard 기준 (모바일·태블릿 / 1280px 이상 두 가지 배치) */
+.handoff-card {
+  /* 우선순위별 색상 */
+  --tone-bar: #a8a29e;         /* stone-400 */
+  --tone-border: #e7e5e4;      /* stone-200 */
+  --tone-border-hover: #d6d3d1;/* stone-300 */
+  --tone-wide-bg: #ffffff;
+  --tone-icon-bg: #f5f5f4;     /* stone-100 */
+  --tone-icon: #a8a29e;        /* stone-400 */
+  --tone-title: #292524;       /* stone-800 */
+  --tone-wide-title: #1c1917;  /* stone-900 */
+  --tone-category: #78716c;    /* stone-500 */
+  --tone-content: #57534e;     /* stone-600 */
+
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid var(--tone-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+  transition: box-shadow 150ms, border-color 150ms;
+}
+
+.handoff-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.handoff-card--urgent {
+  --tone-bar: #ef4444;         /* red-500 */
+  --tone-border: #fecaca;      /* red-200 */
+  --tone-border-hover: #fca5a5;/* red-300 */
+  --tone-wide-bg: #fef2f2;     /* red-50 */
+  --tone-icon-bg: #fee2e2;     /* red-100 */
+  --tone-icon: #dc2626;        /* red-600 */
+  --tone-title: #b91c1c;       /* red-700 */
+  --tone-wide-title: #b91c1c;
+  --tone-category: #dc2626;    /* red-600 */
+  --tone-content: rgb(127 29 29 / 0.7); /* red-900/70 */
+}
+
+.handoff-card--important {
+  --tone-bar: #f59e0b;         /* amber-500 */
+  --tone-border: #fde68a;      /* amber-200 */
+  --tone-border-hover: #fcd34d;/* amber-300 */
+  --tone-wide-bg: #fffbeb;     /* amber-50 */
+  --tone-icon-bg: #fef3c7;     /* amber-100 */
+  --tone-icon: #d97706;        /* amber-600 */
+  --tone-wide-title: #78350f;  /* amber-900 */
+}
+
+.handoff-card--done {
+  opacity: 0.55;
+}
+
+/* 제목 버튼: 글자처럼 보이게 */
+.handoff-card__link {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  text-decoration: inherit;
+  cursor: pointer;
+}
+
+.handoff-card__suffix {
+  margin-left: 6px;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.handoff-card__suffix--carried {
+  color: #f97316;              /* orange-500 */
+}
+
+/* ── 할 일 목록 (공통) ─────────────────────────────── */
+.handoff-card__tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.handoff-card__task {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.375;
+}
+
+.handoff-card__task-category {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--tone-category);
+}
+
+.handoff-card__task-dash {
+  flex-shrink: 0;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.handoff-card__task-content {
+  min-width: 0;
+  color: #57534e;              /* stone-600 */
+}
+
+.handoff-card__task--done > * {
+  opacity: 0.5;
+}
+
+.handoff-card__task--done .handoff-card__task-category,
+.handoff-card__task--done .handoff-card__task-content {
+  text-decoration: line-through;
+}
+
+.handoff-card__task-more {
+  margin: 0;
+  font-size: 11px;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.handoff-card__author {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── 모바일 · 태블릿 배치 ──────────────────────────── */
+.handoff-card__bar {
+  height: 2px;
+  background: var(--tone-bar);
+}
+
+.handoff-card__compact-body {
+  padding: 16px;
+}
+
+.handoff-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.handoff-card__dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  background: var(--tone-bar);
+  border-radius: 50%;
+}
+
+.handoff-card__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.375;
+  color: var(--tone-title);
+}
+
+.handoff-card--done .handoff-card__title {
+  color: #a8a29e;              /* stone-400 */
+  text-decoration: line-through;
+}
+
+.handoff-card__indent {
+  padding-left: 16px;
+}
+
+.handoff-card__indent > .handoff-card__tasks,
+.handoff-card__content {
+  margin-bottom: 10px;
+}
+
+.handoff-card__content {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #78716c;              /* stone-500 */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.handoff-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.handoff-card__footer-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.handoff-card__assignee-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #f5f5f4;         /* stone-100 */
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #78716c;              /* stone-500 */
+}
+
+.handoff-card__assignee-chip--mine {
+  background: #d1fae5;         /* emerald-100 */
+  font-weight: 600;
+  color: #047857;              /* emerald-700 */
+}
+
+.handoff-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.handoff-card__owner-icon {
+  color: #c084fc;              /* purple-400 */
+}
+
+/* ── 데스크톱 배치 (기본 숨김) ─────────────────────── */
+.handoff-card__wide {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .handoff-card {
+    background: var(--tone-wide-bg);
+  }
+
+  .handoff-card:hover {
+    border-color: var(--tone-border-hover);
+  }
+
+  .handoff-card__compact {
+    display: none;
+  }
+
+  .handoff-card__wide {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+  }
+}
+
+.handoff-card__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--tone-icon-bg);
+  border-radius: 12px;
+  color: var(--tone-icon);
+}
+
+.handoff-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.handoff-card__wide-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.handoff-card__wide-title {
+  flex: 1;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.375;
+  color: var(--tone-wide-title);
+}
+
+.handoff-card__wide-title .handoff-card__suffix {
+  margin-left: 8px;
+  font-size: 0.875rem;
+}
+
+.handoff-card--done .handoff-card__wide-title {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.handoff-card__badges {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.handoff-card__wide-tasks {
+  margin-bottom: 12px;
+}
+
+.handoff-card__wide-content {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  color: var(--tone-content);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.handoff-card__wide-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.handoff-card__assignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: #78716c;              /* stone-500 */
+}
+
+.handoff-card__assignee--mine {
+  color: #059669;              /* emerald-600 */
+}
+
+.handoff-card__shift {
+  font-weight: 400;
+  color: #a8a29e;              /* stone-400 */
+}
+
+.handoff-card__confirmed {
+  color: #3b82f6;              /* blue-500 */
+}
+
+.handoff-card__actions {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.handoff-card__action {
+  padding: 8px 14px;
+  border: 1px solid;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms, transform 150ms;
+}
+
+.handoff-card__action:active {
+  transform: scale(0.95);
+}
+
+.handoff-card__action:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.handoff-card__action--confirm {
+  background: #dbeafe;         /* blue-100 */
+  border-color: #bfdbfe;       /* blue-200 */
+  color: #1d4ed8;              /* blue-700 */
+}
+
+.handoff-card__action--confirm:hover {
+  background: #bfdbfe;
+}
+
+.handoff-card__action--complete {
+  background: #d1fae5;         /* emerald-100 */
+  border-color: #a7f3d0;       /* emerald-200 */
+  color: #047857;              /* emerald-700 */
+}
+
+.handoff-card__action--complete:hover {
+  background: #a7f3d0;
+}
+
+.handoff-card__done-mark {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-top: 4px;
+  background: #d1fae5;         /* emerald-100 */
+  border-radius: 12px;
+  color: #059669;              /* emerald-600 */
+}

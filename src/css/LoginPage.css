@@ -1,0 +1,161 @@
+/* Figma 원본(Tailwind stone / emerald 팔레트) 기준 */
+.login {
+  --ink: #1c1917;          /* stone-900 */
+  --muted: #78716c;        /* stone-500 */
+  --subtle: #a8a29e;       /* stone-400 */
+  --subtle-hover: #57534e; /* stone-600 */
+  --paper: #fafaf9;        /* stone-50 */
+  --accent: #059669;       /* emerald-600 */
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ── 브랜드 패널 (모바일·태블릿에서는 숨김) ─────────── */
+.login__brand {
+  display: none;
+}
+
+.login__brand-logo {
+  margin-bottom: 24px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.login__brand-logo img {
+  display: block;
+  height: 28px;
+  width: auto;
+}
+
+.login__brand-title {
+  margin: 0 0 16px;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.375;
+  color: #ffffff;
+}
+
+.login__brand-lead {
+  margin: 0 0 40px;
+  font-size: 1rem;
+  line-height: 1.625;
+  color: #d1fae5;          /* emerald-100 */
+}
+
+.login__brand-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.login__brand-tag {
+  padding: 6px 12px;
+  background: #10b981;     /* emerald-500 */
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  color: #d1fae5;          /* emerald-100 */
+}
+
+/* ── 폼 패널 ────────────────────────────────────────── */
+.login__panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.login__container {
+  width: 100%;
+  max-width: 384px;
+  margin: 0 auto;
+}
+
+.login__mobile-logo {
+  display: block;
+  height: 28px;
+  width: auto;
+  margin-bottom: 32px;
+}
+
+.login__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 32px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--subtle);
+  text-decoration: none;
+  transition: color 150ms;
+}
+
+.login__back:hover {
+  color: var(--subtle-hover);
+}
+
+.login__title {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+  color: var(--ink);
+}
+
+.login__desc {
+  margin: 0 0 28px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--muted);
+}
+
+.login__signup {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-align: center;
+  color: var(--subtle);
+}
+
+.login__signup-link {
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.login__signup-link:hover {
+  text-decoration: underline;
+}
+
+/* ── 1024px 이상: 좌측 브랜드 패널 + 우측 폼 ────────── */
+@media (min-width: 1024px) {
+  .login {
+    flex-direction: row;
+  }
+
+  .login__brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 41.666667%;
+    box-sizing: border-box;
+    padding: 80px 64px;
+    background: var(--accent);
+  }
+
+  .login__mobile-logo {
+    display: none;
+  }
+}

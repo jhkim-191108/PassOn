@@ -1,0 +1,141 @@
+.records {
+    width: 100%;
+    max-width: 768px;
+    margin: 0 auto;
+    color: #1c1917;
+}
+
+.records__header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 36px;
+}
+
+.records__header p,
+.records__count {
+    margin: 6px 0 0;
+    color: #78716c;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.records__search {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 20px;
+    padding: 0 14px;
+    border: 1px solid #e7e5e4;
+    border-radius: 12px;
+    background: #fafaf9;
+    font-size: 14px;
+}
+
+.records__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.records__range {
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid #e7e5e4;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #44403c;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.records__range--active {
+    border-color: #a4f4cf;
+    background: #ecfdf5;
+    color: #007a55;
+    font-weight: 700;
+}
+
+.records__deleted {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #57534e;
+    font-size: 13px;
+}
+
+.records__message {
+    margin: 16px 0 0;
+    color: #e11d48;
+    font-size: 14px;
+}
+
+.records__count {
+    margin-top: 18px;
+}
+
+.records__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.records__card {
+    padding: 16px;
+    border: 1px solid #e7e5e4;
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.records__card strong {
+    display: block;
+    font-size: 15px;
+    line-height: 22px;
+}
+
+.records__card ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.records__card li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #57534e;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.records__mark {
+    display: inline-flex;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f5f5f4;
+    color: #44403c;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.records__mark--CREATED,
+.records__mark--COMPLETED {
+    background: #d0fae5;
+    color: #007a55;
+}
+
+.records__mark--DELETED {
+    background: #ffe4e6;
+    color: #e11d48;
+}

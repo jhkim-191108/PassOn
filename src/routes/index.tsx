@@ -2,7 +2,6 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import AppLayout from '@/layouts/AppLayout';
 import DashboardPage from '@/pages/DashboardPage';
-import ProfilePage from '@/pages/profile/ProfilePage';
 import EmployeesPage from '@/pages/employees/EmployeePage';
 import NoticePage from '@/pages/notices/NoticePage';
 import NoticeDetailPage from '@/pages/notices/NoticeDetailPage';
@@ -14,6 +13,9 @@ import HandoverPage from "@/pages/handovers/HandoverPage";
 import HandoverCreatePage from "@/pages/handovers/HandoverCreatePage";
 import { SchedulePage } from "@/pages/schedule/SchedulePage";
 import HandoverDetailPage from "@/pages/handovers/HandoverDetailPage";
+import DelegatePage from "@/pages/delegations/DelegatePage";
+import MyPage from "@/pages/mypage/MyPage";
+import RecordsPage from "@/pages/records/RecordsPage";
 
 export const router = createBrowserRouter([
   // ── 인증 / 매장 진입 (공통 레이아웃 없음) ──────────
@@ -80,7 +82,9 @@ export const router = createBrowserRouter([
       { path: 'handovers/new', element: <HandoverCreatePage /> },
       { path: 'handovers/:handoffId', element: <HandoverDetailPage /> },
       { path: 'schedule', element: <SchedulePage /> },
-      { path: 'profile', element: <ProfilePage /> },
+      { path: 'delegate', element: <DelegatePage /> },
+      { path: 'mypage', element: <MyPage /> },
+      { path: 'history', element: <RecordsPage /> },
       // 아직 페이지가 만들어지지 않은 메뉴
       {
         path: '*',

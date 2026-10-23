@@ -1,0 +1,50 @@
+/* Figma DashboardPage 바깥 여백 기준 (AppLayout 안에 들어가는 본문 영역) */
+.dashboard {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+  box-sizing: border-box;
+  color: #1c1917;              /* stone-900 */
+}
+
+.dashboard__status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 64px 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+  color: #78716c;              /* stone-500 */
+}
+
+.dashboard__status p {
+  margin: 0;
+}
+
+.dashboard__inline-error {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  background: #fef2f2;         /* red-50 */
+  border: 1px solid #fecaca;   /* red-200 */
+  border-radius: 12px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #dc2626;              /* red-600 */
+}
+
+@media (min-width: 1024px) {
+  .dashboard {
+    max-width: 896px;
+    padding: 32px 32px 40px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .dashboard {
+    max-width: none;
+    padding: 24px 24px 32px;
+  }
+}
