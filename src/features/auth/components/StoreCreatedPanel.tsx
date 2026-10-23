@@ -1,5 +1,6 @@
-// TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
-import Button from './common/Button';
+import iconCheck from '@/assets/Icon-check.png';
+import iconInfo from '@/assets/Icon-info.png';
+import Button from '@/components/ui/Button';
 
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 import '../../../css/StoreCreatedPanel.css';
@@ -21,9 +22,7 @@ export const StoreCreatedPanel = ({ storeName, inviteCode, inviteLink, onStart }
   return (
     <section className="store-created">
       <div className="store-created__check" aria-hidden="true">
-        <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
+        <img src={iconCheck} alt="" width={28} height={28} />
       </div>
 
       <h1 className="store-created__title">{storeName} 개설 완료!</h1>
@@ -64,9 +63,7 @@ export const StoreCreatedPanel = ({ storeName, inviteCode, inviteLink, onStart }
       </div>
 
       <div className="store-created__notice">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <img src={iconInfo} alt="" width={14} height={14} />
         <p>
           초대코드는 <strong>매장 설정</strong>에서 언제든 다시 확인할 수 있어요. 역할(매니저/직원)은
           직원이 합류한 후 직원 관리 페이지에서 지정하세요.

@@ -1,18 +1,18 @@
 import { useId, useState, type FormEvent } from 'react';
 
-// TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
-import Button from './common/Button';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 
 import type { CreateStoreRequest, StoreType } from '../types';
 import '../../../css/authInput.css';
 import '../../../css/StoreCreateForm.css';
 
 const STORE_TYPES: { value: StoreType; label: string; icon: string }[] = [
-  { value: 'cafe', label: '카페', icon: '☕' },
-  { value: 'convenience', label: '편의점', icon: '🏪' },
-  { value: 'study-cafe', label: '스터디카페', icon: '📚' },
-  { value: 'restaurant', label: '레스토랑', icon: '🍽' },
-  { value: 'other', label: '기타', icon: '🏢' },
+  { value: 'CAFE', label: '카페', icon: '☕' },
+  { value: 'CONVENIENCE', label: '편의점', icon: '🏪' },
+  { value: 'STUDY_CAFE', label: '스터디카페', icon: '📚' },
+  { value: 'RESTAURANT', label: '레스토랑', icon: '🍽' },
+  { value: 'OTHER', label: '기타', icon: '🏢' },
 ];
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
 
 export const StoreCreateForm = ({ onSubmit, isPending = false, error, onChange }: Props) => {
   const [name, setName] = useState('');
-  const [type, setType] = useState<StoreType>('cafe');
+  const [type, setType] = useState<StoreType>('CAFE');
   const nameId = useId();
   const typeLabelId = useId();
 
@@ -43,7 +43,7 @@ export const StoreCreateForm = ({ onSubmit, isPending = false, error, onChange }
           <label htmlFor={nameId} className="store-create__label">
             매장 이름
           </label>
-          <input
+          <Input
             id={nameId}
             type="text"
             className="auth-input"

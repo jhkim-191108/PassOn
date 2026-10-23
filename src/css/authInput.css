@@ -1,4 +1,4 @@
-/* 인증 폼 공통 입력창 (LoginForm · SignupForm · PasswordInput에서 사용) */
+/* 인증 폼 입력창 — 공용 Input(.input)에 className으로 붙여 Figma 인증 화면 모양으로 맞춤 */
 .auth-input {
   display: block;
   width: 100%;
@@ -21,11 +21,17 @@
 
 .auth-input:focus {
   border-color: #34d399;       /* emerald-400 */
+  box-shadow: none;
 }
 
 /* 검증 실패 상태 */
 .auth-input--error {
   border-color: #fca5a5;       /* red-300 */
+}
+
+.auth-input--error:focus,
+.auth-input.input--error:focus {
+  box-shadow: none;
 }
 
 .auth-input--error:focus {
