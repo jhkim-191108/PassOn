@@ -27,3 +27,12 @@ export function updateCard(
         }
     );
 }
+
+export function deleteCard(cardId: string) {
+    return api<void>(
+        `/api/cards/${cardId}`,
+        {
+            method: "DELETE",
+        }
+    );
+}

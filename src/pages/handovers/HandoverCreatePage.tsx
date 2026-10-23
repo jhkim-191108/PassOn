@@ -6,7 +6,7 @@ import {
     analyzeHandoff,
     confirmHandoff,
 } from "../../api/handoffs";
-import { getHandoffCards, updateCard } from "../../api/cards";
+import { getHandoffCards, updateCard, deleteCard, } from "../../api/cards";
 import type { Store, Card, UpdateCardRequest } from "@/types/api";
 import AiResultCard from "@/components/handovers/AiResultCard";
 import Button from "@/components/ui/Button";
@@ -118,6 +118,25 @@ function HandoverCreatePage() {
         }
     };
 
+    const handleDeleteCard = async (
+        cardId: string
+    ) => {
+        try {
+            setError("");
+
+            await deleteCard(cardId);
+
+            setCards((current) => 
+                current.filter(
+                    (card) => card.id !== cardId
+                )
+            );
+        } catch (error) {
+            console.error("카드 삭제 실패:", error);
+            setError("카드를 삭제하지 못했습니다.");
+        }
+    };
+
     if (!currentStore) {
         return <p>등록된 매장이 없습니다.</p>;
     }
@@ -146,6 +165,7 @@ function HandoverCreatePage() {
                             key={card.id}
                             card={card}
                             onSave={handleUpdateCard}
+                            onDelete={handleDeleteCard}
                         />
                     ))}
                     {!confirmed ? (
