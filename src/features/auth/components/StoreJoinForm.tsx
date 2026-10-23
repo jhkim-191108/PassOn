@@ -1,8 +1,13 @@
 import { useId, useState, type FormEvent } from 'react';
 import iconInfo from '@/assets/Icon-info.png';
 
+<<<<<<< HEAD
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+=======
 // TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
 import Button from '@/components/ui/Button';
+>>>>>>> origin/develop
 
 import '../../../css/authInput.css';
 import '../../../css/StoreJoinForm.css';
@@ -71,7 +76,7 @@ export const StoreJoinForm = ({
           초대코드
         </label>
         <div className="store-join__row">
-          <input
+          <Input
             id={codeId}
             type="text"
             className={`auth-input store-join__code${error ? ' auth-input--error' : ''}`}
@@ -108,7 +113,7 @@ export const StoreJoinForm = ({
           초대 링크로 합류
         </label>
         <div className="store-join__row">
-          <input
+          <Input
             id={linkId}
             type="url"
             className={`auth-input${linkError ? ' auth-input--error' : ''}`}

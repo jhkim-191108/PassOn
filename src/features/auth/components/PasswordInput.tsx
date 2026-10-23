@@ -1,6 +1,8 @@
 import iconEye from '@/assets/Icon-eye.png';
 import { useState, type InputHTMLAttributes } from 'react';
 
+import Input from '@/components/ui/Input';
+
 import '../../../css/authInput.css';
 import '../../../css/PasswordInput.css'
 
@@ -28,7 +30,7 @@ function PasswordInput({
 
   return (
     <div className="password-input">
-      <input
+      <Input
         {...inputProps}
         type={visible ? 'text' : 'password'}
         className={`auth-input password-input__field ${className}`.trim()}

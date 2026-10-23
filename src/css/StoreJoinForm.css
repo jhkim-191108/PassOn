@@ -12,13 +12,13 @@
   gap: 8px;
 }
 
-.store-join__row .auth-input {
+.store-join__row .input-field {
   flex: 1;
   min-width: 0;
 }
 
 /* 공통 Button은 내용 너비만큼 */
-.store-join__row > :not(input) {
+.store-join__row > .button {
   flex-shrink: 0;
 }
 

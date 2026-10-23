@@ -33,12 +33,7 @@ export const useLogin = ({ onSuccess }: UseLoginOptions = {}) => {
     [run],
   );
 
-  const loginAsDemo = useCallback(
-    (userId: string) => run(() => authApi.loginAsDemo(userId)),
-    [run],
-  );
-
   const clearError = useCallback(() => setError(null), []);
 
-  return { login, loginAsDemo, isPending, error, clearError };
+  return { login, isPending, error, clearError };
 };
