@@ -3,7 +3,6 @@ export { default as LoginForm } from './components/LoginForm';
 export { default as SignupForm } from './components/SignupForm';
 export { PASSWORD_MIN_LENGTH } from './components/SignupForm';
 export { default as PasswordInput } from './components/PasswordInput';
-export { DemoAccountList } from './components/DemoAccountList';
 export { StoreSetupChoice } from './components/StoreSetupChoice';
 export { StoreCreateForm } from './components/StoreCreateForm';
 export { StoreCreatedPanel } from './components/StoreCreatedPanel';
@@ -25,7 +24,6 @@ export {
 // api
 export { authApi } from './api/authApi';
 export { storeApi } from './api/storeApi';
-export { DEMO_USERS } from './api/mockUsers';
 
 // types
 export type {

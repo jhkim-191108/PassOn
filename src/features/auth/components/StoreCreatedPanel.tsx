@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-// TODO: 공통 컴포넌트 Export명·variant prop 확정 후 교체
->>>>>>> origin/develop
 import iconCheck from '@/assets/Icon-check.png';
 import iconInfo from '@/assets/Icon-info.png';
 import Button from '@/components/ui/Button';
