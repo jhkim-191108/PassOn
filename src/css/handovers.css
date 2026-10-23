@@ -363,6 +363,12 @@
     white-space: pre-wrap;
 }
 
+.handover-detail__card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
 /* =========================
     Handover Photos
 ========================= */

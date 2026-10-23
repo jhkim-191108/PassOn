@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHandoff } from "@/api/handoffs";
-import { getHandoffCards } from "@/api/cards";
+import { getHandoffCards, deleteCard, } from "@/api/cards";
 import type { Handoff, Card, Photo, } from "@/types/api";
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import Badge from "@/components/ui/Badge";
 import { getHandoffPhotos, getPhotoFile } from "@/api/photos";
+import Button from "@/components/ui/Button";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 import "../../css/handovers.css";
 
@@ -59,6 +61,8 @@ function HandoverDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [photos, setPhotos] = useState<DisplayPhoto[]>([]);
+    const [deleteCardId, setDeleteCardId] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -125,6 +129,30 @@ function HandoverDetailPage() {
             objectUrls.forEach((url) => URL.revokeObjectURL(url));
         };
     }, [handoffId]);
+
+    const handleDeleteCard = async () => {
+        if (!deleteCardId) return;
+
+        try {
+            setDeleting(true);
+            setError("");
+
+            await deleteCard(deleteCardId);
+
+            setCards((current) => 
+                current.filter(
+                    (card) => card.id !== deleteCardId
+                )
+            );
+
+            setDeleteCardId(null);
+        } catch (error) {
+            console.error("카드 삭제 실패:", error);
+            setError("카드를 삭제하지 못했습니다.");
+        } finally {
+            setDeleting(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -214,10 +242,35 @@ function HandoverDetailPage() {
                             </div>
                             <h3>{card.title}</h3>
                             <p>{card.body}</p>
+
+                            <div className="handover-detail__card-actions">
+                                <Button
+                                    type="button"
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={() => setDeleteCardId(card.id)}
+                                >
+                                    삭제
+                                </Button>
+                            </div>
                         </article>
                     ))}
                 </div>
             </section>
+            <ConfirmDialog 
+                open={deleteCardId !== null}
+                title="카드 삭제"
+                description="이 카드를 삭제하시겠습니까?"
+                confirmText={deleting ? "삭제 중..." : "삭제"}
+                cancelText="취소"
+                variant="danger"
+                onConfirm={handleDeleteCard}
+                onClose={() => {
+                    if (!deleting) {
+                        setDeleteCardId(null);
+                    }
+                }}
+            />
         </section>
     )
 }
