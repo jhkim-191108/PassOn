@@ -11,6 +11,13 @@
     color: var(--color-text);
 }
 
+.ai-result-card__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 
 /* =========================
     Handover List

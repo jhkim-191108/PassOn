@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Card, CardType, Urgency, UpdateCardRequest } from "@/types/api";
+import ConfirmDialog from "../ui/ConfirmDialog";
 import Button from "../ui/Button";
 
 interface AiResultCardProps {
@@ -8,11 +9,15 @@ interface AiResultCardProps {
         cardId: string,
         data: UpdateCardRequest
     ) => Promise<void>;
+    onDelete: (
+        cardId: string
+    ) => Promise<void>;
 }
 
 function AiResultCard({
     card,
     onSave,
+    onDelete,
 }: AiResultCardProps) {
     const [editing, setEditing] = useState(false);
     const [type, setType] = useState<CardType>(card.type);
@@ -20,6 +25,8 @@ function AiResultCard({
     const [title, setTitle] = useState(card.title);
     const [body, setBody] = useState(card.body);
     const [saving, setSaving] = useState(false);
+    // 삭제
+    const [deleteOpen, setDeleteOpen] = useState(false);
     
     const handleCancel = () => {
         setType(card.type);
@@ -45,6 +52,14 @@ function AiResultCard({
             setSaving(false);
         };
     }
+
+    const handleDelete = async () => {
+        setDeleteOpen(false);
+
+        await onDelete(card.id);
+    };
+
+
     if (editing) {
         return (
             <article className="ai-result-card">
@@ -92,8 +107,35 @@ function AiResultCard({
             {card.needsReview && (
                 <p>검토가 필요한 내용입니다.</p>
             )}
+            <div className="ai-result-card__actions">
+                <Button 
+                    type="button" 
+                    variant="secondary" 
+                    size="sm" 
+                    onClick={() => setEditing(true)}
+                >
+                    수정
+                </Button>
 
-            <Button type="button" onClick={() => setEditing(true)}>수정</Button>
+                <Button
+                    type="button"
+                    variant="danger"
+                    size="sm"
+                    onClick={() => setDeleteOpen(true)}
+                >
+                    삭제
+                </Button>
+            </div>
+            <ConfirmDialog
+                open={deleteOpen}
+                title="카드 삭제"
+                description="이 카드를 삭제하시겠습니까?"
+                confirmText="삭제"
+                cancelText="취소"
+                variant="danger"
+                onConfirm={handleDelete}
+                onClose={() => setDeleteOpen(false)}
+            />
         </article>
     );
 }
