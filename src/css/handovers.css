@@ -492,6 +492,12 @@
     line-height: 1.5;
 }
 
+.trash-list__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
 /* =========================
     Responsive
 ========================= */

@@ -3,11 +3,15 @@ import { useOutletContext } from "react-router-dom";
 
 import { getTrash } from "@/api/trash";
 import type { Store, TrashItem } from "@/types/api";
+import { restoreCard } from "@/api/cards";
+import { restoreHandoff } from "@/api/handoffs";
 
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import EmptyState from "@/components/ui/EmptyState";
 import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 import "../../css/handovers.css";
 
@@ -25,6 +29,9 @@ function TrashPage() {
     const [items, setItems] = useState<TrashItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    // 복구 
+    const [restoreItem, setRestoreItem] = useState<TrashItem | null>(null);
+    const [restoring, setRestoring] = useState(false);
 
     useEffect(() => {
         const loadTrash = async () => {
@@ -59,6 +66,37 @@ function TrashPage() {
 
         loadTrash();
     }, [currentStore]);
+
+    const handleRestore = async () => {
+        if (!restoreItem) return;
+
+        try {
+            setRestoring(true);
+            setError("");
+
+            if (restoreItem.kind === "CARD") {
+                await restoreCard(restoreItem.id);
+            } else {
+                await restoreHandoff(restoreItem.id);
+            }
+
+            setItems((prev) => 
+                prev.filter(
+                    (item) => !(
+                        item.id === restoreItem.id &&
+                        item.kind === restoreItem.kind
+                    )
+                )
+            );
+
+            setRestoreItem(null);
+        } catch (error) {
+            console.error("휴지통 복구 실패:", error);
+            setError("항목을 복구하지 못했습니다.")
+        } finally{
+            setRestoring(false);
+        }
+    };
 
     return (
         <section className="trash-page">
@@ -130,10 +168,34 @@ function TrashPage() {
                                     </span>
                                 )}
                             </div>
+                            {!item.kept && (
+                                <div className="trash-list__actions">
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        onClick={() => setRestoreItem(item)}
+                                    >
+                                        복구
+                                    </Button>
+                                </div>
+                            )}
                         </article>
                     ))}
                 </div>
             )}
+            <ConfirmDialog 
+                open={restoreItem !== null}
+                title="항목 복구"
+                description={restoreItem ? `"${restoreItem.title}" 항목을 복구하시겠습니까?` : ""}
+                confirmText={restoring ? "복구 중..." : "복구"}
+                cancelText="취소"
+                onConfirm={handleRestore}
+                onClose={() => {
+                    if(!restoring) {
+                        setRestoreItem(null);
+                    }
+                }}
+            />
         </section>
     );
 }
