@@ -40,3 +40,9 @@ export function confirmHandoff(handoffId: string) {
         }
     );
 }
+
+export function restoreHandoff(handoffId: string) {
+    return api<void>(`/api/handoffs/${handoffId}/restore`, {
+        method: "POST",
+    });
+}

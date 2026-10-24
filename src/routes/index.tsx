@@ -13,6 +13,7 @@ import HandoverPage from "@/pages/handovers/HandoverPage";
 import HandoverCreatePage from "@/pages/handovers/HandoverCreatePage";
 import { SchedulePage } from "@/pages/schedule/SchedulePage";
 import HandoverDetailPage from "@/pages/handovers/HandoverDetailPage";
+import TrashPage from "@/pages/handovers/TrashPage";
 import DelegatePage from "@/pages/delegations/DelegatePage";
 import MyPage from "@/pages/mypage/MyPage";
 import RecordsPage from "@/pages/records/RecordsPage";
@@ -80,6 +81,7 @@ export const router = createBrowserRouter([
       { path: 'notices/:noticeId', element: <NoticeDetailPage /> },
       { path: 'handovers', element: <HandoverPage /> },
       { path: 'handovers/new', element: <HandoverCreatePage /> },
+      { path: 'handovers/trash', element: <TrashPage />},
       { path: 'handovers/:handoffId', element: <HandoverDetailPage /> },
       { path: 'schedule', element: <SchedulePage /> },
       { path: 'delegate', element: <DelegatePage /> },

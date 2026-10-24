@@ -36,3 +36,9 @@ export function deleteCard(cardId: string) {
         }
     );
 }
+
+export function restoreCard(cardId: string) {
+    return api<void>(`/api/cards/${cardId}/restore`, {
+        method: "POST",
+    });
+}
