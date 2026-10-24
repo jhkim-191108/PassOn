@@ -197,3 +197,17 @@ export interface Photo {
     path: string;
     createdAt: string;
 }
+
+// 휴지통
+export interface TrashItem {
+    kind: "CARD" | "HANDOFF";
+    id: string;
+    storeId: string;
+    handoffId: string;
+    title: string;
+    deletedBy: string;
+    deletedByName: string;
+    deletedAt: string;
+    restoreUntil: string;
+    kept: boolean;
+}
