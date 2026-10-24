@@ -72,14 +72,21 @@ function HandoverPage() {
             <div className="handover-page__header">
                 <h1>인수인계</h1>
 
-                <Button
-                    type="button"
-                    onClick={() =>
-                        navigate("/app/handovers/new")
-                    }
-                >
-                    새 인수인계 작성
-                </Button>
+                <div className="handover-page__actions">
+                    <Button
+                        variant="secondary"
+                        onClick={() => navigate("/app/handovers/trash")}
+                    >
+                        휴지통
+                    </Button>
+
+                    <Button
+                        type="button"
+                        onClick={() => navigate("/app/handovers/new")}
+                    >
+                        새 인수인계 작성
+                    </Button>
+                </div>
             </div>
 
             {loading && (
