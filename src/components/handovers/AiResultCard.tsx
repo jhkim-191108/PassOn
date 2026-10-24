@@ -2,6 +2,36 @@ import { useState } from "react";
 import type { Card, CardType, Urgency, UpdateCardRequest } from "@/types/api";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import Button from "../ui/Button";
+import Select from "../ui/Select";
+import Input from "../ui/Input";
+import Textarea from "../ui/Textarea";
+import Badge from "../ui/Badge";
+
+const cardTypeLabel = {
+    STOCK: "재고",
+    TASK: "할 일",
+    GUEST: "고객",
+    NOTICE: "공지",
+};
+
+const urgencyLabel = {
+    NOW: "긴급",
+    TODAY: "오늘",
+    LATER: "나중",
+};
+
+const typeBadgeVariant = {
+    STOCK: "warning",
+    TASK: "primary",
+    GUEST: "neutral",
+    NOTICE: "success",
+} as const;
+
+const urgencyBadgeVariant = {
+    NOW: "danger",
+    TODAY: "warning",
+    LATER: "neutral",
+} as const;
 
 interface AiResultCardProps {
     card: Card;
@@ -65,7 +95,8 @@ function AiResultCard({
     if (editing) {
         return (
             <article className="ai-result-card">
-                <select
+                <Select
+                    label="카드 종류"
                     value={type}
                     onChange={(e) => setType(e.target.value as CardType)}
                 >
@@ -73,25 +104,28 @@ function AiResultCard({
                     <option value="TASK">할 일</option>
                     <option value="GUEST">고객</option>
                     <option value="NOTICE">공지</option>
-                </select>
+                </Select>
 
-                <select
+                <Select
+                    label="처리 시점"
                     value={urgency}
                     onChange={(e) => setUrgency(e.target.value as Urgency)}
                 >
                     <option value="NOW">긴급</option>
                     <option value="TODAY">오늘</option>
                     <option value="LATER">나중</option>
-                </select>
+                </Select>
 
-                <input value={title} onChange={(e) => setTitle(e.target.value)} />
-                <textarea value={body} onChange={(e) => setBody(e.target.value)} />
-                <Button type="button" onClick={handleCancel} disabled={saving}>
-                    취소
-                </Button>
-                <Button type="button" onClick={handleSave} disabled={saving}>
-                    {saving ? "저장 중..." : "저장"}
-                </Button>
+                <Input label="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
+                <Textarea label="내용" value={body} onChange={(e) => setBody(e.target.value)} />
+                <div className="ai-result-card__actions">
+                    <Button type="button" variant="secondary" size="sm" onClick={handleCancel} disabled={saving}>
+                        취소
+                    </Button>
+                    <Button type="button" size="sm" onClick={handleSave} disabled={saving}>
+                        {saving ? "저장 중..." : "저장"}
+                    </Button>
+                </div>
             </article>
         );
     }
@@ -99,16 +133,26 @@ function AiResultCard({
     return (
         <article className="ai-result-card">
             <div className="ai-result-card__header">
-                <span>{card.type}</span>
-                <span>{card.urgency}</span>
+                <Badge
+                    variant={typeBadgeVariant[card.type]}
+                    size="sm"
+                >
+                    {cardTypeLabel[card.type]}
+                </Badge>
+                <Badge
+                    variant={urgencyBadgeVariant[card.urgency]}
+                    size="sm"
+                >
+                    {urgencyLabel[card.urgency]}
+                </Badge>
+                {card.needsReview && (
+                    <Badge variant="warning" size="sm">검토가 필요한 내용입니다.</Badge>
+                )}
             </div>
 
             <h3>{card.title}</h3>
             <p>{card.body}</p>
 
-            {card.needsReview && (
-                <p>검토가 필요한 내용입니다.</p>
-            )}
             <div className="ai-result-card__actions">
                 {editable && (
                     <Button 

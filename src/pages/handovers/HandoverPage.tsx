@@ -10,6 +10,23 @@ import Badge from "@/components/ui/Badge";
 
 import "../../css/handovers.css";
 
+
+const handoffStatusLabel = {
+    DRAFT: "작성 중",
+    ANALYZING: "분석 중",
+    ANALYZED: "분석 완료",
+    FAILED: "분석 실패",
+    CONFIRMED: "등록 완료",
+};
+
+const handoffStatusVariant = {
+    DRAFT: "neutral",
+    ANALYZING: "warning",
+    ANALYZED: "warning",
+    FAILED: "danger",
+    CONFIRMED: "success",
+} as const;
+
 interface AppContext {
     currentStore: Store | undefined;
 }
@@ -121,8 +138,8 @@ function HandoverPage() {
                                 <Badge variant={handoff.openCardCount > 0 ? "danger" : "success"} size="sm">
                                     미완료 {handoff.openCardCount}개
                                 </Badge>
-                                <Badge variant={handoff.status === "CONFIRMED" ? "success" : "warning"} size="sm">
-                                    {handoff.status === "CONFIRMED" ? "등록 완료" : handoff.status}
+                                <Badge variant={handoffStatusVariant[handoff.status]} size="sm">
+                                    {handoffStatusLabel[handoff.status]}
                                 </Badge>
                             </div>
                         </article>
