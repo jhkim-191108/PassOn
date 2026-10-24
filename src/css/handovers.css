@@ -371,8 +371,14 @@
 
 .handover-detail__card-actions {
     display: flex;
-    justify-content: flex-end;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
     margin-top: 16px;
+}
+
+.handover-detail__progress-control {
+    width: 180px;
 }
 
 /* =========================

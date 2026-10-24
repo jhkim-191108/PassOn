@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHandoff } from "@/api/handoffs";
-import { getHandoffCards, deleteCard, } from "@/api/cards";
-import type { Handoff, Card, Photo, } from "@/types/api";
+import {
+    getHandoffCards,
+    deleteCard,
+    acknowledgeCard,
+    unacknowledgeCard,
+    completeCard,
+    reopenCard,
+} from "@/api/cards";
+import type { Handoff, Card, Photo, CardProgress, } from "@/types/api";
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import Badge from "@/components/ui/Badge";
 import { getHandoffPhotos, getPhotoFile } from "@/api/photos";
 import Button from "@/components/ui/Button";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import Select from "@/components/ui/Select";
 
 import "../../css/handovers.css";
 
@@ -63,6 +71,7 @@ function HandoverDetailPage() {
     const [photos, setPhotos] = useState<DisplayPhoto[]>([]);
     const [deleteCardId, setDeleteCardId] = useState<string | null>(null);
     const [deleting, setDeleting] = useState(false);
+    const [changingCardId, setChangingCardId] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -151,6 +160,50 @@ function HandoverDetailPage() {
             setError("카드를 삭제하지 못했습니다.");
         } finally {
             setDeleting(false);
+        }
+    };
+
+    const handleProgressChange = async (
+        card: Card,
+        nextProgress: CardProgress
+    ) => {
+        if(card.progress === nextProgress) return;
+
+        try {
+            setChangingCardId(card.id);
+            setError("");
+
+            let updatedCard: Card;
+
+            if (nextProgress === "DONE") {
+                updatedCard = await completeCard(card.id);
+            } else if (card.progress === "DONE") {
+                const reopenedCard = await reopenCard(card.id);
+
+                if(nextProgress === "IN_PROGRESS") {
+                    updatedCard = await acknowledgeCard(
+                        reopenedCard.id
+                    );
+                } else {
+                    updatedCard = reopenedCard;
+                }
+            } else if (nextProgress === "IN_PROGRESS") {
+                updatedCard = await acknowledgeCard(card.id);
+            } else {
+                updatedCard = await unacknowledgeCard(card.id);
+            }
+            setCards((current) => 
+                current.map((item) =>
+                    item.id === updatedCard.id
+                        ? updatedCard
+                        : item
+                )
+            );
+        } catch (error) {
+            console.error("카드 처리 상태 변경 실패:", error);
+            setError("카드 처리 상태를 변경하지 못했습니다.");
+        } finally {
+            setChangingCardId(null);
         }
     };
 
@@ -244,10 +297,26 @@ function HandoverDetailPage() {
                             <p>{card.body}</p>
 
                             <div className="handover-detail__card-actions">
+                                <div className="handover-detail__progress-control">
+                                    <Select
+                                        label="처리 상태"
+                                        value={card.progress}
+                                        disabled={changingCardId === card.id}
+                                        onChange={(event) => handleProgressChange(
+                                            card,
+                                            event.target.value as CardProgress
+                                        )}
+                                    >
+                                        <option value="OPEN">미처리</option>
+                                        <option value="IN_PROGRESS">처리 중</option>
+                                        <option value="DONE">처리 완료</option>
+                                    </Select>
+                                </div>
                                 <Button
                                     type="button"
                                     variant="danger"
                                     size="sm"
+                                    disabled={changingCardId === card.id}
                                     onClick={() => setDeleteCardId(card.id)}
                                 >
                                     삭제
