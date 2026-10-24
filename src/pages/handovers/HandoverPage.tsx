@@ -51,7 +51,15 @@ function HandoverPage() {
                 
                 const data = await getHandoffs(currentStore.id);
             
-                setHandoffs(data);
+                setHandoffs(
+                    data.filter(
+                        (handoff) => 
+                            !(
+                                handoff.status === "CONFIRMED" &&
+                                handoff.cardCount === 0
+                            )
+                        )
+                );
             } catch (error) {
                 console.error(
                     "인수인계 조회 실패:",
@@ -136,7 +144,7 @@ function HandoverPage() {
                                 </span>
                             </div>
 
-                            <p>{handoff.rawText}</p>
+                            {/* <p>{handoff.rawText}</p> */}
 
                             <div className="handover-list__meta">
                                 <Badge variant="neutral" size="sm">

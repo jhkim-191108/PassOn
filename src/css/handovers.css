@@ -323,7 +323,7 @@
     font-weight: 700;
 }
 
-.handover-detail__original {
+/* .handover-detail__original {
     padding: 18px 20px;
     border: 1px solid #e7e5e4;
     border-radius: 16px;
@@ -332,7 +332,7 @@
     font-size: 14px;
     line-height: 1.7;
     white-space: pre-wrap;
-}
+} */
 
 .handover-detail__cards {
     display: flex;
@@ -551,7 +551,7 @@
         gap: 4px;
     }
 
-    .handover-detail__original,
+    /* .handover-detail__original, */
     .handover-detail__card {
         padding: 16px;
     }

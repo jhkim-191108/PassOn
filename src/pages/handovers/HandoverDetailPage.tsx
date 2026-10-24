@@ -207,10 +207,10 @@ function HandoverDetailPage() {
                     : "작성 중"}
                 </Badge>
             </div>
-            <section className="handover-detail__section">
+            {/* <section className="handover-detail__section">
                 <h2>원문</h2>
                 <div className="handover-detail__original">{handoff.rawText}</div>
-            </section>
+            </section> */}
             {photos.length > 0 && (
                 <section className="handover-detail__section">
                     <h2>첨부 사진</h2>
