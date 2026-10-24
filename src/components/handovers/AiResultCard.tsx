@@ -5,6 +5,7 @@ import Button from "../ui/Button";
 
 interface AiResultCardProps {
     card: Card;
+    editable?: boolean;
     onSave: (
         cardId: string,
         data: UpdateCardRequest
@@ -16,6 +17,7 @@ interface AiResultCardProps {
 
 function AiResultCard({
     card,
+    editable = true,
     onSave,
     onDelete,
 }: AiResultCardProps) {
@@ -108,14 +110,16 @@ function AiResultCard({
                 <p>검토가 필요한 내용입니다.</p>
             )}
             <div className="ai-result-card__actions">
-                <Button 
-                    type="button" 
-                    variant="secondary" 
-                    size="sm" 
-                    onClick={() => setEditing(true)}
-                >
-                    수정
-                </Button>
+                {editable && (
+                    <Button 
+                        type="button" 
+                        variant="secondary" 
+                        size="sm" 
+                        onClick={() => setEditing(true)}
+                    >
+                        수정
+                    </Button>
+                )}
 
                 <Button
                     type="button"

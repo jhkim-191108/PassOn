@@ -164,6 +164,7 @@ function HandoverCreatePage() {
                         <AiResultCard 
                             key={card.id}
                             card={card}
+                            editable={!confirmed}
                             onSave={handleUpdateCard}
                             onDelete={handleDeleteCard}
                         />
