@@ -42,3 +42,15 @@ export function restoreCard(cardId: string) {
         method: "POST",
     });
 }
+
+export function keepCard(cardId: string) {
+    return api<void>(`/api/cards/${cardId}/keep`, {
+        method: "POST",
+    });
+}
+
+export function unkeepCard(cardId: string) {
+    return api<void>(`/api/cards/${cardId}/keep`, {
+        method: "DELETE",
+    });
+}

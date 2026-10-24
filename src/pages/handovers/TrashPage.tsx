@@ -3,8 +3,8 @@ import { useOutletContext } from "react-router-dom";
 
 import { getTrash } from "@/api/trash";
 import type { Store, TrashItem } from "@/types/api";
-import { restoreCard } from "@/api/cards";
-import { restoreHandoff } from "@/api/handoffs";
+import { restoreCard, keepCard, unkeepCard, } from "@/api/cards";
+import { restoreHandoff, keepHandoff, unkeepHandoff } from "@/api/handoffs";
 
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
@@ -32,6 +32,8 @@ function TrashPage() {
     // 복구 
     const [restoreItem, setRestoreItem] = useState<TrashItem | null>(null);
     const [restoring, setRestoring] = useState(false);
+    // 보관
+    const [keepingId, setKeepingId] = useState<string | null>(null);
 
     useEffect(() => {
         const loadTrash = async () => {
@@ -95,6 +97,42 @@ function TrashPage() {
             setError("항목을 복구하지 못했습니다.")
         } finally{
             setRestoring(false);
+        }
+    };
+
+    const handleKeepToggle = async (item: TrashItem) => {
+        try {
+            setKeepingId(item.id);
+            setError("");
+        
+        if(item.kind === "CARD") {
+            if(item.kept) {
+                await unkeepCard(item.id);
+            } else {
+                await keepCard(item.id);
+            }
+        } else {
+            if(item.kept) {
+                await unkeepHandoff(item.id);
+            } else {
+                await keepHandoff(item.id);
+            }
+        }
+            setItems((prev) => 
+                prev.map((current) => 
+                    current.id === item.id &&
+                    current.kind === item.kind ? {
+                        ...current,
+                        kept: !current.kept,
+                    }
+                    : current
+                )
+            );
+        } catch(error) {
+            console.error("보관 상태 변경 실패", error);
+            setError("보관 상태를 변경하지 못했습니다.");
+        } finally {
+            setKeepingId(null);
         }
     };
 
@@ -168,8 +206,8 @@ function TrashPage() {
                                     </span>
                                 )}
                             </div>
-                            {!item.kept && (
-                                <div className="trash-list__actions">
+                            <div className="trash-list__actions">
+                                {!item.kept && (
                                     <Button
                                         variant="secondary"
                                         size="sm"
@@ -177,8 +215,20 @@ function TrashPage() {
                                     >
                                         복구
                                     </Button>
-                                </div>
-                            )}
+                                )}
+                                <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    disabled={keepingId === item.id}
+                                    onClick={() => handleKeepToggle(item)}
+                                >
+                                    {keepingId === item.id
+                                    ? "처리 중..."
+                                    : item.kept
+                                        ? "보관 해제"
+                                        : "영구 보관"}
+                                </Button>
+                            </div>
                         </article>
                     ))}
                 </div>

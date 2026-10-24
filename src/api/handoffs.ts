@@ -46,3 +46,15 @@ export function restoreHandoff(handoffId: string) {
         method: "POST",
     });
 }
+
+export function keepHandoff(handoffId: string) {
+    return api<void>(`/api/handoffs/${handoffId}/keep`, {
+        method: "POST",
+    });
+}
+
+export function unkeepHandoff(handoffId: string) {
+    return api<void>(`/api/handoffs/${handoffId}/keep`, {
+        method: "DELETE",
+    });
+}
