@@ -54,3 +54,27 @@ export function unkeepCard(cardId: string) {
         method: "DELETE",
     });
 }
+
+export function acknowledgeCard(cardId: string) {
+    return api<Card>(`/api/cards/${cardId}/acknowledge`, {
+        method: "PATCH",
+    });
+}
+
+export function unacknowledgeCard(cardId: string) {
+    return api<Card>(`/api/cards/${cardId}/unacknowledge`, {
+        method: "PATCH",
+    });
+}
+
+export function completeCard(cardId: string) {
+    return api<Card>(`/api/cards/${cardId}/complete`, {
+        method: "PATCH",
+    });
+}
+
+export function reopenCard(cardId: string) {
+    return api<Card>(`/api/cards/${cardId}/reopen`, {
+        method: "PATCH",
+    });
+}
