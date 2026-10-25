@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAppSession } from "@/layouts/appSession";
 import { useParams } from "react-router-dom";
 import { getHandoff } from "@/api/handoffs";
 import {
@@ -66,6 +67,10 @@ type DisplayPhoto = Photo & {
 
 function HandoverDetailPage() {
     const {handoffId} = useParams<{ handoffId: string }>();
+    const { currentStore } = useAppSession();
+    const canManageCompletion =
+        currentStore?.myRole === "OWNER" ||
+        currentStore?.myRole === "MANAGER";
     const [handoff, setHandoff] = useState<Handoff | null>(null);
     const [cards, setCards] = useState<Card[]>([]);
     const [loading, setLoading] = useState(true);
@@ -168,6 +173,7 @@ function HandoverDetailPage() {
     }, [handoffId]);
 
     const handleDeleteCard = async () => {
+        if (!canManageCompletion) return;
         if (!deleteCardId) return;
 
         try {
@@ -196,6 +202,7 @@ function HandoverDetailPage() {
         nextProgress: CardProgress
     ) => {
         if(card.progress === nextProgress) return;
+        if (!canManageCompletion) return;
 
         try {
             setChangingCardId(card.id);
@@ -367,7 +374,7 @@ function HandoverDetailPage() {
                                     <Select
                                         label="처리 상태"
                                         value={card.progress}
-                                        disabled={changingCardId === card.id}
+                                        disabled={changingCardId === card.id || !canManageCompletion }
                                         onChange={(event) => handleProgressChange(
                                             card,
                                             event.target.value as CardProgress
@@ -378,15 +385,17 @@ function HandoverDetailPage() {
                                         <option value="DONE">처리 완료</option>
                                     </Select>
                                 </div>
-                                <Button
-                                    type="button"
-                                    variant="danger"
-                                    size="sm"
-                                    disabled={changingCardId === card.id}
-                                    onClick={() => setDeleteCardId(card.id)}
-                                >
-                                    삭제
-                                </Button>
+                                {canManageCompletion && (
+                                    <Button
+                                        type="button"
+                                        variant="danger"
+                                        size="sm"
+                                        disabled={changingCardId === card.id}
+                                        onClick={() => setDeleteCardId(card.id)}
+                                    >
+                                        삭제
+                                    </Button>
+                                )}
                             </div>
                             <div className="handover-detail__memos">
                                 <h4>후속 메모</h4>
