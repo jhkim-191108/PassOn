@@ -11,8 +11,6 @@
 1. [팀원 및 담당](#팀원-및-담당)
 2. [기술 스택](#기술-스택)
 3. [주요 기능](#주요-기능)
-4. [로컬 실행](#로컬-실행)
-5. [배포](#배포)
 
 ## 팀원 및 담당
 
@@ -113,23 +111,3 @@
 - 누가 작성·확인·수정·처리·삭제했는지 확인
 - 제목, 내용, 작성자, 담당자로 검색
 - 기간과 삭제된 항목 포함 여부를 골라 봄
-
-## 로컬 실행
-
-```bash
-cd nextshift
-npm install
-npm run dev
-```
-
-API 주소는 기본으로 Cloud Run을 씁니다. 로컬 API를 쓰려면 `VITE_API_URL`을 넣으면 됩니다.
-
-## 배포
-
-프론트는 Firebase Hosting, API는 Cloud Run입니다.
-
-```bash
-cd nextshift
-npm run build
-firebase deploy --only hosting
-```
