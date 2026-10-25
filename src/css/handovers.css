@@ -22,7 +22,9 @@
 .handover-page__actions {
     display: flex;
     align-items: center;
+    flex-direction: column;
     gap: 8px;
+    width: 100%;
 }
 
 /* =========================
@@ -31,7 +33,8 @@
 
 .handover-page__header {
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    flex-direction: column;
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 24px;
@@ -43,6 +46,10 @@
     font-weight: 700;
 }
 
+.handover-page__header .button {
+    width: 100%;
+}
+
 .handover-list {
     display: flex;
     flex-direction: column;
@@ -50,7 +57,7 @@
 }
 
 .handover-list__item {
-    padding: 20px;
+    padding: 16px;
     border: 1px solid #e7e5e4;
     border-radius: 16px;
     background: #ffffff;
@@ -71,9 +78,10 @@
 
 .handover-list__item > div:first-child {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
     justify-content: space-between;
-    gap: 12px;
+    gap: 4px;
 }
 
 .handover-list__item > div:first-child strong {
@@ -133,7 +141,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 24px;
+    padding: 18px;
     border: 1px solid #e7e5e4;
     border-radius: 16px;
     background: #ffffff;
@@ -141,6 +149,7 @@
 
 .handover-form > .button {
     align-self: flex-end;
+    width: 100%;
 }
 
 
@@ -291,9 +300,10 @@
 
 .handover-detail__info {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
     justify-content: space-between;
-    gap: 12px;
+    gap: 4px;
     color: var(--color-text-sub);
     font-size: 14px;
 }
@@ -323,17 +333,6 @@
     font-weight: 700;
 }
 
-/* .handover-detail__original {
-    padding: 18px 20px;
-    border: 1px solid #e7e5e4;
-    border-radius: 16px;
-    background: #ffffff;
-    color: var(--color-text-sub);
-    font-size: 14px;
-    line-height: 1.7;
-    white-space: pre-wrap;
-} */
-
 .handover-detail__cards {
     display: flex;
     flex-direction: column;
@@ -341,7 +340,7 @@
 }
 
 .handover-detail__card {
-    padding: 18px 20px;
+    padding: 16px;
     border: 1px solid #e7e5e4;
     border-radius: 16px;
     background: #ffffff;
@@ -387,11 +386,7 @@
 
 .handover-detail__photos {
     display: grid;
-    grid-template-columns:
-        repeat(
-        auto-fill,
-        minmax(180px, 1fr)
-        );
+    grid-template-columns: 1fr;
     gap: 12px;
 }
 
@@ -461,7 +456,7 @@
 }
 
 .trash-list__item {
-    padding: 20px;
+    padding: 16px;
     border: 1px solid #e7e5e4;
     border-radius: 16px;
     background: #ffffff;
@@ -470,8 +465,9 @@
 .trash-list__header {
     display: flex;
     align-items: flex-start;
+    flex-direction: column;
     justify-content: space-between;
-    gap: 16px;
+    gap: 8px;
 }
 
 .trash-list__badges {
@@ -482,7 +478,7 @@
 }
 
 .trash-list__deleted-at {
-    flex-shrink: 0;
+    flex-shrink: 1;
     color: var(--color-text-muted);
     font-size: 12px;
 }
@@ -514,75 +510,69 @@
     Responsive
 ========================= */
 
-@media (max-width: 767px) {
-    .handover-page__header {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .handover-page__header .button {
-        width: 100%;
-    }
-
-    .handover-page__actions {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    .handover-form {
-        padding: 18px;
-    }
-
-    .handover-form > .button {
-        width: 100%;
-    }
-
-    .handover-list__item {
-        padding: 16px;
-    }
-
-    .handover-list__item > div:first-child {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .handover-list__meta {
-        flex-wrap: wrap;
-    }
-
-    .handover-detail__info {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    /* .handover-detail__original, */
-    .handover-detail__card {
-        padding: 16px;
-    }
-
+@media (min-width: 481px) {
     .handover-detail__photos {
-        grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-    }
-
-    .trash-list__item {
-        padding: 16px;
-    }
-
-    .trash-list__header {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .trash-list__deleted-at {
-        flex-shrink: 1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 768px) {
+    .handover-page__header {
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .handover-page__header .button {
+        width: auto;
+    }
+
+    .handover-page__actions {
+        width: auto;
+        flex-direction: row;
+    }
+
+    .handover-form {
+        padding: 24px;
+    }
+
+    .handover-form > .button {
+        width: auto;
+    }
+
+    .handover-list__item {
+        padding: 20px;
+    }
+
+    .handover-list__item > div:first-child {
+        align-items: center;
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .handover-detail__info {
+        align-items: center;
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .handover-detail__card {
+        padding: 18px 20px;
+    }
+
     .handover-detail__photos {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+
+    .trash-list__item {
+        padding: 20px;
+    }
+
+    .trash-list__header {
+        flex-direction: row;
+        gap: 16px;
+    }
+
+    .trash-list__deleted-at {
+        flex-shrink: 0;
     }
 }
