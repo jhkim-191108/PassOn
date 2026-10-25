@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import AppLayout from '@/layouts/AppLayout';
-import DashboardPage from '@/pages/DashboardPage';
+import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import EmployeesPage from '@/pages/employees/EmployeePage';
 import NoticePage from '@/pages/notices/NoticePage';
 import NoticeDetailPage from '@/pages/notices/NoticeDetailPage';

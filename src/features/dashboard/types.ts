@@ -1,6 +1,7 @@
 // Figma types.ts의 인수인계 관련 타입과 동일한 형태
 // TODO: 팀 공용 타입 위치가 정해지면 이동 (인수인계 목록/상세 담당과 공유)
 import type { ShiftType } from '@/features/auth';
+import type { Card, CardProgress, Urgency } from '@/types/api';
 
 export type Priority = 'normal' | 'important' | 'urgent';
 export type HandoffStatus = 'pending' | 'in-progress' | 'complete';
@@ -39,6 +40,8 @@ export interface HandoffTask {
 
 export interface HandoffItem {
   id: string;
+  /** 카드가 속한 인수인계 id (상세 화면 주소에 사용, 공지는 null) */
+  handoffId: string | null;
   storeId: string;
   teamId: string | null;
   teamName: string | null;
@@ -93,43 +96,12 @@ export interface UpdateHandoffRequest {
   userName: string;
 }
 
-// ── 서버 응답 (GET /api/stores/{id}/cards, open-cards, notices) ──
-export type Urgency = 'NOW' | 'TODAY' | 'LATER';
-export type CardProgress = 'OPEN' | 'IN_PROGRESS' | 'DONE';
+// ── 서버 응답 (GET /api/stores/{id}/cards, open-cards) ── 공지는 공용 타입 Notice 사용
+export type { CardProgress, Urgency };
 
-/** 서버 CardView 중 대시보드에서 쓰는 필드 */
-export interface CardResponse {
-  id: string;
-  handoffId: string;
-  title: string;
-  body: string;
-  urgency: Urgency;
-  sourceQuote: string | null;
-  completedAt: string | null;
-  /** 완료한 사람의 user id (이름은 멤버 목록에서 찾음) */
-  completedBy: string | null;
-  createdAt: string;
-  authorName: string | null;
-  escalationStatus: 'PENDING' | 'RESOLVED' | null;
-  /** StoreMember id (user id 아님) */
-  assigneeMemberId: string | null;
-  assigneeName: string | null;
-  acknowledgedAt: string | null;
+/** 서버 CardView = 공용 Card + 공용 타입에 아직 없는 확인자 필드 */
+// TODO: 공용 Card 타입에 acknowledgedBy · acknowledgedByName이 추가되면 Card로 교체
+export type CardResponse = Card & {
   acknowledgedBy: string | null;
   acknowledgedByName: string | null;
-  progress: CardProgress;
-  edited: boolean;
-}
-
-export interface NoticeResponse {
-  id: string;
-  storeId: string;
-  authorId: string;
-  authorName: string;
-  title: string;
-  body: string;
-  pinned: boolean;
-  important: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+};

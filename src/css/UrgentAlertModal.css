@@ -1,0 +1,128 @@
+/* 공용 Modal 안에 긴급 알림 내용이 들어가면 기본 헤더 · 여백을 숨기고 Figma 빨간 헤더로 표시 */
+.modal:has(.urgent-alert) {
+  max-width: 560px;
+  border-radius: 24px;
+}
+
+.modal:has(.urgent-alert) .modal__header {
+  display: none;
+}
+
+.modal:has(.urgent-alert) .modal__content {
+  padding: 0;
+}
+
+.urgent-alert__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 28px;
+  background: #e7000b;         /* red-600 */
+  color: #ffffff;
+}
+
+.urgent-alert__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: rgb(255 255 255 / 0.18);
+  border-radius: 14px;
+}
+
+.urgent-alert__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+}
+
+.urgent-alert__desc {
+  margin: 2px 0 0;
+  font-size: 0.875rem;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.urgent-alert__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  margin: 0;
+  padding: 24px 24px 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.urgent-alert__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 14px 18px;
+  background: #fef2f2;         /* red-50 */
+  border: 1px solid #fecaca;   /* red-200 */
+  border-radius: 14px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+.urgent-alert__item:hover {
+  background: #fee2e2;         /* red-100 */
+}
+
+.urgent-alert__item-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #9f0712;              /* red-900 */
+}
+
+.urgent-alert__item-body {
+  overflow: hidden;
+  font-size: 0.8125rem;
+  color: #dc2626;              /* red-600 */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.urgent-alert__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 24px;
+}
+
+.urgent-alert__later,
+.urgent-alert__check {
+  min-height: 52px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+.urgent-alert__later {
+  background: #ffffff;
+  border: 1px solid #e7e5e4;   /* stone-200 */
+  color: #44403c;              /* stone-700 */
+}
+
+.urgent-alert__later:hover {
+  background: #fafaf9;         /* stone-50 */
+}
+
+.urgent-alert__check {
+  background: #e7000b;         /* red-600 */
+  border: 0;
+  color: #ffffff;
+}
+
+.urgent-alert__check:hover {
+  background: #c10007;         /* red-700 */
+}

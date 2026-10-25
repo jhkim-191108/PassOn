@@ -5,10 +5,12 @@ export { PinnedAnnouncements } from './components/PinnedAnnouncements';
 export { HandoffSection, HandoffEmpty } from './components/HandoffSection';
 export { HandoffListCard } from './components/HandoffListCard';
 export { UrgentBanner } from './components/UrgentBanner';
+export { UrgentAlertModal } from './components/UrgentAlertModal';
 
 // hooks
 export { useDashboard } from './hooks/useDashboard';
 export { useCurrentUser } from './hooks/useCurrentUser';
+export { useUrgentAlert } from './hooks/useUrgentAlert';
 
 // utils
 export { buildDashboardSummary, getCurrentRole, type DashboardSummary } from './utils/summary';
@@ -24,7 +26,6 @@ export type {
   CardProgress,
   CardResponse,
   Memo,
-  NoticeResponse,
   Urgency,
   Photo,
   Priority,
