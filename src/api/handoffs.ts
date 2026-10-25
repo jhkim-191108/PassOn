@@ -41,6 +41,12 @@ export function confirmHandoff(handoffId: string) {
     );
 }
 
+export function deleteHandoff(handoffId: string) {
+    return api<void>(`/api/handoffs/${handoffId}`, {
+        method: "DELETE",
+    });
+}
+
 export function restoreHandoff(handoffId: string) {
     return api<void>(`/api/handoffs/${handoffId}/restore`, {
         method: "POST",

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import HandoverForm from "@/components/handovers/HandoverForm";
 import {
     createHandoff,
     analyzeHandoff,
     confirmHandoff,
+    deleteHandoff,
 } from "../../api/handoffs";
 import { getHandoffCards, updateCard, deleteCard, } from "../../api/cards";
 import type { Store, Card, UpdateCardRequest } from "@/types/api";
@@ -29,7 +30,20 @@ function HandoverCreatePage() {
     const [confirming, setConfirming] = useState(false);
     const [confirmed,setConfirmed] = useState(false);
     const [photos, setPhotos] = useState<File[]>([]);
+    const confirmedRef = useRef(false);
+    const handoffIdRef = useRef<string | null>(null);
+    confirmedRef.current = confirmed;
+    handoffIdRef.current = handoffId;
 
+    // 등록하지 않고 나가면 분석 초안을 지운다
+    useEffect(() => {
+        return () => {
+            const id = handoffIdRef.current;
+            if (id && !confirmedRef.current) {
+                void deleteHandoff(id);
+            }
+        };
+    }, []);
 
     const handleSubmit = async (rawText: string) => {
         if (!currentStore) {
