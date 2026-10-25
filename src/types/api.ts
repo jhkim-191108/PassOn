@@ -211,3 +211,12 @@ export interface TrashItem {
     restoreUntil: string;
     kept: boolean;
 }
+
+export interface MemoView {
+    id: string;
+    cardId: string;
+    authorId: string;
+    authorName: string;
+    body: string;
+    createdAt: string;
+}
