@@ -16,11 +16,11 @@
 
 ## 팀원 및 담당
 
-| 팀원 | 담당 영역 | 주요 파일 |
+| 이름 | 공식역할 | 세부역할 |
 | :--- | :--- | :--- |
-| **김지훈** | 인수인계, 관리자 위임, 기록 조회, 마이페이지, 매장 설정, 공통 레이아웃 | `src/pages/handovers`, `src/pages/delegations`, `src/pages/records`, `src/pages/mypage`, `src/layouts` |
-| **전재형** | 대시보드, 근무표 | `src/pages/dashboard`, `src/features/dashboard`, `src/pages/schedule`, `src/features/schedule` |
-| **김현호** | 인증, 직원 관리, 공지사항 | `src/pages/auth`, `src/features/auth`, `src/pages/employees`, `src/features/employees`, `src/pages/notices` |
+| **김지훈** | 팀장 | 기획, Git/설계, DB설계, 백엔드 개발, 프론트엔드 개발, 공지사항, 직원관리, 기록조회, 관리자위임, 매장설정, 마이페이지, 우측패널 |
+| **전재형** | 팀원 | 공용UI, 기획, 기획작성, 페이지기능 및 AI사용법설정, 프론트엔드 개발, 인수인계 Core |
+| **김현호** | 팀원 | 기획, 회의록작성, 프론트엔드 개발, 인증/매장 진입, 대시보드, 근무표 |
 
 ## 기술 스택
 
