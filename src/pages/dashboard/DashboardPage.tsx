@@ -10,7 +10,6 @@ import {
   HandoffSection,
   PinnedAnnouncements,
   UrgentAlertModal,
-  UrgentBanner,
   useCurrentUser,
   useDashboard,
   useUrgentAlert,
@@ -51,7 +50,7 @@ export const DashboardPage = () => {
     const item = itemById.get(id);
     if (!item) return;
     if (item.isAnnouncement) navigate(generatePath(PATHS.NOTICE_DETAIL, { noticeId: item.id }));
-    else if (item.handoffId) navigate(generatePath(PATHS.HANDOFF_DETAIL, { handoffId: item.handoffId }));
+    else if (item.handoffId) navigate(`${generatePath(PATHS.HANDOFF_DETAIL, { handoffId: item.handoffId })}?card=${item.id}`);
   };
   const newHandoff = () => navigate(PATHS.HANDOFF_NEW);
 
@@ -100,8 +99,6 @@ export const DashboardPage = () => {
           viewItem(id);
         }}
       />
-
-      <UrgentBanner items={summary.urgent} onViewItem={viewItem} />
 
       <DashboardHeader userName={user.name} role={summary.role} summary={summary} onNewHandoff={newHandoff} />
 

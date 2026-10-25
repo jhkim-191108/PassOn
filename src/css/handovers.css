@@ -54,62 +54,125 @@
     gap: 12px;
 }
 
-.handover-list__item {
-    padding: 16px;
-    border: 1px solid #e7e5e4;
-    border-radius: 16px;
-    background: #ffffff;
-    cursor: pointer;
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        transform 0.15s ease;
-}
-
-.handover-list__item:hover {
-    border-color: #d6d3d1;
-    box-shadow:
-        0 4px 6px -1px rgb(0 0 0 / 0.08),
-        0 2px 4px -2px rgb(0 0 0 / 0.08);
-    transform: translateY(-1px);
-}
-
-.handover-list__item > div:first-child {
+/* 팀 칩 */
+.handover-teams,
+.handover-filters {
     display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 4px;
-}
-
-.handover-list__item > div:first-child strong {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.handover-list__item > div:first-child span {
-    color: var(--color-text-muted);
-    font-size: 12px;
-}
-
-.handover-list__item > p {
-    margin: 14px 0;
-    overflow: hidden;
-    color: var(--color-text-sub);
-    font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-.handover-list__meta {
-    display: flex;
-    align-items: center;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.handover-team {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.handover-team b {
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.handover-team--all {
+    border-color: #e7e5e4;
+    background: #ffffff;
+    color: #44403c;
+}
+
+.handover-team--all[aria-pressed="true"] {
+    border-color: #1c1917;
+    background: #1c1917;
+    color: #ffffff;
+}
+
+.handover-team--red { background: #fef2f2; color: #dc2626; }
+.handover-team--orange { background: #fff7ed; color: #ea580c; }
+.handover-team--blue { background: #eff6ff; color: #2563eb; }
+.handover-team--purple { background: #faf5ff; color: #9333ea; }
+.handover-team--green { background: #f0fdf4; color: #16a34a; }
+
+.handover-team:not(.handover-team--all)[aria-pressed="true"] {
+    border-color: currentColor;
+}
+
+/* 검색 */
+.handover-page__search {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 16px;
+    padding: 0 14px;
+    border: 1px solid #e7e5e4;
+    border-radius: 12px;
+    background: #ffffff;
+    font-size: 14px;
+}
+
+/* 상태 필터 */
+.handover-filters {
+    margin-top: 12px;
+}
+
+.handover-filter {
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid #e7e5e4;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #57534e;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.handover-filter b {
+    font-weight: 600;
+    color: #a8a29e;
+}
+
+.handover-filter[aria-pressed="true"] {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #ffffff;
+}
+
+.handover-filter[aria-pressed="true"] b {
+    color: inherit;
+}
+
+/* 건수 · 정렬 */
+.handover-page__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0 12px;
+    color: var(--color-text-sub);
+    font-size: 13px;
+}
+
+.handover-page__toolbar .select-field {
+    width: auto;
+}
+
+.handover-page__sort {
+    width: auto;
+    min-height: 32px;
+    padding: 0 28px 0 10px;
+    font-size: 13px;
+}
+
+.handover-page__error {
+    margin: 0 0 12px;
+    color: var(--color-danger);
+    font-size: 13px;
 }
 
 
@@ -280,201 +343,209 @@
 .handover-detail {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 12px;
 }
+
+.handover-detail__back {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #78716c;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.handover-detail__bar {
+    height: 3px;
+    margin: 4px 0 8px;
+    border-radius: 999px;
+    background: #d6d3d1;
+}
+
+.handover-detail__bar--now { background: #ef4444; }
+.handover-detail__bar--today { background: #f59e0b; }
 
 .handover-detail__header {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .handover-detail__header h1 {
     margin: 0;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
-    color: var(--color-text-sub);
-}
-
-.handover-detail__info {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 4px;
-    color: var(--color-text-sub);
-    font-size: 14px;
-}
-
-.handover-detail__info strong {
-    color: var(--color-text);
-    font-size: 1rem;
-}
-
-.handover-detail__status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--color-text-sub);
-    font-size: 13px;
-}
-
-.handover-detail__section {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.handover-detail__section h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.handover-detail__cards {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.handover-detail__card {
-    padding: 16px;
-    border: 1px solid #e7e5e4;
-    border-radius: 16px;
-    background: #ffffff;
+    line-height: 1.35;
 }
 
 .handover-detail__badges {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: 6px;
 }
 
-.handover-detail__card h3 {
-    margin: 0 0 8px;
-    font-size: 16px;
-    font-weight: 700;
+.handover-detail__urgency::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: middle;
 }
 
-.handover-detail__card p {
+.handover-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    margin: 4px 0 0;
+    color: #78716c;
+    font-size: 12px;
+}
+
+.handover-detail__meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.handover-detail__avatar {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ede9fe;
+    color: #7c3aed;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.handover-detail__error {
     margin: 0;
-    color: var(--color-text-sub);
+    color: var(--color-danger);
+    font-size: 13px;
+}
+
+.handover-detail__box {
+    padding: 16px;
+    border: 1px solid #e7e5e4;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.handover-detail__body {
+    color: #44403c;
     font-size: 14px;
     line-height: 1.6;
     white-space: pre-wrap;
 }
 
-.handover-detail__card-actions {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 16px;
+.handover-detail__label {
+    margin: 0 0 10px;
+    color: #78716c;
+    font-size: 12px;
+    font-weight: 600;
 }
-
-.handover-detail__progress-control {
-    width: 180px;
-}
-
-/* =========================
-    Handover Photos
-========================= */
 
 .handover-detail__photos {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .handover-detail__photo {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
+    display: block;
+    width: 96px;
+    height: 96px;
     overflow: hidden;
     border: 1px solid #e7e5e4;
-    border-radius: 14px;
-    background: #ffffff;
-    transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
-}
-
-.handover-detail__photo:hover {
-    border-color: #d6d3d1;
-    box-shadow:
-        0 4px 6px -1px rgb(0 0 0 / 0.08),
-        0 2px 4px -2px rgb(0 0 0 / 0.08);
-    transform: translateY(-1px);
+    border-radius: 10px;
+    background: var(--color-background-soft);
 }
 
 .handover-detail__photo img {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 100%;
     object-fit: cover;
-    background: var(--color-background-soft);
 }
 
-.handover-detail__photo span {
-    overflow: hidden;
-    padding: 10px 12px;
-    color: var(--color-text-sub);
+.handover-detail__progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.handover-detail__progress-button {
+    height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #f5f5f4;
+    color: #44403c;
+    font: inherit;
     font-size: 12px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-/* =========================
-    Handover Memos
-========================= */
-.handover-detail__memos {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid var(--color-border);
+.handover-detail__progress-button[aria-pressed="true"] {
+    background: #1c1917;
+    color: #ffffff;
 }
 
-.handover-detail__memos h4 {
+.handover-detail__progress-button:disabled {
+    cursor: not-allowed;
+}
+
+.handover-detail__progress-button:disabled:not([aria-pressed="true"]) {
+    opacity: 0.5;
+}
+
+.handover-detail__hint {
     margin: 0 0 12px;
-    font-size: 14px;
-    font-weight: 700;
+    color: #a8a29e;
+    font-size: 12px;
 }
 
-.handover-detail__memo-list {
+.handover-detail__memos {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 12px;
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
 }
 
-.handover-detail__memo {
+.handover-detail__memos li {
     padding: 10px 12px;
     border-radius: 10px;
     background: var(--color-background-soft);
 }
 
-.handover-detail__memo-meta {
+.handover-detail__memos li div {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    font-size: 12px;
 }
 
-.handover-detail__memo-meta strong {
-    font-size: 13px;
-}
-
-.handover-detail__memo-meta span {
+.handover-detail__memos li span {
     color: var(--color-text-muted);
-    font-size: 11px;
 }
 
-.handover-detail__memo p {
+.handover-detail__memos li p {
     margin: 0;
-    color: var(--color-text-sub);
+    color: #44403c;
     font-size: 13px;
     line-height: 1.5;
     white-space: pre-wrap;
@@ -482,18 +553,47 @@
 
 .handover-detail__memo-form {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 8px;
 }
 
-.handover-detail__memo-form .button {
-    width: 100%;
+.handover-detail__memo-form .input-field {
+    flex: 1;
+    min-width: 0;
 }
 
-.handover-detail__memo-error {
-    margin: 8px 0 0;
-    color: var(--color-danger);
-    font-size: 12px;
+.handover-detail__memo-form .button {
+    flex-shrink: 0;
+    min-height: 40px;
+}
+
+.handover-detail__footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.handover-detail__footer .button {
+    border: 0;
+    background: #f5f5f4;
+    color: #44403c;
+}
+
+.handover-detail__footer .handover-detail__delete {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.handover-detail__edit {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.handover-detail__edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
 }
 
 /* =========================
@@ -577,12 +677,6 @@
     Responsive
 ========================= */
 
-@media (min-width: 481px) {
-    .handover-detail__photos {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
 @media (min-width: 768px) {
     .handover-page__header {
         align-items: center;
@@ -606,30 +700,6 @@
         width: auto;
     }
 
-    .handover-list__item {
-        padding: 20px;
-    }
-
-    .handover-list__item > div:first-child {
-        align-items: center;
-        flex-direction: row;
-        gap: 12px;
-    }
-
-    .handover-detail__info {
-        align-items: center;
-        flex-direction: row;
-        gap: 12px;
-    }
-
-    .handover-detail__card {
-        padding: 18px 20px;
-    }
-
-    .handover-detail__photos {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    }
-
     .trash-list__item {
         padding: 20px;
     }
@@ -640,20 +710,6 @@
     }
 
     .trash-list__deleted-at {
-        flex-shrink: 0;
-    }
-
-    .handover-detail__memo-form {
-        flex-direction: row;
-        align-items: flex-end;
-    }
-
-    .handover-detail__memo-form .textarea-field {
-        flex: 1;
-    }
-
-    .handover-detail__memo-form .button {
-        width: auto;
         flex-shrink: 0;
     }
 }

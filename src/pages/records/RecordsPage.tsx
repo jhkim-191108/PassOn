@@ -201,10 +201,6 @@ function RecordsPage() {
             </header>
 
             <div className="records__search-box">
-                <svg className="records__search-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="m20 20-3.5-3.5" />
-                </svg>
                 <Input
                     className="records__search"
                     value={keyword}

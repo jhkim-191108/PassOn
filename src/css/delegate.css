@@ -40,11 +40,7 @@
     padding: 7px;
     border-radius: 50%;
     background: #dbeafe;
-    fill: none;
-    stroke: #2563eb;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    object-fit: contain;
 }
 
 .delegate__banner div {

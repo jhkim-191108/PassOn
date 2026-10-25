@@ -1,4 +1,4 @@
-/* Figma ShiftBanner 기준 — 1280px 이상에서만 표시 */
+/* Figma ShiftBanner 기준 — 1280px 이상에서만, 상단 내비 바로 아래 전체 폭 띠 */
 .urgent-banner {
   display: none;
 }
@@ -8,13 +8,18 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    min-height: 44px;
-    margin-bottom: 20px;
-    padding: 8px 16px;
+    width: 100%;
+    min-height: 40px;
+    padding: 6px 16px;
     box-sizing: border-box;
     background: #fef2f2;       /* red-50 */
-    border: 1px solid #fecaca; /* red-200 */
-    border-radius: 12px;
+    border-bottom: 1px solid #fecaca; /* red-200 */
+  }
+}
+
+@media (min-width: 1441px) {
+  .urgent-banner {
+    padding: 6px 24px;
   }
 }
 

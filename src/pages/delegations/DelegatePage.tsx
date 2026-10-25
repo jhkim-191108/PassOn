@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ComponentProps } from "react";
 import { ApiError } from "@/api/client";
+import iconDelegate from "@/assets/Icon-delegate.png";
 import { cancelEscalation, createEscalation, listEscalations, resolveEscalation } from "@/api/escalations";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -198,10 +199,7 @@ function DelegatePage() {
             </header>
 
             <div className="delegate__banner">
-                <svg className="delegate__banner-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6l-7-3Z" />
-                    <path d="m9 12 2 2 4-4" />
-                </svg>
+                <img className="delegate__banner-icon" src={iconDelegate} alt="" />
                 <div>
                     <strong>{role === "OWNER" ? "Owner 권한으로 보는 중" : "Manager 권한으로 보는 중"}</strong>
                     <span>

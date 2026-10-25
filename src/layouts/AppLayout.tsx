@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, generatePath, useNavigate } from "react-router-dom";
 import Sidebar from "../components/common/Sidebar";
 import Navigation from "../components/common/Navigation";
 import BottomNavigation from "../components/common/BottomNavigation";
@@ -11,12 +11,15 @@ import { getStores } from "../api/stores";
 import { loadStorePanel, loadTodayShifts, openStoreSocket } from "../api/live";
 import { pickStore, selectStore, useCurrentStoreId } from "../features/stores/currentStore";
 import { AppSessionProvider, type AppSession } from "./appSession";
+import { UrgentBanner } from "../features/dashboard/components/UrgentBanner";
+import { PATHS } from "../routes/paths";
 
 import { getNotifications, readAllNotifications, readNotification } from "../api/notification";
 import type { Card, Notification, Store, User } from "../types/api";
 import type { ShiftResponse } from "../features/schedule/types";
 
 function AppLayout() {
+    const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);
     const [stores, setStores] = useState<Store[]>([]);
     const [loading, setLoading] = useState(true);
@@ -281,6 +284,13 @@ function AppLayout() {
         [user, stores, currentStore, openCards, todayShifts, liveLoading, photoUrl, replaceUser, replacePhoto, replaceStore, replaceStores, reloadTodayShifts],
     );
 
+    const urgentCards = openCards.filter((card) => card.urgency === "NOW" && !card.completedAt);
+
+    function viewUrgentCard(cardId: string) {
+        const card = openCards.find((item) => item.id === cardId);
+        if (card) navigate(`${generatePath(PATHS.HANDOFF_DETAIL, { handoffId: card.handoffId })}?card=${card.id}`);
+    }
+
     if (loading) {
         return <Loading text="사용자 정보를 불러오는 중입니다..." />;
     }
@@ -319,6 +329,8 @@ function AppLayout() {
                         onReadNotification={markRead}
                         onReadAllNotifications={markAllRead}
                     />
+
+                    <UrgentBanner items={urgentCards} onViewItem={viewUrgentCard} />
 
                     <div className="app-body">
                         <main className="app-main">

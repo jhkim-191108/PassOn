@@ -19,29 +19,13 @@
 }
 
 .records__search-box {
-    position: relative;
     margin-top: 20px;
-}
-
-.records__search-icon {
-    position: absolute;
-    top: 50%;
-    left: 14px;
-    z-index: 1;
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: #a8a29e;
-    stroke-width: 2;
-    stroke-linecap: round;
-    transform: translateY(-50%);
-    pointer-events: none;
 }
 
 .records__search {
     width: 100%;
     min-height: 44px;
-    padding: 0 14px 0 38px;
+    padding: 0 14px;
     border: 1px solid #e7e5e4;
     border-radius: 12px;
     background: #ffffff;

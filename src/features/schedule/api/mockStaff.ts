@@ -11,10 +11,10 @@ export const MOCK_TEAMS: StoreTeam[] = [
 ];
 
 export const MOCK_STAFF: StaffMember[] = [
-  { id: 'u1', name: '김민지', email: 'minji@morning.kr', role: 'owner', shifts: ['풀타임'], teamId: null, teamName: null, isActive: true, joinedAt: '2025-03-15', departedAt: null },
-  { id: 'u2', name: '박준호', email: 'junho@morning.kr', role: 'manager', shifts: ['오전', '오후'], teamId: null, teamName: null, isActive: true, joinedAt: '2025-04-01', departedAt: null },
-  { id: 'u3', name: '이지연', email: 'jiyeon@morning.kr', role: 'staff', shifts: ['오전'], teamId: 'team_morning', teamName: '오전팀', isActive: true, joinedAt: '2025-05-10', departedAt: null },
-  { id: 'u4', name: '최서준', email: 'seojun@morning.kr', role: 'staff', shifts: ['마감'], teamId: 'team_closing', teamName: '마감팀', isActive: true, joinedAt: '2025-07-20', departedAt: null },
-  { id: 'u5', name: '정하늘', email: 'haneul@morning.kr', role: 'staff', shifts: ['오후', '마감'], teamId: 'team_hall', teamName: '홀팀', isActive: true, joinedAt: '2025-09-01', departedAt: null },
-  { id: 'u6', name: '오유진', email: 'yujin@morning.kr', role: 'staff', shifts: ['오전', '오후'], teamId: null, teamName: null, isActive: false, joinedAt: '2025-06-01', departedAt: '2026-08-31' },
+  { id: 'u1', name: '김민지', email: 'minji@morning.kr', role: 'OWNER', shifts: ['풀타임'], teamId: null, teamName: null, isActive: true, joinedAt: '2025-03-15', departedAt: null },
+  { id: 'u2', name: '박준호', email: 'junho@morning.kr', role: 'MANAGER', shifts: ['오전', '오후'], teamId: null, teamName: null, isActive: true, joinedAt: '2025-04-01', departedAt: null },
+  { id: 'u3', name: '이지연', email: 'jiyeon@morning.kr', role: 'STAFF', shifts: ['오전'], teamId: 'team_morning', teamName: '오전팀', isActive: true, joinedAt: '2025-05-10', departedAt: null },
+  { id: 'u4', name: '최서준', email: 'seojun@morning.kr', role: 'STAFF', shifts: ['마감'], teamId: 'team_closing', teamName: '마감팀', isActive: true, joinedAt: '2025-07-20', departedAt: null },
+  { id: 'u5', name: '정하늘', email: 'haneul@morning.kr', role: 'STAFF', shifts: ['오후', '마감'], teamId: 'team_hall', teamName: '홀팀', isActive: true, joinedAt: '2025-09-01', departedAt: null },
+  { id: 'u6', name: '오유진', email: 'yujin@morning.kr', role: 'STAFF', shifts: ['오전', '오후'], teamId: null, teamName: null, isActive: false, joinedAt: '2025-06-01', departedAt: '2026-08-31' },
 ];

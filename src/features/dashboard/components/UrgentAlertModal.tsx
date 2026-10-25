@@ -1,3 +1,4 @@
+import iconAlert from '@/assets/Icon-alert.png';
 import Modal from '@/components/ui/Modal';
 
 import type { HandoffItem } from '../types';
@@ -17,9 +18,7 @@ export const UrgentAlertModal = ({ open, items, onLater, onCheck, onViewItem }: 
     <div className="urgent-alert">
       <div className="urgent-alert__head">
         <span className="urgent-alert__icon" aria-hidden="true">
-          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-          </svg>
+          <img src={iconAlert} alt="" width={22} height={22} />
         </span>
         <div>
           <h2 className="urgent-alert__title">긴급 알림이 있습니다!</h2>

@@ -32,6 +32,11 @@
   border-radius: 14px;
 }
 
+/* 빨간 아이콘을 빨간 머리 위에서 흰색으로 */
+.urgent-alert__icon img {
+  filter: brightness(0) invert(1);
+}
+
 .urgent-alert__title {
   margin: 0;
   font-size: 1.25rem;
