@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,13 @@ public class EscalationController {
     @ResponseStatus(HttpStatus.CREATED)
     public EscalationView create(@PathVariable UUID cardId, @Valid @RequestBody EscalationRequest request) {
         return escalationService.create(AuthPrincipal.current(), cardId, request.priority());
+    }
+
+    /** 위임한 매니저가 취소한다. */
+    @DeleteMapping("/api/cards/{cardId}/escalations")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancel(@PathVariable UUID cardId) {
+        escalationService.cancel(AuthPrincipal.current(), cardId);
     }
 
     /** 오너의 처리 대기 목록. */

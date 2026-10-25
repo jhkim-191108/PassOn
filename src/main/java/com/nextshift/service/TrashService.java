@@ -12,6 +12,7 @@ import com.nextshift.domain.User;
 import com.nextshift.repo.CardRepository;
 import com.nextshift.repo.HandoffRepository;
 import com.nextshift.repo.UserRepository;
+import com.nextshift.security.PermissionMatrix;
 import com.nextshift.security.StoreGuard;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -51,15 +52,15 @@ public class TrashService {
     public List<TrashItemView> list(AuthPrincipal principal, UUID storeId) {
         StoreMember member = guard.requireActiveMember(storeId, principal.id());
         OffsetDateTime since = OffsetDateTime.now(ZoneOffset.UTC).minusDays(DAYS);
-        boolean storeWide = member.getRole() != StoreRole.STAFF;
+        Map<UUID, StoreRole> authorRoles = new HashMap<>();
         List<Handoff> handoffs = handoffRepository.findTrash(storeId, since).stream()
-                .filter(handoff -> storeWide || visibleToStaff(handoff, principal.id()))
+                .filter(handoff -> visible(member, handoff.getAuthorId(), authorRoles))
                 .toList();
         Map<UUID, Handoff> parents = new HashMap<>();
         List<Card> cards = cardRepository.findTrash(storeId, since).stream()
                 .filter(card -> {
                     Handoff parent = parents.computeIfAbsent(card.getHandoffId(), id -> handoffRepository.findById(id).orElse(null));
-                    return parent != null && (storeWide || visibleToStaff(parent, card, principal.id()));
+                    return parent != null && visible(member, parent.getAuthorId(), authorRoles);
                 })
                 .toList();
         return items(storeId, handoffs, cards);
@@ -112,12 +113,9 @@ public class TrashService {
         return items;
     }
 
-    private static boolean visibleToStaff(Handoff handoff, UUID userId) {
-        return handoff.getAuthorId().equals(userId) || userId.equals(handoff.getDeletedBy());
-    }
-
-    private static boolean visibleToStaff(Handoff parent, Card card, UUID userId) {
-        return parent.getAuthorId().equals(userId) || userId.equals(card.getDeletedBy());
+    private boolean visible(StoreMember actor, UUID authorId, Map<UUID, StoreRole> authorRoles) {
+        StoreRole authorRole = authorRoles.computeIfAbsent(authorId, id -> guard.authorRole(actor.getStoreId(), id));
+        return PermissionMatrix.canViewTrash(actor.getRole(), actor.getUserId(), authorRole, authorId);
     }
 
     private Map<UUID, String> names(List<Handoff> handoffs, List<Card> cards) {

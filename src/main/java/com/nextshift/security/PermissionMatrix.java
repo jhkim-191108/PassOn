@@ -31,6 +31,28 @@ public final class PermissionMatrix {
         };
     }
 
+    /** 오너 글은 오너만, 매니저 글은 오너와 그 매니저, 직원 글은 오너·매니저·작성자. */
+    public static boolean canDeleteAuthored(StoreRole actorRole, UUID actorId, StoreRole authorRole, UUID authorId) {
+        if (authorRole == StoreRole.OWNER) {
+            return actorRole == StoreRole.OWNER;
+        }
+        if (authorRole == StoreRole.MANAGER) {
+            return actorRole == StoreRole.OWNER || actorId.equals(authorId);
+        }
+        return actorRole == StoreRole.OWNER || actorRole == StoreRole.MANAGER || actorId.equals(authorId);
+    }
+
+    /** 오너 글은 오너만, 매니저 글은 오너와 매니저 전체, 직원 글은 오너·매니저·작성자. */
+    public static boolean canViewTrash(StoreRole actorRole, UUID actorId, StoreRole authorRole, UUID authorId) {
+        if (authorRole == StoreRole.OWNER) {
+            return actorRole == StoreRole.OWNER;
+        }
+        if (authorRole == StoreRole.MANAGER) {
+            return actorRole == StoreRole.OWNER || actorRole == StoreRole.MANAGER;
+        }
+        return actorRole == StoreRole.OWNER || actorRole == StoreRole.MANAGER || actorId.equals(authorId);
+    }
+
     /** 매니저 이상은 매장 글을 고칠 수 있고, 직원은 본인 글만 고친다. */
     public static boolean canMutateAuthored(StoreRole role, UUID authorId, UUID userId) {
         if (role == StoreRole.OWNER || role == StoreRole.MANAGER) {

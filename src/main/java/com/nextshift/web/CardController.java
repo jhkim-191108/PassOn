@@ -85,7 +85,7 @@ public class CardController {
         );
     }
 
-    /** 확정 전 카드를 휴지통으로 보낸다. */
+    /** 카드를 휴지통으로 보낸다. 확정 이후에도 가능하다. */
     @DeleteMapping("/api/cards/{cardId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID cardId) {

@@ -35,6 +35,9 @@ record LoginRequest(
         @NotBlank(message = "비밀번호를 입력해 주세요.") String password
 ) {}
 
+/** 웹소켓 티켓. 이 매장의 활동 멤버만 발급된다. */
+record WsTicketRequest(@NotNull(message = "매장을 선택해 주세요.") UUID storeId) {}
+
 /** 내 이름 수정. */
 record UpdateMeRequest(
         @NotBlank(message = "이름을 입력해 주세요.") @Size(max = 40, message = "이름은 40자 이하입니다.") String name

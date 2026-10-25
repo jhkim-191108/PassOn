@@ -1,7 +1,11 @@
 package com.nextshift.web;
 
 import com.nextshift.api.Views.AuthView;
+import com.nextshift.api.Views.WsTicketView;
+import com.nextshift.common.AuthPrincipal;
+import com.nextshift.security.JwtService;
 import com.nextshift.security.RefreshCookie;
+import com.nextshift.security.StoreGuard;
 import com.nextshift.service.AuthService;
 import com.nextshift.service.AuthService.Issued;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,10 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
     private final RefreshCookie refreshCookie;
+    private final JwtService jwtService;
+    private final StoreGuard guard;
 
-    public AuthController(AuthService authService, RefreshCookie refreshCookie) {
+    public AuthController(AuthService authService, RefreshCookie refreshCookie, JwtService jwtService, StoreGuard guard) {
         this.authService = authService;
         this.refreshCookie = refreshCookie;
+        this.jwtService = jwtService;
+        this.guard = guard;
     }
 
     /** 가입하고 액세스 토큰과 리프레시 쿠키를 준다. */
@@ -59,6 +67,14 @@ public class AuthController {
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         authService.logout(refreshCookie.read(request));
         refreshCookie.clear(request, response);
+    }
+
+    /** 웹소켓용 1분 티켓. 액세스 토큰은 주소에 넣지 않는다. */
+    @PostMapping("/ws-ticket")
+    public WsTicketView wsTicket(@Valid @RequestBody WsTicketRequest request) {
+        AuthPrincipal principal = AuthPrincipal.current();
+        guard.requireActiveMember(request.storeId(), principal.id());
+        return new WsTicketView(jwtService.wsTicket(principal.id(), request.storeId()));
     }
 
     /** 가입 전 이메일 중복을 확인한다. 이미 있으면 409다. */

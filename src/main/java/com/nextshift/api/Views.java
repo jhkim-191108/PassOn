@@ -29,6 +29,9 @@ public final class Views {
     /** accessToken만 본문에 있다. refresh는 쿠키로 나간다. expiresIn은 초. */
     public record AuthView(String accessToken, String tokenType, long expiresIn, UserView user) {}
 
+    /** 웹소켓 접속용. 액세스 토큰이 아니라 짧은 티켓만 담는다. */
+    public record WsTicketView(String ticket) {}
+
     /**
      * 매장 한 건.
      * inviteCode와 invitePath는 STAFF에게 null.
@@ -246,7 +249,8 @@ public final class Views {
 
     /**
      * 기록 조회 한 줄.
-     * action은 CREATED 작성, UPDATED 수정, COMPLETED 처리, DELETED 삭제.
+     * action은 CREATED 작성, UPDATED 수정, ACKNOWLEDGED 확인, COMPLETED 처리, DELETED 삭제.
+     * urgency와 done은 카드 기록에만 있고, 인수인계 기록은 null이다.
      */
     public record RecordView(
             String action,
@@ -256,6 +260,8 @@ public final class Views {
             UUID cardId,
             String title,
             String actorName,
-            OffsetDateTime at
+            OffsetDateTime at,
+            Urgency urgency,
+            Boolean done
     ) {}
 }

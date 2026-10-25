@@ -141,12 +141,12 @@ public class HandoffService {
         return one(principal, handoff);
     }
 
-    /** 작성 권한이 있고 확정 전일 때만 휴지통으로 보낸다. */
+    /** 작성자 역할에 따라, 확정 전에만 휴지통으로 보낸다. */
     @Transactional
     public void delete(AuthPrincipal principal, UUID handoffId) {
         Handoff handoff = requireReadable(principal, handoffId);
         StoreMember actor = guard.requireActiveMember(handoff.getStoreId(), principal.id());
-        guard.requireAuthored(actor, handoff.getAuthorId());
+        guard.requireDeleteAuthored(actor, handoff.getAuthorId());
         requireOpen(handoff, "삭제");
         handoff.setDeletedAt(OffsetDateTime.now(ZoneOffset.UTC));
         handoff.setDeletedBy(principal.id());
@@ -165,7 +165,7 @@ public class HandoffService {
         if (handoff.getDeletedAt().plusDays(TrashService.DAYS).isBefore(OffsetDateTime.now(ZoneOffset.UTC))) {
             throw ApiException.conflict("2주가 지나 복원할 수 없습니다.");
         }
-        guard.requireAuthored(actor, handoff.getAuthorId());
+        guard.requireDeleteAuthored(actor, handoff.getAuthorId());
         handoff.setDeletedAt(null);
         handoff.setDeletedBy(null);
         live.cards(handoff.getStoreId());

@@ -5,10 +5,12 @@ import com.nextshift.common.AuthPrincipal;
 import com.nextshift.domain.Card;
 import com.nextshift.domain.CardRevision;
 import com.nextshift.domain.Handoff;
+import com.nextshift.domain.StoreMember;
 import com.nextshift.domain.User;
 import com.nextshift.repo.CardRepository;
 import com.nextshift.repo.CardRevisionRepository;
 import com.nextshift.repo.HandoffRepository;
+import com.nextshift.repo.StoreMemberRepository;
 import com.nextshift.repo.UserRepository;
 import com.nextshift.security.StoreGuard;
 import java.time.LocalDate;
@@ -34,6 +36,7 @@ public class RecordService {
     private final CardRepository cardRepository;
     private final CardRevisionRepository revisionRepository;
     private final UserRepository userRepository;
+    private final StoreMemberRepository memberRepository;
     private final StoreGuard guard;
 
     public RecordService(
@@ -41,18 +44,20 @@ public class RecordService {
             CardRepository cardRepository,
             CardRevisionRepository revisionRepository,
             UserRepository userRepository,
+            StoreMemberRepository memberRepository,
             StoreGuard guard
     ) {
         this.handoffRepository = handoffRepository;
         this.cardRepository = cardRepository;
         this.revisionRepository = revisionRepository;
         this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
         this.guard = guard;
     }
 
     /**
      * 매장 멤버가 기록을 본다.
-     * q는 제목과 한 사람 이름에 포함되면 통과한다.
+     * q는 제목, 내용, 기록한 사람, 담당자 이름에 포함되면 통과한다.
      * from과 to는 서울 날짜이며 양 끝을 포함한다.
      * 삭제는 휴지통에 남아 있는 최근 2주와 영구 보관만 나온다.
      */
@@ -60,43 +65,72 @@ public class RecordService {
     public List<RecordView> list(AuthPrincipal principal, UUID storeId, String q, LocalDate from, LocalDate to) {
         guard.requireActiveMember(storeId, principal.id());
         Map<UUID, String> names = new HashMap<>();
-        List<RecordView> records = new ArrayList<>();
+        Map<UUID, String> assignees = new HashMap<>();
+        List<Row> rows = new ArrayList<>();
         for (Handoff handoff : handoffRepository.findByStoreIdAndDeletedAtIsNullOrderByCreatedAtDesc(storeId)) {
-            records.add(row("CREATED", handoff.getId(), storeId, handoff.getId(), null, title(handoff.getRawText()), name(names, handoff.getAuthorId()), handoff.getCreatedAt()));
+            rows.add(handoffRow("CREATED", handoff, storeId, name(names, handoff.getAuthorId()), handoff.getCreatedAt()));
         }
         Map<UUID, Card> cards = new HashMap<>();
         for (Card card : cardRepository.findActiveByStoreId(storeId)) {
             cards.put(card.getId(), card);
             Handoff parent = handoffRepository.findById(card.getHandoffId()).orElse(null);
             UUID authorId = parent == null ? null : parent.getAuthorId();
-            records.add(row("CREATED", card.getId(), storeId, card.getHandoffId(), card.getId(), card.getTitle(), name(names, authorId), card.getCreatedAt()));
+            rows.add(cardRow("CREATED", card.getId(), card, storeId, name(names, authorId), card.getCreatedAt(), assignees));
+            if (card.getAcknowledgedAt() != null) {
+                rows.add(cardRow("ACKNOWLEDGED", card.getId(), card, storeId, name(names, card.getAcknowledgedBy()), card.getAcknowledgedAt(), assignees));
+            }
             if (card.getCompletedAt() != null) {
-                records.add(row("COMPLETED", card.getId(), storeId, card.getHandoffId(), card.getId(), card.getTitle(), name(names, card.getCompletedBy()), card.getCompletedAt()));
+                rows.add(cardRow("COMPLETED", card.getId(), card, storeId, name(names, card.getCompletedBy()), card.getCompletedAt(), assignees));
             }
         }
         for (CardRevision revision : revisionRepository.findByStoreIdOrderByCreatedAtDesc(storeId)) {
             Card card = cards.computeIfAbsent(revision.getCardId(), id -> cardRepository.findById(id).orElse(null));
-            String title = card == null ? revision.getAfterValue() : card.getTitle();
-            UUID handoffId = card == null ? null : card.getHandoffId();
-            records.add(row("UPDATED", revision.getId(), storeId, handoffId, revision.getCardId(), title, name(names, revision.getEditorId()), revision.getCreatedAt()));
+            String actor = name(names, revision.getEditorId());
+            if (card == null) {
+                RecordView view = new RecordView("UPDATED", revision.getId(), storeId, null, revision.getCardId(), revision.getAfterValue(), actor, revision.getCreatedAt(), null, null);
+                rows.add(new Row(view, ""));
+            } else {
+                rows.add(cardRow("UPDATED", revision.getId(), card, storeId, actor, revision.getCreatedAt(), assignees));
+            }
         }
         OffsetDateTime since = OffsetDateTime.now(ZoneOffset.UTC).minusDays(TrashService.DAYS);
         for (Handoff handoff : handoffRepository.findTrash(storeId, since)) {
-            records.add(row("DELETED", handoff.getId(), storeId, handoff.getId(), null, title(handoff.getRawText()), name(names, handoff.getDeletedBy()), handoff.getDeletedAt()));
+            rows.add(handoffRow("DELETED", handoff, storeId, name(names, handoff.getDeletedBy()), handoff.getDeletedAt()));
         }
         for (Card card : cardRepository.findTrash(storeId, since)) {
-            records.add(row("DELETED", card.getId(), storeId, card.getHandoffId(), card.getId(), card.getTitle(), name(names, card.getDeletedBy()), card.getDeletedAt()));
+            rows.add(cardRow("DELETED", card.getId(), card, storeId, name(names, card.getDeletedBy()), card.getDeletedAt(), assignees));
         }
-        return records.stream()
-                .filter(record -> matches(q, record.title(), record.actorName()))
+        return rows.stream()
+                .filter(row -> matches(q, row.view().title(), row.view().actorName(), row.search()))
+                .map(Row::view)
                 .filter(record -> inRange(record.at(), from, to))
                 .sorted(Comparator.comparing(RecordView::at, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
     }
 
-    private RecordView row(String action, UUID id, UUID storeId, UUID handoffId, UUID cardId, String title, String actorName, OffsetDateTime at) {
-        return new RecordView(action, id, storeId, handoffId, cardId, title, actorName, at);
+    private Row handoffRow(String action, Handoff handoff, UUID storeId, String actorName, OffsetDateTime at) {
+        RecordView view = new RecordView(action, handoff.getId(), storeId, handoff.getId(), null, title(handoff.getRawText()), actorName, at, null, null);
+        return new Row(view, handoff.getRawText());
     }
+
+    private Row cardRow(String action, UUID id, Card card, UUID storeId, String actorName, OffsetDateTime at, Map<UUID, String> assignees) {
+        RecordView view = new RecordView(action, id, storeId, card.getHandoffId(), card.getId(), card.getTitle(), actorName, at,
+                card.getUrgency(), card.getCompletedAt() != null);
+        String assignee = card.getAssigneeMemberId() == null ? "" : assignees.computeIfAbsent(card.getAssigneeMemberId(), this::memberName);
+        return new Row(view, card.getBody() + " " + assignee);
+    }
+
+    private String memberName(UUID memberId) {
+        StoreMember member = memberRepository.findById(memberId).orElse(null);
+        if (member == null) {
+            return "";
+        }
+        User user = userRepository.findById(member.getUserId()).orElse(null);
+        return user == null || user.getDeletedAt() != null ? "" : user.getName();
+    }
+
+    /** 검색에만 쓰는 내용과 담당자 이름을 기록 한 줄과 함께 들고 다닌다. */
+    private record Row(RecordView view, String search) {}
 
     private String name(Map<UUID, String> names, UUID userId) {
         if (userId == null) {
@@ -122,12 +156,12 @@ public class RecordService {
         return line.length() <= 80 ? line : line.substring(0, 80);
     }
 
-    private static boolean matches(String q, String title, String actor) {
+    private static boolean matches(String q, String title, String actor, String search) {
         if (q == null || q.isBlank()) {
             return true;
         }
         String needle = q.trim().toLowerCase(Locale.ROOT);
-        return contains(title, needle) || contains(actor, needle);
+        return contains(title, needle) || contains(actor, needle) || contains(search, needle);
     }
 
     private static boolean contains(String value, String needle) {

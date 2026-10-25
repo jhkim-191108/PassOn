@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-/** 알림 웹소켓. 브라우저는 헤더를 못 넣으므로 토큰은 쿼리로 받는다. */
+/** 알림 웹소켓. 브라우저는 헤더를 못 넣으므로 짧은 티켓을 쿼리로 받는다. */
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {

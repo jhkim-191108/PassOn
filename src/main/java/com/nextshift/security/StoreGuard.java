@@ -72,6 +72,21 @@ public class StoreGuard {
         }
     }
 
+    /** 작성자의 현재 역할. 멤버 기록이 없으면 오너 글로 본다. */
+    public StoreRole authorRole(UUID storeId, UUID authorId) {
+        return memberRepository.findByStoreIdAndUserId(storeId, authorId)
+                .map(StoreMember::getRole)
+                .orElse(StoreRole.OWNER);
+    }
+
+    /** 작성자 역할에 따라 삭제할 수 있는지 확인한다. */
+    public void requireDeleteAuthored(StoreMember actor, UUID authorId) {
+        StoreRole authorRole = authorRole(actor.getStoreId(), authorId);
+        if (!PermissionMatrix.canDeleteAuthored(actor.getRole(), actor.getUserId(), authorRole, authorId)) {
+            throw ApiException.forbidden("삭제 권한이 없습니다.");
+        }
+    }
+
     /** 직원은 본인이 쓴 인수인계만 수정할 수 있다. */
     public void requireAuthored(StoreMember actor, UUID autorId) {
         if(!PermissionMatrix.canMutateAuthored(actor.getRole(), autorId, actor.getUserId())){

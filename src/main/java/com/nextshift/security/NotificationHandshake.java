@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-/** 웹소켓 연결 전에 액세스 토큰과 매장 멤버를 확인한다. */
+/** 웹소켓 연결 전에 티켓과 매장 멤버를 확인한다. 액세스 토큰은 주소로 받지 않는다. */
 @Component
 public class NotificationHandshake implements HandshakeInterceptor {
     private final JwtService jwtService;
@@ -27,7 +27,7 @@ public class NotificationHandshake implements HandshakeInterceptor {
         this.guard = guard;
     }
 
-    /** 토큰이 맞고 그 매장의 활동 멤버면 연결을 허용한다. */
+    /** 티켓이 맞고 그 매장의 활동 멤버면 연결을 허용한다. */
     @Override
     public boolean beforeHandshake(
             ServerHttpRequest request,
@@ -38,17 +38,17 @@ public class NotificationHandshake implements HandshakeInterceptor {
         if (!(request instanceof ServletServerHttpRequest servletRequest)) {
             return false;
         }
-        String token = token(servletRequest);
         String store = servletRequest.getServletRequest().getParameter("storeId");
-        if (token == null || store == null || store.isBlank()) {
+        if (store == null || store.isBlank()) {
             return false;
         }
         try {
-            User user = userRepository.findById(jwtService.userId(token)).orElse(null);
+            UUID storeId = UUID.fromString(store);
+            UUID userId = userId(servletRequest, storeId);
+            User user = userRepository.findById(userId).orElse(null);
             if (user == null || user.getDeletedAt() != null) {
                 return false;
             }
-            UUID storeId = UUID.fromString(store);
             guard.requireActiveMember(storeId, user.getId());
             attributes.put("userId", user.getId());
             attributes.put("storeId", storeId);
@@ -67,15 +67,20 @@ public class NotificationHandshake implements HandshakeInterceptor {
     ) {
     }
 
-    private static String token(ServletServerHttpRequest request) {
+    /** 헤더의 액세스 토큰 또는 쿼리의 짧은 티켓. 쿼리에는 액세스 토큰을 받지 않는다. */
+    private UUID userId(ServletServerHttpRequest request, UUID storeId) {
         String header = request.getServletRequest().getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7);
+            return jwtService.userId(header.substring(7));
         }
-        String query = request.getServletRequest().getParameter("token");
-        if (query == null || query.isBlank()) {
-            return null;
+        String ticket = request.getServletRequest().getParameter("ticket");
+        if (ticket == null || ticket.isBlank()) {
+            throw new IllegalArgumentException("티켓이 없습니다.");
         }
-        return query;
+        WsTicket parsed = jwtService.readWsTicket(ticket);
+        if (!storeId.equals(parsed.storeId())) {
+            throw new IllegalArgumentException("티켓의 매장이 다릅니다.");
+        }
+        return parsed.userId();
     }
 }

@@ -70,7 +70,22 @@ public class EscalationService {
         escalation.setPriority(priority);
         escalation.setStatus(EscalationStatus.PENDING);
         escalationRepository.save(escalation);
+        live.cards(loaded.handoff().getStoreId());
         return toView(escalation, loaded.card(), loaded.handoff());
+    }
+
+    /** 위임한 매니저가 오너 처리 전에 취소한다. */
+    @Transactional
+    public void cancel(AuthPrincipal principal, UUID cardId) {
+        Loaded loaded = load(cardId);
+        guard.requireActiveMember(loaded.handoff().getStoreId(), principal.id());
+        Escalation escalation = escalationRepository.findByCardIdAndStatus(cardId, EscalationStatus.PENDING)
+                .orElseThrow(() -> ApiException.notFound("처리 대기 중인 위임이 없습니다."));
+        if (!escalation.getRequestedBy().equals(principal.id())) {
+            throw ApiException.forbidden("위임한 매니저만 취소할 수 있습니다.");
+        }
+        escalationRepository.delete(escalation);
+        live.cards(loaded.handoff().getStoreId());
     }
 
     /** 오너의 처리 대기 목록. */

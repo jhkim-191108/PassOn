@@ -228,10 +228,12 @@ public class CardService {
         return toView(card, loaded.handoff());
     }
 
-    /** 확정 전이고 작성 권한이 있을 때만 카드를 휴지통으로 보낸다. */
+    /** 확정 이후에도 휴지통으로 보낸다. 작성자 역할에 따라 권한이 갈린다. */
     @Transactional
     public void delete(AuthPrincipal principal, UUID cardId) {
-        Loaded loaded = authoredCard(principal, cardId);
+        Loaded loaded = readableCard(principal, cardId);
+        StoreMember actor = guard.requireActiveMember(loaded.handoff().getStoreId(), principal.id());
+        guard.requireDeleteAuthored(actor, loaded.handoff().getAuthorId());
         loaded.card().setDeletedAt(OffsetDateTime.now(ZoneOffset.UTC));
         loaded.card().setDeletedBy(principal.id());
         live.cards(loaded.handoff().getStoreId());
@@ -253,7 +255,7 @@ public class CardService {
         if (handoff.getDeletedAt() != null) {
             throw ApiException.conflict("인수인계가 삭제되어 있습니다. 인수인계를 먼저 복원해 주세요.");
         }
-        guard.requireAuthored(actor, handoff.getAuthorId());
+        guard.requireDeleteAuthored(actor, handoff.getAuthorId());
         card.setDeletedAt(null);
         card.setDeletedBy(null);
         live.cards(handoff.getStoreId());
