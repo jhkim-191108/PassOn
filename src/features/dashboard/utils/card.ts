@@ -1,6 +1,7 @@
 import type { Member } from '@/features/employees';
+import type { Notice } from '@/types/api';
 
-import type { CardProgress, CardResponse, HandoffItem, HandoffStatus, NoticeResponse, Priority, Urgency } from '../types';
+import type { CardProgress, CardResponse, HandoffItem, HandoffStatus, Priority, Urgency } from '../types';
 
 // 중요도: 당장(NOW)=긴급, 오늘 안(TODAY)=중요, 나중(LATER)=일반 (기록 조회와 같은 기준)
 const URGENCY_TO_PRIORITY: Record<Urgency, Priority> = {
@@ -45,6 +46,7 @@ type MemberMaps = ReturnType<typeof buildMemberMaps>;
 export const cardToHandoff = (card: CardResponse, storeId: string, maps: MemberMaps): HandoffItem => ({
   ...EMPTY_ITEM,
   id: card.id,
+  handoffId: card.handoffId,
   storeId,
   title: card.title,
   content: card.body,
@@ -69,13 +71,14 @@ export const cardToHandoff = (card: CardResponse, storeId: string, maps: MemberM
 });
 
 /** 공지 → 대시보드 공지 (고정 공지 영역에서 사용) */
-export const noticeToHandoff = (notice: NoticeResponse): HandoffItem => ({
+export const noticeToHandoff = (notice: Notice): HandoffItem => ({
   ...EMPTY_ITEM,
   id: notice.id,
+  handoffId: null,
   storeId: notice.storeId,
   title: notice.title,
   content: notice.body,
-  priority: notice.important ? 'important' : 'normal',
+  priority: notice.priority === 'URGENT' ? 'urgent' : notice.priority === 'IMPORTANT' ? 'important' : 'normal',
   status: 'pending',
   authorId: notice.authorId,
   authorName: notice.authorName,

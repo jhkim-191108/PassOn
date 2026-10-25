@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { getOpenCards } from '@/api/cards';
 import { api } from '@/api/client';
+import { getNotices } from '@/api/notices';
 import type { AppUser } from '@/features/auth';
 import type { Member } from '@/features/employees';
 
-import type { CardResponse, HandoffItem, NoticeResponse, QuickAction } from '../types';
+import type { CardResponse, HandoffItem, QuickAction } from '../types';
 import { buildMemberMaps, cardToHandoff, noticeToHandoff } from '../utils/card';
 import { buildDashboardSummary } from '../utils/summary';
 
@@ -41,10 +43,11 @@ export const useDashboard = (user: AppUser | null) => {
     setError(null);
     try {
             const [openCards, recentCards, members, notices] = await Promise.all([
-        api<CardResponse[]>(`/api/stores/${storeId}/open-cards`),
+        // 실제 응답에는 공용 Card 타입에 없는 acknowledgedBy · acknowledgedByName도 들어 있음
+        getOpenCards(storeId) as Promise<CardResponse[]>,
         api<CardResponse[]>(`/api/stores/${storeId}/cards?${new URLSearchParams({ from: daysAgoISO(RECENT_DAYS) })}`),
         api<Member[]>(`/api/stores/${storeId}/members`),
-        api<NoticeResponse[]>(`/api/stores/${storeId}/notices`),
+        getNotices(storeId),
       ]);
       membersRef.current = members;
       const maps = buildMemberMaps(members);

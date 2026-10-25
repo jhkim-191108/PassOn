@@ -8,6 +8,8 @@ export const PATHS = {
   DASHBOARD: '/app/dashboard',
   MYPAGE: '/app/mypage',
   STORE_SETTINGS: '/app/store',
-  HANDOFF_NEW: '/app/handoffs/new',      // 추가
-  HANDOFF_DETAIL: '/app/handoffs/:id',   // 추가
+  // 인수인계 작성 · 상세 (인수인계 담당 페이지의 실제 주소)
+  HANDOFF_NEW: '/app/handovers/new',
+  HANDOFF_DETAIL: '/app/handovers/:handoffId',
+  NOTICE_DETAIL: '/app/notices/:noticeId',
 } as const;
