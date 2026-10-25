@@ -1,204 +1,135 @@
-
 # PassOn | 오르미 3차 팀프로젝트
-> 오르미 3차 팀프로젝트 1조 'PassOn' 의 AI 활용 매장 교대 인수인계 사이트입니다.
+
+오르미 3차 팀프로젝트 1조 PassOn의 AI 활용 매장 교대 인수인계 사이트입니다.
 
 - **작업 기간:** 2026.09.29 ~ 2026.10.28
-- **배포 주소:** (현재 공란)
+- **프론트 배포:** https://passon-346c8.web.app
+- **API 배포:** https://nextshift-1065882590623.asia-northeast3.run.app
 
-## 📌 목차
-1. [팀원 및 담당](#-팀원-및-담당)
-2. [기술 스택](#-기술-스택)
-3. [주요 기능](#-주요-기능)
+## 목차
 
-## 👥 팀원 및 담당
+1. [팀원 및 담당](#팀원-및-담당)
+2. [기술 스택](#기술-스택)
+3. [주요 기능](#주요-기능)
+4. [로컬 실행](#로컬-실행)
+5. [배포](#배포)
 
-| 팀원       | 담당 영역                                                                      | 주요 파일                                                                                |
-| :--------- | :----------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| **김지훈** | 플레이스홀더 | 플레이스홀더 |
-| **전재형** | 플레이스홀더 | 플레이스홀더 |
-| **김현호** | 플레이스홀더 | 플레이스홀더 |
+## 팀원 및 담당
 
-## 🛠 기술 스택
+| 팀원 | 담당 영역 | 주요 파일 |
+| :--- | :--- | :--- |
+| **김지훈** | 인수인계, 관리자 위임, 기록 조회, 마이페이지, 매장 설정, 공통 레이아웃 | `src/pages/handovers`, `src/pages/delegations`, `src/pages/records`, `src/pages/mypage`, `src/layouts` |
+| **전재형** | 대시보드, 근무표 | `src/pages/dashboard`, `src/features/dashboard`, `src/pages/schedule`, `src/features/schedule` |
+| **김현호** | 인증, 직원 관리, 공지사항 | `src/pages/auth`, `src/features/auth`, `src/pages/employees`, `src/features/employees`, `src/pages/notices` |
 
-| 구분                | 사용 기술                                                          |
-| :------------------ | :----------------------------------------------------------------- |
-| **(플레이스홀더)** | 플레이스홀더 |
-| **(플레이스홀더)** | 플레이스홀더 |
-| **(플레이스홀더)** | 플레이스홀더 |
-| **(플레이스홀더)** | 플레이스홀더 |
-| **(플레이스홀더)** | 플레이스홀더 |
-| **(플레이스홀더)** | 플레이스홀더 |
+## 기술 스택
 
-## ✨ 주요 기능
+| 구분 | 사용 기술 |
+| :--- | :--- |
+| **프론트** | React 19, TypeScript, Vite 8, React Router 7 |
+| **백엔드** | Spring Boot, Java 21, Gradle |
+| **프론트 배포** | Firebase Hosting |
+| **API 배포** | Google Cloud Run |
+| **실시간** | WebSocket (매장 카드·근무·알림) |
+
+## 주요 기능
 
 ### 회원가입 / 로그인 / 매장등록
 
 - 회원가입 및 로그인
-- Owner일 경우 매장코드 등록
-- 사용자가 어느 매장에 소속됐는지 관리
-- 한 사용자가 여러 매장에 속하는 경우까지 고려하여 매장 여러개 등록 가능
+- Owner일 경우 매장 개설
+- 한 사용자가 여러 매장에 속할 수 있음
 - 매장 코드 또는 초대 링크로 직원 추가
 
 ### 인수인계 작성
 
-- 자연어+사진첨부로 작성하면 AI가 카드형식으로 변환
-- 별도 언급이 없다면 AI판단 하 일반·중요·긴급 중요도 지정(수정 눌러서 체크박스 변경가능)
-- 사진 1~3장 첨부가능: 리스트 내에선 보이지 않고 카드를 눌러야 보이게 작성
+- 자연어와 사진으로 작성하면 AI가 카드로 변환
+- 별도 언급이 없으면 AI가 일반·중요·긴급을 지정하고, 수정으로 바꿀 수 있음
+- 사진은 카드 상세에서 확인
 - 작성 즉시 해당 매장의 인수인계 목록에 반영
+
+### 인수인계 목록 / 상세
+
+- 팀·상태·검색·정렬로 카드를 찾음
+- 전체 / 미처리 / 중요·긴급 / 내 담당 / 완료
+- 카드를 누르면 상세에서 본문, 사진, 상태, 메모를 확인
+- 확인하기와 완료처리를 목록과 상세에서 바로 할 수 있음
 
 ### 인수인계 상태 관리
 
-- 미처리 / 처리완료 / 처리중(확인됨)
+- 미처리 / 처리중(확인됨) / 완료
 - 처리한 사람과 처리 시간 기록
 - 완료한 내용도 삭제하지 않고 보존
-- 미완료 업무는 다음 날 자동으로 이어서 표시
 
 ### 담당자 관리
 
-- 특정 직원 지정(Owner권한)
-- 오전 근무자, 마감 근무자처럼 근무조 단위 지정(필요시 홀 주방 등 역할을 직접 적어 나눌 수 있게 하면 좋음)
-- 근무표와 연동해 실제 담당자를 자동 표시할 수 있도록 설계
+- 특정 직원 지정
+- 근무표와 연동해 담당자의 오늘 근무 시간대를 표시
 
 ### 관리자 확인 / 보고
 
-- Manager 이상이 접속 시 중요한 인수인계를 상단에 먼저 띄움, 확인 체크시 우선 내려감
-- 확인자와 확인 시간 기록(확인 됨 체크시 처리중으로 넘어감)
-- (매니저 권한 선택사항)Owner에게 보고해야 하는 항목과 일반 Staff 업무를 구분
+- 대시보드에서 역할별로 확인할 항목을 먼저 보여줌
+- 확인하면 처리중으로 바뀜
+- 매니저가 처리 권한이 없는 항목은 Owner에게 위임
 
-### 수정 및 수정 이력
+### 수정 및 삭제
 
-- 권한이 있는 사용자가 내용 수정
+- 권한이 있는 사용자만 수정·삭제 버튼을 봄
 - 수정되면 (수정됨) 표시
-- 이전 내용 / 변경 내용 / 수정자 / 수정시간 기록
-- 수정 때문에 원래 인수인계 내용이 사라지지 않도록 함(작성자 당사자에게 보존)
-
-### 삭제
-
-- 실제 DB 즉시 삭제가 아니라 소프트 삭제
-- 삭제자 / 삭제 시간 기록
-- 작성자는 일정 기간 삭제된 사실 확인 가능
-- 2주가 지나면 실제 데이터 삭제 또는 별도 보관 정책 적용(오너가 보관 체크한 항목)
+- 삭제는 소프트 삭제이며 휴지통에서 복구 가능
+- 2주가 지나면 보관 정책에 따라 정리
 
 ### 메모 / 진행상황
 
-- 기존 인수인계 아래에 후속 내용 추가
-- 예: 업체 연락 완료, 11시 입고 예정
+- 카드 아래에 후속 메모를 추가
 - 작성자와 작성 시간 표시
-- 메모 때문에 원본 내용을 계속 수정할 필요가 없도록 함
-
-### 검색 / 필터 / 정렬
-
-- 전체 / 미완료 / 중요 / 내가 담당 / 완료
-- 중요도별 검색
-- 작성자 / 담당자 검색
-- 날짜별 조회
-- 오래된 미처리 업무 우선 정렬
+- 원본을 고치지 않고 진행 상황을 남김
 
 ### 근무표
 
-- 직원별 근무 시간 등록
-- 오전 / 오후 / 마감 등 근무조 관리
-- 인수인계 담당자를 근무표와 연결
-- 지금 근무 중인 사람이 누구인지 확인
+- 직원별 오전 / 오후 / 마감 근무 등록
+- 지금 근무 중인 사람을 확인
 
 ### 알림
 
-- 나에게 업무가 지정됐을 때
-- 중요·긴급 인수인계가 등록됐을 때
-- 내가 작성한 업무에 메모가 추가됐을 때
-- Manager가 확인해야 하는 업무가 생겼을 때
-- 처음에는 웹 내부 알림으로 만들고, 필요시 이메일 푸시
+- 웹 내부 알림
+- 긴급 카드가 있으면 상단 메뉴 아래 띠로 표시
+- 대시보드 진입 시 긴급 알림 창
 
 ### 공지사항
 
 - 인수인계와 장기 공지를 분리
-- 예: 이번 주 화요일 에어컨 점검
-- admin페이지에 작성 후 필요시 Manager가 AI를 통해 공지카드 작성 => 인수인계로 공지
-- (선택)공지 체크시 일정 기간 상단 고정 가능
+- 고정 공지는 대시보드 상단에 표시
 
-### 직원 관리- 직원 초대 / 퇴사 처리
+### 직원 관리
 
-- Manager / Staff 역할 지정 (혹은 추가 가능)
-- 직원 이름 / 근무조 / 소속 매장 관리
-- 퇴사해도 과거 작성 기록의 작성자가 없어지지 않도록 처리
+- 직원 초대 / 퇴사 처리
+- Owner / Manager / Staff 역할 지정
+- 팀 배정
+- 퇴사해도 과거 작성 기록의 작성자는 유지
 
-### 기록 조회- 과거 인수인계 검색
-- 누가 작성·수정·처리·삭제했는지 확인
-- 기록에 들어가 특정 날짜의 인수인계 상황을 검색하여 다시 볼 수 있도록 설정
-=======
-# React + TypeScript + Vite
+### 기록 조회
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- 누가 작성·확인·수정·처리·삭제했는지 확인
+- 제목, 내용, 작성자, 담당자로 검색
+- 기간과 삭제된 항목 포함 여부를 골라 봄
 
-Currently, two official plugins are available:
+## 로컬 실행
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cd nextshift
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+API 주소는 기본으로 Cloud Run을 씁니다. 로컬 API를 쓰려면 `VITE_API_URL`을 넣으면 됩니다.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 배포
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+프론트는 Firebase Hosting, API는 Cloud Run입니다.
 
+```bash
+cd nextshift
+npm run build
+firebase deploy --only hosting
 ```
-
