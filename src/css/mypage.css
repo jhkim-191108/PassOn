@@ -1,7 +1,5 @@
 .mypage {
   width: 100%;
-  max-width: 576px;
-  margin: 0 auto;
   color: #1c1917;
 }
 
@@ -261,7 +259,6 @@
   border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
 }
 
 .mypage__save {
@@ -272,7 +269,6 @@
 }
 
 .mypage__save:disabled {
-  cursor: default;
   opacity: 0.7;
 }
 

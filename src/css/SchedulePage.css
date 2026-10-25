@@ -1,8 +1,6 @@
-/* Figma SchedulePage 바깥 여백 기준 (AppLayout 안에 들어가는 본문 영역) */
+/* 본문 폭은 AppLayout(.app-main)을 따른다 */
 .schedule {
-  max-width: 896px;
-  margin: 0 auto;
-  padding: 24px 16px 96px;
+  width: 100%;
   box-sizing: border-box;
   color: #1c1917;              /* stone-900 */
 }
@@ -24,18 +22,4 @@
   font-size: 0.75rem;
   line-height: 1rem;
   color: #dc2626;              /* red-600 */
-}
-
-@media (min-width: 1024px) {
-  .schedule {
-    padding: 32px 32px 40px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .schedule {
-    max-width: none;
-    margin: 0;
-    padding: 24px 24px 32px;
-  }
 }

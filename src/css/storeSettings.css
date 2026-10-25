@@ -5,7 +5,7 @@
 .store-settings__header h1 {
     margin: 0;
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .store-settings__header p {
@@ -42,7 +42,7 @@
 .store-settings__danger h2 {
     margin: 0 0 16px;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .store-settings__field {
@@ -67,8 +67,11 @@
     font-size: 13px;
 }
 
-.store-settings__field > span {
-    font-weight: 600;
+.store-settings__field > span,
+.store-settings .input-field__label {
+    color: var(--color-text-sub);
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .store-settings__field input {
@@ -98,6 +101,7 @@
 .store-settings__code {
     letter-spacing: 0.08em;
     font-size: 18px;
+    font-weight: 600;
 }
 
 .store-settings__copy {
@@ -107,7 +111,7 @@
     background: #f3f4f6;
     color: #3f3f46;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -145,7 +149,7 @@
     place-items: center;
     flex-shrink: 0;
     border-radius: 999px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .store-settings__avatar {
@@ -169,6 +173,7 @@
 
 .store-settings__identity strong {
     font-size: 16px;
+    font-weight: 600;
 }
 
 .store-settings__identity em,
@@ -177,7 +182,7 @@
     padding: 3px 8px;
     font-style: normal;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .store-settings__identity em {
@@ -243,6 +248,7 @@
 .store-settings__toggles strong {
     display: block;
     font-size: 14px;
+    font-weight: 600;
 }
 
 .store-settings__mark {
@@ -328,7 +334,7 @@
     border: 1px solid #fca5a5;
     border-radius: 10px;
     background: #ffffff;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
 }
 

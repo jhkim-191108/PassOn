@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
+import type { ComponentProps } from "react";
 import { ApiError } from "@/api/client";
 import { listRecords } from "@/api/records";
+import Badge from "@/components/ui/Badge";
 import EmptyState from "@/components/ui/EmptyState";
 import ErrorState from "@/components/ui/ErrorState";
+import Input from "@/components/ui/Input";
 import Loading from "@/components/ui/Loading";
 import { useAppSession } from "@/layouts/appSession";
-import type { RecordAction, RecordEntry } from "@/types/api";
+import type { RecordAction, RecordEntry, Urgency } from "@/types/api";
 import "../../css/records.css";
+
+type BadgeVariant = ComponentProps<typeof Badge>["variant"];
 
 type RangeKey = "today" | "week" | "month" | "all";
 
@@ -20,8 +25,24 @@ const RANGES: { key: RangeKey; label: string }[] = [
 const ACTION_LABEL: Record<RecordAction, string> = {
     CREATED: "작성",
     UPDATED: "수정",
-    COMPLETED: "처리",
+    ACKNOWLEDGED: "확인",
+    COMPLETED: "처리완료",
     DELETED: "삭제",
+};
+
+const URGENCY_BADGE: Record<Urgency, { label: string; variant: BadgeVariant }> = {
+    NOW: { label: "긴급", variant: "danger" },
+    TODAY: { label: "중요", variant: "warning" },
+    LATER: { label: "일반", variant: "neutral" },
+};
+
+type Status = "pending" | "progress" | "done" | "deleted";
+
+const STATUS_BADGE: Record<Status, { label: string; variant: BadgeVariant }> = {
+    pending: { label: "미처리", variant: "warning" },
+    progress: { label: "처리중", variant: "primary" },
+    done: { label: "완료", variant: "success" },
+    deleted: { label: "삭제됨", variant: "danger" },
 };
 
 // 서울 기준 날짜
@@ -77,12 +98,21 @@ function formatAt(value: string) {
     }).format(date);
 }
 
-// 같은 인수인계끼리 묶기
+function statusOf(events: RecordEntry[]): Status {
+    if (events.some((event) => event.action === "DELETED")) return "deleted";
+    if (events.some((event) => event.done === true || event.action === "COMPLETED")) return "done";
+    if (events.some((event) => event.action === "ACKNOWLEDGED")) return "progress";
+    return "pending";
+}
+
+// 카드 한 건씩 묶기. 카드가 있는 인수인계는 카드로만 보여 줌
 function groupRecords(records: RecordEntry[], includeDeleted: boolean) {
-    // 삭제된 기록은 체크가 꺼져 있으면 빼기
+    // 삭제된 기록은 토글이 꺼져 있으면 빼기
     const visible = includeDeleted ? records : records.filter((record) => record.action !== "DELETED");
+    const handoffsWithCards = new Set(visible.filter((record) => record.cardId).map((record) => record.handoffId));
     const groups = new Map<string, RecordEntry[]>();
     for (const record of visible) {
+        if (!record.cardId && handoffsWithCards.has(record.handoffId)) continue;
         const key = record.cardId ?? record.handoffId ?? record.id;
         const list = groups.get(key);
         if (list) list.push(record);
@@ -91,8 +121,18 @@ function groupRecords(records: RecordEntry[], includeDeleted: boolean) {
     return [...groups.entries()]
         .map(([key, events]) => {
             const ordered = [...events].sort((left, right) => left.at.localeCompare(right.at));
-            const title = ordered.find((event) => event.action === "CREATED")?.title ?? ordered[0].title;
-            return { key, title, events: ordered, latest: ordered[ordered.length - 1].at };
+            const created = ordered.find((event) => event.action === "CREATED");
+            const urgency = ordered.find((event) => event.urgency)?.urgency ?? null;
+            return {
+                key,
+                title: created?.title ?? ordered[0].title,
+                created,
+                urgency,
+                isCard: Boolean(ordered[0].cardId),
+                status: statusOf(ordered),
+                events: ordered.filter((event) => event !== created),
+                latest: ordered[ordered.length - 1].at,
+            };
         })
         .sort((left, right) => right.latest.localeCompare(left.latest));
 }
@@ -104,7 +144,7 @@ function RecordsPage() {
     const [keyword, setKeyword] = useState("");
     const [query, setQuery] = useState("");
     const [range, setRange] = useState<RangeKey>("all");
-    const [includeDeleted, setIncludeDeleted] = useState(true);
+    const [includeDeleted, setIncludeDeleted] = useState(false);
     const [records, setRecords] = useState<RecordEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
@@ -160,12 +200,19 @@ function RecordsPage() {
                 <p>작성·수정·처리·삭제 기록을 모두 확인할 수 있어요.</p>
             </header>
 
-            <input
-                className="records__search"
-                value={keyword}
-                placeholder="제목, 작성자 검색"
-                onChange={(event) => setKeyword(event.target.value)}
-            />
+            <div className="records__search-box">
+                <svg className="records__search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-3.5-3.5" />
+                </svg>
+                <Input
+                    className="records__search"
+                    value={keyword}
+                    placeholder="제목, 내용, 작성자, 담당자 검색"
+                    aria-label="기록 검색"
+                    onChange={(event) => setKeyword(event.target.value)}
+                />
+            </div>
 
             <div className="records__filters">
                 {RANGES.map((item) => (
@@ -173,6 +220,7 @@ function RecordsPage() {
                         key={item.key}
                         type="button"
                         className={range === item.key ? "records__range records__range--active" : "records__range"}
+                        aria-pressed={range === item.key}
                         onClick={() => setRange(item.key)}
                     >
                         {item.label}
@@ -181,6 +229,8 @@ function RecordsPage() {
                 <label className="records__deleted">
                     <input
                         type="checkbox"
+                        role="switch"
+                        className="records__switch"
                         checked={includeDeleted}
                         onChange={(event) => setIncludeDeleted(event.target.checked)}
                     />
@@ -198,19 +248,43 @@ function RecordsPage() {
                     <ul className="records__list">
                         {groups.map((group) => (
                             <li key={group.key} className="records__card">
-                                <strong>{group.title}</strong>
-                                <ul>
-                                    {group.events.map((event) => (
-                                        <li key={`${event.action}-${event.id}`}>
-                                            <span className={`records__mark records__mark--${event.action}`}>
-                                                {event.actorName.charAt(0)}
-                                            </span>
-                                            <span>
-                                                {event.actorName}님 {ACTION_LABEL[event.action]} · {formatAt(event.at)}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="records__card-head">
+                                    <strong>{group.title}</strong>
+                                    <div className="records__badges">
+                                        {group.urgency ? (
+                                            <Badge size="sm" variant={URGENCY_BADGE[group.urgency].variant} className="records__priority">
+                                                {URGENCY_BADGE[group.urgency].label}
+                                            </Badge>
+                                        ) : null}
+                                        {group.isCard || group.status === "deleted" ? (
+                                            <Badge size="sm" variant={STATUS_BADGE[group.status].variant} className="records__status">
+                                                {STATUS_BADGE[group.status].label}
+                                            </Badge>
+                                        ) : null}
+                                    </div>
+                                </div>
+                                {group.created ? (
+                                    <p className="records__author">
+                                        <span className="records__avatar" aria-hidden="true">
+                                            {group.created.actorName.charAt(0)}
+                                        </span>
+                                        <span>
+                                            <b>{group.created.actorName}</b>님 작성 · {formatAt(group.created.at)}
+                                        </span>
+                                    </p>
+                                ) : null}
+                                {group.events.length > 0 ? (
+                                    <ul className="records__events">
+                                        {group.events.map((event) => (
+                                            <li key={`${event.action}-${event.id}`} className={`records__event records__event--${event.action}`}>
+                                                <span aria-hidden="true">✓</span>
+                                                <span>
+                                                    {event.actorName} {ACTION_LABEL[event.action]} · {formatAt(event.at)}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : null}
                             </li>
                         ))}
                     </ul>

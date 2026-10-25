@@ -241,14 +241,14 @@ function MyPage() {
 
                 {message && <p className="mypage__status">{message}</p>}
 
-                <button type="submit" className="mypage__save" disabled={pending}>
+                <Button type="submit" variant="primary" className="mypage__save" disabled={pending}>
                     {pending ? "저장 중..." : "저장하기"}
-                </button>
+                </Button>
             </form>
 
-            <button type="button" className="mypage__logout" onClick={() => setLogoutConfirm(true)}>
+            <Button type="button" variant="danger" className="mypage__logout" onClick={() => setLogoutConfirm(true)}>
                 로그아웃
-            </button>
+            </Button>
 
             <Modal open={savedOpen} title="저장했습니다" onClose={() => setSavedOpen(false)}>
                 <p className="confirm-dialog__description">변경한 내용이 저장되었습니다.</p>

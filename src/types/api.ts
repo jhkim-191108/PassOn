@@ -172,9 +172,9 @@ export interface UpdateCardRequest {
     needsReview: boolean;
 }
 
-export type RecordAction = "CREATED" | "UPDATED" | "COMPLETED" | "DELETED";
+export type RecordAction = "CREATED" | "UPDATED" | "ACKNOWLEDGED" | "COMPLETED" | "DELETED";
 
-// 기록 한 건
+// 기록 한 건. 중요도와 완료 여부는 카드 기록에만 있음
 export interface RecordEntry{
     action: RecordAction;
     id: string;
@@ -184,6 +184,8 @@ export interface RecordEntry{
     title: string;
     actorName: string;
     at: string;
+    urgency?: Urgency | null;
+    done?: boolean | null;
 }
 
 // 인수인계 사진
