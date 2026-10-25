@@ -430,6 +430,75 @@
 }
 
 /* =========================
+    Handover Memos
+========================= */
+.handover-detail__memos {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+}
+
+.handover-detail__memos h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.handover-detail__memo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.handover-detail__memo {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--color-background-soft);
+}
+
+.handover-detail__memo-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.handover-detail__memo-meta strong {
+    font-size: 13px;
+}
+
+.handover-detail__memo-meta span {
+    color: var(--color-text-muted);
+    font-size: 11px;
+}
+
+.handover-detail__memo p {
+    margin: 0;
+    color: var(--color-text-sub);
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.handover-detail__memo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.handover-detail__memo-form .button {
+    width: 100%;
+}
+
+.handover-detail__memo-error {
+    margin: 8px 0 0;
+    color: var(--color-danger);
+    font-size: 12px;
+}
+
+/* =========================
     Trash
 ========================= */
 
@@ -573,6 +642,20 @@
     }
 
     .trash-list__deleted-at {
+        flex-shrink: 0;
+    }
+
+    .handover-detail__memo-form {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+
+    .handover-detail__memo-form .textarea-field {
+        flex: 1;
+    }
+
+    .handover-detail__memo-form .button {
+        width: auto;
         flex-shrink: 0;
     }
 }

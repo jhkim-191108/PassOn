@@ -9,7 +9,8 @@ import {
     completeCard,
     reopenCard,
 } from "@/api/cards";
-import type { Handoff, Card, Photo, CardProgress, } from "@/types/api";
+import { getCardMemos, createCardMemo, } from "@/api/memos";
+import type { Handoff, Card, Photo, CardProgress, MemoView, } from "@/types/api";
 import Loading from "@/components/ui/Loading";
 import ErrorState from "@/components/ui/ErrorState";
 import Badge from "@/components/ui/Badge";
@@ -17,6 +18,7 @@ import { getHandoffPhotos, getPhotoFile } from "@/api/photos";
 import Button from "@/components/ui/Button";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Select from "@/components/ui/Select";
+import Textarea from "@/components/ui/Textarea";
 
 import "../../css/handovers.css";
 
@@ -72,6 +74,10 @@ function HandoverDetailPage() {
     const [deleteCardId, setDeleteCardId] = useState<string | null>(null);
     const [deleting, setDeleting] = useState(false);
     const [changingCardId, setChangingCardId] = useState<string | null>(null);
+    const [memos, setMemos] = useState<Record<string, MemoView[]>>({});
+    const [memoInputs, setMemoInputs] = useState<Record<string, string>>({});
+    const [addingMemoCardId, setAddingMemoCardId] = useState<string | null>(null);
+    const [memoErrors, setMemoErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         let cancelled = false;
@@ -93,6 +99,27 @@ function HandoverDetailPage() {
                         getHandoffCards(handoffId),
                         getHandoffPhotos(handoffId),
                     ]);
+
+                    const memoEntries = await Promise.all(
+                        cardData.map(async (card) => {
+                            try {
+                                const cardMemos = await getCardMemos(card.id);
+
+                                return [
+                                    card.id,
+                                    cardMemos,
+                                ] as const;
+                            } catch(error) {
+                                console.error("메모 조회 실패", card.id, error);
+                                return [
+                                card.id,
+                                []
+                                ] as const;
+                            }
+                        })
+                    );
+
+                    const memoMap: Record<string, MemoView[]> = Object.fromEntries(memoEntries);
 
                     const photoFiles = await Promise.all(
                         photoData.map(async (photo) => {
@@ -119,6 +146,7 @@ function HandoverDetailPage() {
                     setHandoff(handoffData);
                     setCards(cardData);
                     setPhotos(photoFiles);
+                    setMemos(memoMap);
             } catch (error) {
                 if (cancelled) return;
 
@@ -222,6 +250,44 @@ function HandoverDetailPage() {
         );
     }
 
+    const handleAddMemo = async (cardId: string) => {
+        const body = memoInputs[cardId]?.trim();
+
+        if (!body) return;
+        try {
+            setAddingMemoCardId(cardId);
+            setMemoErrors((current) => ({
+                ...current,
+                [cardId]: "",
+            }));
+            const createdMemo = await createCardMemo(
+                cardId,
+                body
+            );
+
+            setMemos((current) => ({
+                ...current,
+                [cardId]: [
+                    ...(current[cardId] ?? []),
+                    createdMemo,
+                ],
+            }));
+
+            setMemoInputs((current) => ({
+                ...current,
+                [cardId]: "",
+            }));
+        } catch (error) {
+            console.error("메모 등록 실패:", error);
+            setMemoErrors((current) => ({
+                ...current,
+                [cardId]: "메모를 등록하지 못했습니다.",
+            }));
+        } finally {
+            setAddingMemoCardId(null);
+        }
+    }
+
     return (
         <section className="handover-detail">
                 <header className="handover-detail__header">
@@ -321,6 +387,68 @@ function HandoverDetailPage() {
                                 >
                                     삭제
                                 </Button>
+                            </div>
+                            <div className="handover-detail__memos">
+                                <h4>후속 메모</h4>
+                                
+                                {(memos[card.id] ?? []).length > 0 && (
+                                    <div className="handover-detail__memo-list">
+                                        {(memos[card.id] ?? []).map((memo) => (
+                                            <div
+                                                key={memo.id}
+                                                className="handover-detail__memo"
+                                            >
+                                                <div className="handover-detail__memo-meta">
+                                                    <strong>{memo.authorName}</strong>
+                                                    <span>
+                                                        {new Date(
+                                                            memo.createdAt
+                                                        ).toLocaleString("ko-KR", {
+                                                            month: "numeric",
+                                                            day: "numeric",
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                        })}
+                                                    </span>
+                                                </div>
+
+                                                <p>{memo.body}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <div className="handover-detail__memo-form">
+                                    <Textarea 
+                                        value={memoInputs[card.id] ?? ""}
+                                        placeholder="코멘트를 남겨주세요."
+                                        rows={2}
+                                        disabled={addingMemoCardId === card.id}
+                                        onChange={(event) =>
+                                            setMemoInputs((current) => ({
+                                                ...current,
+                                                [card.id]: event.target.value,
+                                            }))
+                                        }
+                                    />
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        disabled={
+                                            addingMemoCardId === card.id ||
+                                            !(memoInputs[card.id] ?? "").trim()
+                                        }
+                                        onClick={() => handleAddMemo(card.id)}
+                                    >{addingMemoCardId === card.id
+                                        ? "등록 중..."
+                                        : "등록"}
+                                    </Button>
+                                </div>
+                                {memoErrors[card.id] && (
+                                    <p className="handover-detail__memo-error">
+                                        {memoErrors[card.id]}
+                                    </p>
+                                )}
                             </div>
                         </article>
                     ))}
